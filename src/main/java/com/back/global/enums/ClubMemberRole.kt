@@ -8,7 +8,6 @@ enum class ClubMemberRole(val description: String) {
     HOST("소유자");
 
     companion object {
-
         @JvmStatic
         fun fromString(role: String): ClubMemberRole {
             val key = role.trim()
