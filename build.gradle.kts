@@ -2,6 +2,8 @@ plugins {
     java
     id("org.springframework.boot") version "3.5.4"
     id("io.spring.dependency-management") version "1.1.7"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.spring") version "1.9.23"
 }
 
 group = "com"
@@ -50,6 +52,10 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     // swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect") // 코틀린 리플렉션
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") // 코틀린 표준 라이브러리
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core") // 코틀린 코루틴
 
 }
 
