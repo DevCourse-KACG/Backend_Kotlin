@@ -9,9 +9,9 @@ enum class ClubMemberState(val description: String) {
     WITHDRAWN("탈퇴");
 
     companion object {
-        fun fromString(state: String): ClubMemberState {
-            return entries.find { it.name.equals(state, ignoreCase = true) }
-                ?: throw ServiceException(400, "Unknown Member state: $state")
-        }
+        @JvmStatic
+        fun fromString(state: String): ClubMemberState =
+            values().firstOrNull { it.name.equals(state.trim(), ignoreCase = true) }
+                ?: throw ServiceException(400, "Unknown member state: $state")
     }
 }

@@ -9,9 +9,9 @@ enum class EventType(val description: String) {
     LONG_TERM("장기"); // 종료일 없이 지속적으로 열리는 모임
 
     companion object {
-        fun fromString(eventType: String): EventType {
-            return entries.find { it.name.equals(eventType, ignoreCase = true) }
+        @JvmStatic
+        fun fromString(eventType: String): EventType =
+            values().firstOrNull { it.name.equals(eventType.trim(), ignoreCase = true) }
                 ?: throw ServiceException(400, "Unknown event type: $eventType")
-        }
     }
 }

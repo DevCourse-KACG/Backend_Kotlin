@@ -14,9 +14,11 @@ enum class ClubCategory(val description: String) {
     OTHER("기타");
 
     companion object {
+        @JvmStatic
         fun fromString(category: String): ClubCategory {
-            return entries.find { it.name.equals(category, ignoreCase = true) }
-                ?: throw ServiceException(400, "Unknown Club category: $category")
+            val key = category.trim()
+            return values().find { it.name.equals(key, ignoreCase = true) }
+                ?: throw ServiceException(400, "Unknown Item category: $category")
         }
     }
 }

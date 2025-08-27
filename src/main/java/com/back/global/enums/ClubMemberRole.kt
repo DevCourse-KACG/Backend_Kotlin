@@ -8,8 +8,11 @@ enum class ClubMemberRole(val description: String) {
     HOST("소유자");
 
     companion object {
+
+        @JvmStatic
         fun fromString(role: String): ClubMemberRole {
-            return entries.find { it.name.equals(role, ignoreCase = true) }
+            val key = role.trim()
+            return values().find { it.name.equals(key, ignoreCase = true) }
                 ?: throw ServiceException(400, "Unknown Member role: $role")
         }
     }
