@@ -47,10 +47,10 @@ class ResponseAspect {
             val response = attributes?.response
 
             if (response != null) {
-                if (rsData.code() == CUSTOM_AUTH_ERROR_CODE) {
+                if (rsData.code == CUSTOM_AUTH_ERROR_CODE) {
                     response.status = HTTP_UNAUTHORIZED // 인증 에러를 401로 변환
                 } else {
-                    response.status = rsData.code()
+                    response.status = rsData.code
                 }
             }
         } catch (e: IllegalStateException) {
