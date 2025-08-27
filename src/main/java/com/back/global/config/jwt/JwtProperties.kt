@@ -8,9 +8,11 @@ class JwtProperties(
     val accessToken: AccessToken
 ) {
 
-    data class Jwt(
+    class Jwt(
         var secretKey: String? = null
-    )
+    ) {
+        override fun toString(): String = "Jwt(secretKey=**redacted**)"
+    }
 
     data class AccessToken(
         var expirationSeconds: Long? = null
