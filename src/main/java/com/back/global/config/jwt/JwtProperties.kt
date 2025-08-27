@@ -7,19 +7,20 @@ class JwtProperties(
     val jwt: Jwt,
     val accessToken: AccessToken
 ) {
+    fun getExpirationSecondsAsLong(): Long =
+        accessToken.expirationSeconds
+            ?: throw IllegalStateException("expirationSeconds is null")
+}
 
+    // Top-level class
     class Jwt(
         var secretKey: String? = null
     ) {
         override fun toString(): String = "Jwt(secretKey=**redacted**)"
     }
 
+    // Top-level data class
     data class AccessToken(
         var expirationSeconds: Long? = null
     )
-
-    fun getExpirationSecondsAsLong(): Long =
-        accessToken.expirationSeconds
-            ?: throw IllegalStateException("expirationSeconds is null")
-}
 
