@@ -19,7 +19,10 @@ java {
 kotlin {
     jvmToolchain(21)
     sourceSets.main {
-        kotlin.srcDir("src/main/kotlin")
+        kotlin.srcDirs("src/main/kotlin", "src/main/java")
+    }
+    sourceSets.test {
+        kotlin.srcDirs("src/test/kotlin", "src/test/java")
     }
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
