@@ -2,8 +2,8 @@ plugins {
     java
     id("org.springframework.boot") version "3.5.4"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.spring") version "1.9.23"
+    kotlin("jvm") version "1.9.25"
+    kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
 }
 
@@ -20,7 +20,6 @@ kotlin {
     jvmToolchain(21)
     sourceSets.main {
         kotlin.srcDir("src/main/kotlin")
-        kotlin.srcDir("src/main/java")
     }
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
@@ -65,9 +64,10 @@ dependencies {
     // swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
-    implementation("org.jetbrains.kotlin:kotlin-reflect") // 코틀린 리플렉션
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") // 코틀린 표준 라이브러리
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core") // 코틀린 코루틴
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.8.1"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
 }
 
