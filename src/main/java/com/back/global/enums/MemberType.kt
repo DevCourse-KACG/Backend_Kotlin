@@ -8,8 +8,10 @@ enum class MemberType(val description: String) {
 
     companion object {
         @JvmStatic
-        fun fromString(type: String): MemberType {
-            val key = type.trim()
+        fun fromString(type: String?): MemberType {
+            val key = type?.trim()
+                ?: throw ServiceException(400, "Member type is required")
+            if (key.isEmpty()) throw ServiceException(400, "Member type is required")
             return values().find { it.name.equals(key, ignoreCase = true) }
                 ?: throw ServiceException(400, "Unknown Member type: $type")
         }
