@@ -57,5 +57,5 @@ jobs:
       - name: GitHub 프로젝트에 추가
         uses: actions/add-to-project@v1.0.2
         with:
-          project-url: "https://github.com/orgs/DevCourse-KACG/projects/1"
+          project-url: "https://github.com/orgs/DevCourse-KACG/projects/3"
           github-token: ${{ secrets.PROJECT_ACCESS_TOKEN }}
