@@ -1,6 +1,6 @@
-package com.back.global.enums;
+package com.back.global.enums
 
-public enum ClubApplyResult {
+enum class ClubApplyResult {
     SUCCESS,
     ALREADY_JOINED,
     ALREADY_APPLYING,
