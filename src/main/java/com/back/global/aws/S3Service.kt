@@ -30,7 +30,7 @@ class S3Service(
         val putObjectRequest = PutObjectRequest.builder()
             .bucket(bucket)
             .key(fileName)
-            .contentType(multipartFile.contentType)
+            .contentType(multipartFile.contentType ?: "application/octet-stream")
             .build()
 
         // 2. S3에 파일 업로드 (InputStream을 직접 사용)
