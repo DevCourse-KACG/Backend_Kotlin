@@ -40,7 +40,7 @@ class ResponseAspect {
             return proceed
         }
 
-        val rsData = proceed as RsData<*>
+        val rsData = proceed
 
         try {
             val attributes = RequestContextHolder.currentRequestAttributes() as? ServletRequestAttributes
