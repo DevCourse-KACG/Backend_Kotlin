@@ -122,7 +122,6 @@ public class Club {
    */
   public void addClubSchedule(Schedule schedule) {
       this.clubSchedules.add(schedule);
-      schedule.setClub(this); // 양방향 연관관계 설정
   }
   /**
    * 클럽의 이미지 URL을 업데이트합니다.

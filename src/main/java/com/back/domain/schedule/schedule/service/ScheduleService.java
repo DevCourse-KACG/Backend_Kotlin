@@ -156,14 +156,14 @@ public class ScheduleService {
         validateDate(reqBody.startDate(), reqBody.endDate());
 
         // 일정 생성
-        Schedule schedule = Schedule.builder()
-                .title(reqBody.title())
-                .content(reqBody.content())
-                .startDate(reqBody.startDate())
-                .endDate(reqBody.endDate())
-                .spot(reqBody.spot())
-                .club(club)
-                .build();
+        Schedule schedule = new Schedule(
+                reqBody.title(),
+                reqBody.content(),
+                reqBody.startDate(),
+                reqBody.endDate(),
+                reqBody.spot(),
+                club
+        );
         scheduleRepository.save(schedule);
 
         return new ScheduleDetailDto(schedule);
