@@ -150,18 +150,18 @@ public class ScheduleService {
      */
     @Transactional
     public ScheduleDetailDto createSchedule(ScheduleCreateReqBody reqBody) {
-        Club club = getClubOrThrow(reqBody.clubId());
+        Club club = getClubOrThrow(reqBody.clubId);
 
         // 날짜 유효성 검증
-        validateDate(reqBody.startDate(), reqBody.endDate());
+        validateDate(reqBody.startDate, reqBody.endDate);
 
         // 일정 생성
         Schedule schedule = Schedule.builder()
-                .title(reqBody.title())
-                .content(reqBody.content())
-                .startDate(reqBody.startDate())
-                .endDate(reqBody.endDate())
-                .spot(reqBody.spot())
+                .title(reqBody.title)
+                .content(reqBody.content)
+                .startDate(reqBody.startDate)
+                .endDate(reqBody.endDate)
+                .spot(reqBody.spot)
                 .club(club)
                 .build();
         scheduleRepository.save(schedule);
