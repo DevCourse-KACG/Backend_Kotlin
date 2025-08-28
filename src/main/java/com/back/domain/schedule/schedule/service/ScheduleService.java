@@ -47,7 +47,7 @@ public class ScheduleService {
 
         return schedule
                 .stream()
-                .map(ScheduleDto::new)
+                .map(ScheduleDto::from)
                 .toList();
     }
 
@@ -71,7 +71,7 @@ public class ScheduleService {
 
         return mySchedules
                 .stream()
-                .map(ScheduleWithClubDto::new)
+                .map(ScheduleWithClubDto::from)
                 .toList();
     }
 
@@ -94,7 +94,7 @@ public class ScheduleService {
      */
     @Transactional(readOnly = true)
     public ScheduleDetailDto getScheduleById(Long scheduleId) {
-        return new ScheduleDetailDto(getScheduleEntityById(scheduleId));
+        return ScheduleDetailDto.from(getScheduleEntityById(scheduleId));
     }
 
     /**
@@ -116,7 +116,7 @@ public class ScheduleService {
      */
     @Transactional(readOnly = true)
     public ScheduleDetailDto getActiveScheduleById(Long scheduleId) {
-        return new ScheduleDetailDto(getActiveScheduleEntityById(scheduleId));
+        return ScheduleDetailDto.from(getActiveScheduleEntityById(scheduleId));
     }
 
     /**
@@ -130,7 +130,7 @@ public class ScheduleService {
                 .findFirstByClubIdOrderByIdDesc(clubId)
                 .orElseThrow(() -> new NoSuchElementException(ScheduleErrorCode.SCHEDULE_NOT_FOUND.getMessage()));
 
-        return new ScheduleDetailDto(schedule);
+        return ScheduleDetailDto.from(schedule);
     }
 
     /**
@@ -156,17 +156,17 @@ public class ScheduleService {
         validateDate(reqBody.startDate(), reqBody.endDate());
 
         // 일정 생성
-        Schedule schedule = Schedule.builder()
-                .title(reqBody.title())
-                .content(reqBody.content())
-                .startDate(reqBody.startDate())
-                .endDate(reqBody.endDate())
-                .spot(reqBody.spot())
-                .club(club)
-                .build();
+        Schedule schedule = new Schedule(
+                reqBody.title(),
+                reqBody.content(),
+                reqBody.startDate(),
+                reqBody.endDate(),
+                reqBody.spot(),
+                club
+        );
         scheduleRepository.save(schedule);
 
-        return new ScheduleDetailDto(schedule);
+        return ScheduleDetailDto.from(schedule);
     }
 
     /**

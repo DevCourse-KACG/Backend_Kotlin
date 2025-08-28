@@ -116,33 +116,33 @@ public class ApiV1CheckListControllerTest {
     club = clubRepository.save(clubBuilder);
     club2 = clubRepository.save(clubBuilder2);
 
-    Schedule scheduleBuilder = Schedule.builder()
-        .club(club)
-        .title("테스트 일정")
-        .content("테스트 일정 내용")
-        .startDate(LocalDateTime.parse("2025-08-15T10:00:00"))
-        .endDate(LocalDateTime.parse("2025-08-16T10:00:00"))
-        .spot("테스트 장소")
-        .build();
+    Schedule scheduleBuilder = new Schedule(
+        "테스트 일정",
+        "테스트 일정 내용",
+        LocalDateTime.parse("2025-08-15T10:00:00"),
+        LocalDateTime.parse("2025-08-16T10:00:00"),
+        "테스트 장소",
+        club
+    );
 
     // 클럽에 다른 일정 추가
-    Schedule scheduleBuilder2 = Schedule.builder()
-        .club(club)
-        .title("테스트 일정2")
-        .content("테스트 일정 내용2")
-        .startDate(LocalDateTime.parse("2025-08-20T10:00:00"))
-        .endDate(LocalDateTime.parse("2025-08-21T10:00:00"))
-        .spot("테스트 장소2")
-        .build();
+    Schedule scheduleBuilder2 = new Schedule(
+        "테스트 일정2",
+        "테스트 일정 내용2",
+        LocalDateTime.parse("2025-08-20T10:00:00"),
+        LocalDateTime.parse("2025-08-21T10:00:00"),
+        "테스트 장소2",
+        club
+    );
 
-    Schedule scheduleBuilder3 = Schedule.builder()
-        .club(club2)
-        .title("테스트 일정3")
-        .content("테스트 일정 내용3")
-        .startDate(LocalDateTime.parse("2025-08-20T10:00:00"))
-        .endDate(LocalDateTime.parse("2025-08-21T10:00:00"))
-        .spot("테스트 장소3")
-        .build();
+    Schedule scheduleBuilder3 = new Schedule(
+        "테스트 일정3",
+        "테스트 일정 내용3",
+        LocalDateTime.parse("2025-08-20T10:00:00"),
+        LocalDateTime.parse("2025-08-21T10:00:00"),
+        "테스트 장소3",
+        club2
+    );
 
     List<CheckListItem> checkListItems = new ArrayList<>();
     checkListItems.add(CheckListItem.builder()
@@ -159,7 +159,7 @@ public class ApiV1CheckListControllerTest {
         .build();
 
 
-    scheduleBuilder2.setCheckList(checkListBuilder);
+    scheduleBuilder2.updateCheckList(checkListBuilder);
 
     schedule = scheduleRepository.save(scheduleBuilder);
     schedule2 = scheduleRepository.save(scheduleBuilder2);

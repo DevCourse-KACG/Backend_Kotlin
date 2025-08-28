@@ -92,7 +92,7 @@ public class ApiV1ScheduleController {
         return RsData.of(
                 200,
                 "일정이 수정되었습니다.",
-                new ScheduleDetailDto(schedule)
+                ScheduleDetailDto.from(schedule)
         );
     }
 
