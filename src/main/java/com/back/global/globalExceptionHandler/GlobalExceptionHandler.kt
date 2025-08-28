@@ -102,6 +102,7 @@ class GlobalExceptionHandler {
             HttpStatus.BAD_REQUEST
         )
     }
+
     // MethodArgumentTypeMismatchException: 요청 파라미터의 타입이 일치하지 않을 때 발생하는 예외
     @ExceptionHandler(MethodArgumentTypeMismatchException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -139,5 +140,14 @@ class GlobalExceptionHandler {
             RsData.of(403, "권한이 없습니다."),
             HttpStatus.FORBIDDEN
         )
+
+    // Fallback: 처리되지 않은 모든 예외
+    @ExceptionHandler(Exception::class)
+    fun handleUnhandled(ex: Exception): ResponseEntity<RsData<Void>> {
+        return ResponseEntity(
+            RsData.of(500, "서버 내부 오류가 발생했습니다."),
+            HttpStatus.INTERNAL_SERVER_ERROR
+        )
+    }
 
 }
