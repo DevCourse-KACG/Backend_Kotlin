@@ -3,6 +3,7 @@ package com.back.domain.club.club.controller;
 import com.back.domain.club.club.entity.Club;
 import com.back.domain.club.club.service.ClubService;
 import com.back.domain.club.clubMember.service.ClubMemberService;
+import com.back.domain.member.member.dto.request.MemberRegisterDto;
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.service.MemberService;
 import com.back.global.aws.S3Service;
@@ -628,7 +629,7 @@ class ApiV1ClubControllerTest {
         );
         memberService.registerMember(dto);
 
-        Member member = memberService.findMemberByEmail(dto.email());
+        Member member = memberService.findMemberByEmail(dto.getEmail());
 
         // 클럽 생성
         Club club = clubService.createClub(
@@ -676,7 +677,7 @@ class ApiV1ClubControllerTest {
                 .andExpect(jsonPath("$.data.isPublic").value(club.isPublic()))
                 .andExpect(jsonPath("$.data.imageUrl").value(club.getImageUrl()))
                 .andExpect(jsonPath("$.data.leaderId").value(club.getLeaderId()))
-                .andExpect(jsonPath("$.data.leaderName").value(dto.nickname()));
+                .andExpect(jsonPath("$.data.leaderName").value(dto.getNickname()));
     }
 
     @Test

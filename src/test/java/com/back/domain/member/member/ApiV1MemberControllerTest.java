@@ -6,6 +6,8 @@ import com.back.domain.club.club.entity.Club;
 import com.back.domain.club.club.repository.ClubRepository;
 import com.back.domain.club.clubMember.entity.ClubMember;
 import com.back.domain.club.clubMember.repository.ClubMemberRepository;
+import com.back.domain.member.member.dto.request.GuestDto;
+import com.back.domain.member.member.dto.request.MemberRegisterDto;
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.entity.MemberInfo;
 import com.back.domain.member.member.repository.MemberRepository;
@@ -69,7 +71,7 @@ public class ApiV1MemberControllerTest {
     @Autowired
     private AuthService authService;
 
-    @Autowiredqq
+    @Autowired
     private ClubRepository clubRepository;
 
     @Autowired
@@ -219,7 +221,7 @@ public class ApiV1MemberControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.message").value("nickname-NotBlank-닉네임은 필수 입력값입니다."));
+                .andExpect(jsonPath("$.message").value("요청 본문이 올바르지 않습니다."));
     }
 
 
