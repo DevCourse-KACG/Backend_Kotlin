@@ -9,9 +9,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableConfigurationProperties(JwtProperties::class)
-class BackendApplication {
+class BackendApplication
 
-    fun main(args: Array<String>) {
-        runApplication<BackendApplication>(*args)
-    }
-}
+fun main(args: Array<String>) = runApplication<BackendApplication>(*args)
