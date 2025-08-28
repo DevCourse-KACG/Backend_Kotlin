@@ -2,6 +2,7 @@ package com.back.domain.preset.preset.entity
 
 import com.back.global.enums.CheckListItemCategory
 import jakarta.persistence.*
+import org.hibernate.Hibernate
 
 /**
  * 중요: 이 엔티티 클래스는 JPA가 기본 생성자를 만들 수 있도록
@@ -30,14 +31,12 @@ class PresetItem(
     // id 기반으로 엔티티의 동등성을 비교합니다.
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other == null) return false
+        if (Hibernate.getClass(this) != Hibernate.getClass(other)) return false
         other as PresetItem
-        if (id == null) return false // id가 없는 새 엔티티는 다른 것과 같을 수 없습니다.
-        return id == other.id
+        return id != null && id == other.id
     }
 
     // id 기반으로 해시코드를 생성합니다.
-    override fun hashCode(): Int {
-        return id?.hashCode() ?: 31
-    }
+    override fun hashCode(): Int = javaClass.hashCode()
 }
