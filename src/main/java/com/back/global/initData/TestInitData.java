@@ -542,21 +542,31 @@ public class TestInitData {
      * 회원 생성 메서드
      */
     private Member createMember(String nickname, String password, String email, String bio) {
-        Member member = Member.builder()
-                .nickname(nickname)
-                .password(password)
-                .memberType(MemberType.MEMBER)
-                .tag(UUID.randomUUID().toString().substring(0, 5))
-                .build();
+        Member member = new Member(
+                null,                    // id
+                nickname,
+                password,
+                MemberType.MEMBER,
+                UUID.randomUUID().toString().substring(0, 5),
+                null,                    // memberInfo
+                new ArrayList<>(),       // presets
+                new HashSet<>(),         // friendshipsAsMember1
+                new HashSet<>(),         // friendshipsAsMember2
+                new ArrayList<>()        // clubMembers
+        );
         memberRepository.save(member);
 
         if (email == null) return member;
 
-        MemberInfo info = MemberInfo.builder()
-                .email(email)
-                .bio(bio)
-                .member(member)
-                .build();
+        MemberInfo info = new MemberInfo(
+                null,           // id
+                email,
+                bio,
+                "",             // profileImageUrl
+                null,            //apiKey
+                member          // Member 객체
+        );
+
         memberInfoRepository.save(info);
 
         member.setMemberInfo(info);
@@ -569,16 +579,19 @@ public class TestInitData {
     private Member createEncodedMember(String nickname, String password, String email, String bio) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-        Member member = Member.createGuest(nickname, passwordEncoder.encode(password), "2344");
+        Member member = Member.Companion.createGuest(nickname, passwordEncoder.encode(password), "2344");
         memberRepository.save(member);
 
         if (email == null) return member;
 
-        MemberInfo info = MemberInfo.builder()
-                .email(email)
-                .bio(bio)
-                .member(member)
-                .build();
+        MemberInfo info = new MemberInfo(
+                null,     // id
+                email,
+                bio,
+                null,     // profileImageUrl
+                null,     // apiKey
+                member    // _member
+        );
         memberInfoRepository.save(info);
 
         member.setMemberInfo(info);

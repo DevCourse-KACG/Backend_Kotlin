@@ -284,7 +284,7 @@ public class MemberService {
         String hashedPassword = passwordEncoder.encode(dto.password());
 
         // 2. Member 엔티티 생성 및 저장
-        Member member = Member.createMember(dto.nickname(), hashedPassword, tag);
+        Member member = Member.Companion.createMember(dto.nickname(), hashedPassword, tag);
         return memberRepository.save(member);
     }
 
@@ -293,19 +293,20 @@ public class MemberService {
         String hashedPassword = passwordEncoder.encode(dto.password());
 
         // 2. 비회원 Member 엔티티 생성 및 저장
-        Member guest = Member.createGuest(dto.nickname(), hashedPassword, tag);
+        Member guest = Member.Companion.createGuest(dto.nickname(), hashedPassword, tag);
         return memberRepository.save(guest);
     }
 
     private MemberInfo createAndSaveMemberInfo(MemberRegisterDto dto, Member member, String apiKey) {
         // 1. MemberInfo 엔티티 생성 및 저장
-        MemberInfo info = MemberInfo.builder()
-                .email(dto.email())
-                .bio(dto.bio())
-                .profileImageUrl("")
-                .member(member)
-                .apiKey(apiKey)
-                .build();
+        MemberInfo info = new MemberInfo(
+                null,             // id
+                dto.email(),
+                dto.bio(),
+                "",               // profileImageUrl
+                apiKey,
+                member
+        );
 
         MemberInfo savedInfo = memberInfoRepository.save(info);
 

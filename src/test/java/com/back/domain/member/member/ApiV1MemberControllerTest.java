@@ -89,18 +89,15 @@ public class ApiV1MemberControllerTest {
     @Test
     @DisplayName("회원가입 - 정상 기입 / 객체 정상 생성")
     public void memberObjectCreationTest() {
-        MemberInfo memberInfo = MemberInfo.builder()
-                .email("qkqek6223@naver.com")
-                .bio("안녕하세요 반갑습니다")
-                .profileImageUrl("https://picsum.photos/seed/picsum/200/300")
-                .build();
+        MemberInfo memberInfo = new MemberInfo();
+        memberInfo.setEmail("qkqek6223@naver.com");
+        memberInfo.setBio("안녕하세요 반갑습니다");
+        memberInfo.setProfileImageUrl("https://picsum.photos/seed/picsum/200/300");
 
-        Member member = Member.builder()
-                .nickname("안수지")
-                .password("password123")
-                .memberInfo(memberInfo)
-                .presets(null)
-                .build();
+        Member member = new Member();
+        member.setNickname("안수지");
+        member.setPassword("password123");
+        member.setMemberInfo(memberInfo);
 
         assertEquals("안수지", member.getNickname());
         assertEquals("password123", member.getPassword());
