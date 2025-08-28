@@ -18,7 +18,7 @@ import com.back.global.enums.MemberType;
 import com.back.global.exception.ServiceException;
 import com.back.global.security.SecurityUser;
 import com.jayway.jsonpath.JsonPath;
-import io.jsonwebtoken.lang.Collections;
+import java.util.Collections;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
