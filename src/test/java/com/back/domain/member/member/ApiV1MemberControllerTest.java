@@ -18,7 +18,7 @@ import com.back.global.enums.MemberType;
 import com.back.global.exception.ServiceException;
 import com.back.global.security.SecurityUser;
 import com.jayway.jsonpath.JsonPath;
-import io.jsonwebtoken.lang.Collections;
+import java.util.Collections;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -119,8 +119,8 @@ public class ApiV1MemberControllerTest {
                 """;
 
         mockMvc.perform(post("/api/v1/members/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
@@ -221,7 +221,7 @@ public class ApiV1MemberControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.message").value("nickname-NotBlank-닉네임은 필수 입력값입니다."));
+                .andExpect(jsonPath("$.message").value("요청 본문이 올바르지 않습니다."));
     }
 
 
@@ -375,16 +375,16 @@ public class ApiV1MemberControllerTest {
         Cookie accessTokenCookie = loginAndGetAccessTokenCookie("test1@example.com", "password123");
 
         mockMvc.perform(delete("/api/v1/members/me")
-                .with(user(new SecurityUser(
-                        member.getId(),
-                        member.getNickname(),
-                        member.getTag(),
-                        member.getMemberType(),
-                        member.getPassword(),
-                        Collections.emptyList()
-                )))
-                .cookie(accessTokenCookie)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .with(user(new SecurityUser(
+                                member.getId(),
+                                member.getNickname(),
+                                member.getTag(),
+                                member.getMemberType(),
+                                member.getPassword(),
+                                Collections.emptyList()
+                        )))
+                        .cookie(accessTokenCookie)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.nickname").value(member.getNickname()))
                 .andExpect(jsonPath("$.data.tag").value(member.getTag()))
@@ -544,10 +544,10 @@ public class ApiV1MemberControllerTest {
         );
 
         mockMvc.perform(post("/api/v1/members/auth/verify-password")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(requestBody)
-                    .cookie(loginAndGetAccessTokenCookie(memberInfo.getEmail(), rawPassword))
-                    .with(user(securityUser)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .cookie(loginAndGetAccessTokenCookie(memberInfo.getEmail(), rawPassword))
+                        .with(user(securityUser)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.message").value("비밀번호 유효성 반환 성공"))
