@@ -122,8 +122,8 @@ public class ApiV1MemberControllerTest {
                 """;
 
         mockMvc.perform(post("/api/v1/members/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
@@ -378,16 +378,16 @@ public class ApiV1MemberControllerTest {
         Cookie accessTokenCookie = loginAndGetAccessTokenCookie("test1@example.com", "password123");
 
         mockMvc.perform(delete("/api/v1/members/me")
-                .with(user(new SecurityUser(
-                        member.getId(),
-                        member.getNickname(),
-                        member.getTag(),
-                        member.getMemberType(),
-                        member.getPassword(),
-                        Collections.emptyList()
-                )))
-                .cookie(accessTokenCookie)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .with(user(new SecurityUser(
+                                member.getId(),
+                                member.getNickname(),
+                                member.getTag(),
+                                member.getMemberType(),
+                                member.getPassword(),
+                                Collections.emptyList()
+                        )))
+                        .cookie(accessTokenCookie)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.nickname").value(member.getNickname()))
                 .andExpect(jsonPath("$.data.tag").value(member.getTag()))
@@ -547,10 +547,10 @@ public class ApiV1MemberControllerTest {
         );
 
         mockMvc.perform(post("/api/v1/members/auth/verify-password")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(requestBody)
-                    .cookie(loginAndGetAccessTokenCookie(memberInfo.getEmail(), rawPassword))
-                    .with(user(securityUser)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .cookie(loginAndGetAccessTokenCookie(memberInfo.getEmail(), rawPassword))
+                        .with(user(securityUser)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.message").value("비밀번호 유효성 반환 성공"))
