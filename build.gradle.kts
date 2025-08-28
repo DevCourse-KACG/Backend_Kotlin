@@ -5,7 +5,6 @@ plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
-    kotlin("kapt") version "1.9.25"
 }
 
 group = "com"
@@ -60,7 +59,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     // lombok
     compileOnly("org.projectlombok:lombok")
-    kapt("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok")
     // jwt
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")

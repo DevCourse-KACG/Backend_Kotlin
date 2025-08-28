@@ -36,13 +36,7 @@ class Rq (
             ?: defaultValue
 
     fun setHeader(name: String, value: String?) {
-        val headerValue = value ?: ""
-
-        if (headerValue.isBlank()) {
-            req.removeAttribute(name)
-        } else {
-            resp.setHeader(name, headerValue)
-        }
+        resp.setHeader(name, value ?: "")
     }
 
     fun getCookieValue(name: String, defaultValue: String): String =
