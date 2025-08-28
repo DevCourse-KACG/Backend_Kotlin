@@ -47,7 +47,7 @@ public class ScheduleService {
 
         return schedule
                 .stream()
-                .map(ScheduleDto::new)
+                .map(ScheduleDto::from)
                 .toList();
     }
 
