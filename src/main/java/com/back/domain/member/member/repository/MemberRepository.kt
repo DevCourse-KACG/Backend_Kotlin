@@ -42,7 +42,7 @@ interface MemberRepository : JpaRepository<Member, Long> {
         from Member m
         join m.clubMembers cm
         where m.nickname = :nickname
-          and m.memberType = 'GUEST'
+          and m.memberType = com.back.global.enums.MemberType.GUEST
           and cm.club.id = :clubId
     """)
     fun findByGuestNicknameInClub(@Param("nickname") nickname: String, @Param("clubId") clubId: Long): Optional<Member>
