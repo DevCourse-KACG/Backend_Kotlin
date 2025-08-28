@@ -71,7 +71,7 @@ public class ScheduleService {
 
         return mySchedules
                 .stream()
-                .map(ScheduleWithClubDto::new)
+                .map(ScheduleWithClubDto::from)
                 .toList();
     }
 

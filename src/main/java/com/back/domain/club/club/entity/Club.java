@@ -95,6 +95,11 @@ public class Club {
     return this.id;
   }
 
+  // TODO: 코틀린과의 호환성을 위한 임시 getter. Club 엔티티가 코틀린으로 전환되면 삭제해주세요.
+  public String getName() {
+    return this.name;
+  }
+
   // ---------------- 메서드 ----------------
     /**
      * 클럽 활성화 상태를 변경합니다.
