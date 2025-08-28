@@ -280,10 +280,7 @@ public class ApiV1CheckListControllerTest {
   @WithUserDetails(value = "hgd222@test.com")
   void t3() throws Exception {
     // 다른 멤버를 생성하고 클럽에 추가하지 않음
-    Member anotherMember = Member.builder()
-        .nickname("다른 유저")
-        .password("password")
-        .build();
+    Member anotherMember = Member.Companion.createMember("다른 유저", "password", null);
     memberRepository.save(anotherMember);
 
     String requestBody = """

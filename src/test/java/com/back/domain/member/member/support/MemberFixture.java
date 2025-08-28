@@ -36,18 +36,17 @@ public class MemberFixture {
             tag = UUID.randomUUID().toString().substring(0, 6);
         } while (memberRepository.existsByNicknameAndTag("테스트유저" + i, tag));
 
-        Member member = Member.createMember("테스트유저" + i,
+        Member member = Member.Companion.createMember("테스트유저" + i,
                 passwordEncoder.encode("password123"),
                 tag);
 
         // 2. 회원정보 엔티티 생성 + 연관관계 설정
-        MemberInfo memberInfo = MemberInfo.builder()
-                .email("test" + i + "@example.com")
-                .bio("소개입니다")
-                .profileImageUrl(null)
-                .apiKey(apiKeyService.generateApiKey())
-                .member(member)  // MemberInfo → Member 연결
-                .build();
+        MemberInfo memberInfo = new MemberInfo();
+        memberInfo.setEmail("test" + i + "@example.com");
+        memberInfo.setBio("소개입니다");
+        memberInfo.setProfileImageUrl(null);
+        memberInfo.setApiKey(apiKeyService.generateApiKey());
+        memberInfo.setMember(member); // MemberInfo → Member 연결
 
         // 3. 양방향 연관관계 설정
         member.setMemberInfo(memberInfo);  // Member → MemberInfo 연결

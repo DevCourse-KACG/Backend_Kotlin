@@ -77,3 +77,7 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.named("compileJava") {
+    dependsOn(tasks.named("compileKotlin"))
+}
