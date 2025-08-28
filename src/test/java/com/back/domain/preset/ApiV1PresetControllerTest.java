@@ -54,17 +54,17 @@ public class ApiV1PresetControllerTest {
 
 
     List<PresetItem> presetItems = new ArrayList<>();
-    presetItems.add(PresetItem.builder()
-        .content("테스트 아이템 내용 1")
-        .category(CheckListItemCategory.RESERVATION)
-        .sequence(1)
-        .build());
+    presetItems.add(new PresetItem(
+        "테스트 아이템 내용 1",
+        CheckListItemCategory.RESERVATION,
+        1
+    ));
 
-    Preset presetBuilder = Preset.builder()
-        .owner(member)
-        .name("테스트 프리셋 1")
-        .presetItems(presetItems)
-        .build();
+    Preset presetBuilder = new Preset(
+        "테스트 프리셋 1",
+        member,
+        presetItems
+    );
 
     preset = presetRepository.save(presetBuilder);
   }
