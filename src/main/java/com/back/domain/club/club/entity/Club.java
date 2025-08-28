@@ -90,6 +90,11 @@ public class Club {
   @Builder.Default
   private List<Schedule> clubSchedules = new ArrayList<>();
 
+  // TODO: 코틀린과의 호환성을 위한 임시 getter. Club 엔티티가 코틀린으로 전환되면 삭제해주세요.
+  public Long getId() {
+    return this.id;
+  }
+
   // ---------------- 메서드 ----------------
     /**
      * 클럽 활성화 상태를 변경합니다.
