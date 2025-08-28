@@ -25,8 +25,8 @@ class PresetItem(
     var id: Long? = null
         private set // 외부에서는 id를 변경할 수 없도록 private set으로 설정
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    lateinit var preset: Preset // 프리셋 (양방향 연관관계)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    var preset: Preset? = null // 프리셋 (양방향 연관관계)
 
     // id 기반으로 엔티티의 동등성을 비교합니다.
     override fun equals(other: Any?): Boolean {
