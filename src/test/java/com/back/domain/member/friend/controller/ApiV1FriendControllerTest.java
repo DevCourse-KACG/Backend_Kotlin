@@ -61,9 +61,9 @@ class ApiV1FriendControllerTest {
         resultActions
                 .andExpect(handler().handlerType(ApiV1FriendController.class))
                 .andExpect(handler().methodName("addFriend"))
-                .andExpect(status().is(exceptedErrorCode.status))
-                .andExpect(jsonPath("$.code").value(exceptedErrorCode.status))
-                .andExpect(jsonPath("$.message").value(exceptedErrorCode.message));
+                .andExpect(status().is(exceptedErrorCode.getStatus()))
+                .andExpect(jsonPath("$.code").value(exceptedErrorCode.getStatus()))
+                .andExpect(jsonPath("$.message").value(exceptedErrorCode.getMessage()));
     }
 
     /**
@@ -86,9 +86,9 @@ class ApiV1FriendControllerTest {
         resultActions
                 .andExpect(handler().handlerType(ApiV1FriendController.class))
                 .andExpect(handler().methodName(methodName))
-                .andExpect(status().is(exceptedErrorCode.status))
-                .andExpect(jsonPath("$.code").value(exceptedErrorCode.status))
-                .andExpect(jsonPath("$.message").value(exceptedErrorCode.message));
+                .andExpect(status().is(exceptedErrorCode.getStatus()))
+                .andExpect(jsonPath("$.code").value(exceptedErrorCode.getStatus()))
+                .andExpect(jsonPath("$.message").value(exceptedErrorCode.getMessage()));
     }
 
     /**
@@ -107,9 +107,9 @@ class ApiV1FriendControllerTest {
         resultActions
                 .andExpect(handler().handlerType(ApiV1FriendController.class))
                 .andExpect(handler().methodName("deleteFriend"))
-                .andExpect(status().is(exceptedErrorCode.status))
-                .andExpect(jsonPath("$.code").value(exceptedErrorCode.status))
-                .andExpect(jsonPath("$.message").value(exceptedErrorCode.message));
+                .andExpect(status().is(exceptedErrorCode.getStatus()))
+                .andExpect(jsonPath("$.code").value(exceptedErrorCode.getStatus()))
+                .andExpect(jsonPath("$.message").value(exceptedErrorCode.getMessage()));
     }
 
     @Test
