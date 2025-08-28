@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
+    kotlin("kapt") version "1.9.25"
 }
 
 group = "com"
@@ -59,7 +60,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     // lombok
     compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
+    kapt("org.projectlombok:lombok:1.18.30")
     // jwt
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
@@ -71,7 +72,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.8.1"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-
 }
 
 tasks.withType<Test> {
