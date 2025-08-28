@@ -60,6 +60,15 @@ public class Member {
 
 
   //==========================빌더, 빌더 메소드==========================
+  // JPA와 상관없는 객체를 만들 때 사용, SecurityUser로부터 정보를 받아와서 생성할 때 사용
+  public Member(Long id, String nickname, MemberType memberType, String tag) {
+    this.id = id;
+    this.nickname = nickname;
+    this.password = null;
+    this.memberType = memberType;
+    this.tag = tag;
+  }
+
   @Builder
   public Member(String nickname, String password, MemberType memberType, String tag, MemberInfo memberInfo) {
     this.nickname = nickname;
