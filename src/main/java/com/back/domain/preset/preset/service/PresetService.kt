@@ -36,7 +36,7 @@ class PresetService(
         val tempMap: Map<String, List<PresetDto>> =
             try {
                 // 'use' 함수를 사용하여 InputStream을 안전하게 자동 종료
-                javaClass.getResourceAsStream("/presets/preset-data.json")?.use {
+                Thread.currentThread().contextClassLoader.getResourceAsStream("presets/preset-data.json")?.use {
                     objectMapper.readValue(it, typeReference)
                 } ?: throw IOException("preset-data.json 파일을 찾을 수 없습니다.")
             } catch (e: IOException) {
