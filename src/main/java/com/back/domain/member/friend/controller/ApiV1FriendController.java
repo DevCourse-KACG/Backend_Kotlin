@@ -1,6 +1,9 @@
 package com.back.domain.member.friend.controller;
 
-import com.back.domain.member.friend.dto.*;
+import com.back.domain.member.friend.dto.FriendAddReqBody;
+import com.back.domain.member.friend.dto.FriendDto;
+import com.back.domain.member.friend.dto.FriendMemberDto;
+import com.back.domain.member.friend.dto.FriendStatusDto;
 import com.back.domain.member.friend.service.FriendService;
 import com.back.global.rsData.RsData;
 import com.back.global.security.SecurityUser;
