@@ -37,7 +37,7 @@ public class ApiV1MemberController {
     public RsData<MemberAuthResponse> register(@Valid @RequestBody MemberRegisterDto memberRegisterDto, HttpServletResponse response) {
         MemberAuthResponse memberAuthResponse = memberService.registerMember(memberRegisterDto);
 
-        Cookie accessTokenCookie = createAccessTokenCookie(memberAuthResponse.accessToken(), false);
+        Cookie accessTokenCookie = createAccessTokenCookie(memberAuthResponse.getAccessToken(), false);
 
         response.addCookie(accessTokenCookie);
 
@@ -49,7 +49,7 @@ public class ApiV1MemberController {
     public RsData<MemberAuthResponse> login(@Valid @RequestBody MemberLoginDto memberLoginDto, HttpServletResponse response) {
         MemberAuthResponse memberAuthResponse = memberService.loginMember(memberLoginDto);
 
-        Cookie accessTokenCookie = createAccessTokenCookie(memberAuthResponse.accessToken(), false);
+        Cookie accessTokenCookie = createAccessTokenCookie(memberAuthResponse.getAccessToken(), false);
 
         response.addCookie(accessTokenCookie);
 
@@ -134,7 +134,7 @@ public class ApiV1MemberController {
         GuestResponse guestResponse =
                 memberService.registerGuestMember(dto);
 
-        Cookie accessTokenCookie = createAccessTokenCookie(guestResponse.accessToken(), true);
+        Cookie accessTokenCookie = createAccessTokenCookie(guestResponse.getAccessToken(), true);
 
         response.addCookie(accessTokenCookie);
 
@@ -149,7 +149,7 @@ public class ApiV1MemberController {
                                             @Valid @RequestBody GuestDto guestDto) {
         GuestResponse guestAuthResponse = memberService.loginGuestMember(guestDto);
 
-        Cookie accessTokenCookie = createAccessTokenCookie(guestAuthResponse.accessToken(), true);
+        Cookie accessTokenCookie = createAccessTokenCookie(guestAuthResponse.getAccessToken(), true);
 
         response.addCookie(accessTokenCookie);
 
@@ -187,7 +187,7 @@ public class ApiV1MemberController {
 
         Member user = rq.getActor();
 
-        MemberPasswordResponse response = memberService.checkPasswordValidity(user.getId(), dto.password());
+        MemberPasswordResponse response = memberService.checkPasswordValidity(user.getId(), dto.getPassword());
 
         return RsData.of(200,
                 "비밀번호 유효성 반환 성공",

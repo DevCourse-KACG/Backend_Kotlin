@@ -3,7 +3,6 @@ package com.back.domain.club.club.controller;
 import com.back.domain.club.club.entity.Club;
 import com.back.domain.club.club.service.ClubService;
 import com.back.domain.club.clubMember.service.ClubMemberService;
-import com.back.domain.member.member.dto.request.MemberRegisterDto;
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.service.MemberService;
 import com.back.global.aws.S3Service;

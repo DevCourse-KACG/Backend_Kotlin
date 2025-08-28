@@ -60,7 +60,7 @@ public class MemberService {
         validateDuplicateMember(dto);
 
         // 2. 태그 및 API 키 생성
-        String tag = generateMemberTag(dto.nickname());
+        String tag = generateMemberTag(dto.getNickname());
         String apiKey = apiKeyService.generateApiKey();
 
         // 3. 멤버 및 멤버인포 DB 저장
@@ -81,11 +81,11 @@ public class MemberService {
         validateDuplicateGuest(dto);
 
         // 2. 태그 생성 및 비회원 DB 저장
-        String tag = generateMemberTag(dto.nickname());
+        String tag = generateMemberTag(dto.getNickname());
         Member guest = createAndSaveGuestMember(dto, tag);
 
         // 3. 클럽 조회
-        Club club = clubRepository.findById(dto.clubId())
+        Club club = clubRepository.findById(dto.getClubId())
                 .orElseThrow(() -> new ServiceException(400, "클럽을 찾을 수 없습니다."));
 
         // 4. ClubMember 엔티티 생성 및 저장
@@ -100,7 +100,7 @@ public class MemberService {
 
         // 5. Access Token 생성 및 응답
         String accessToken = generateAccessToken(guest);
-        return new GuestResponse(dto.nickname(), accessToken, dto.clubId());
+        return new GuestResponse(dto.getNickname(), accessToken, dto.getClubId());
     }
 
     // ============================== [회원] 로그인 ==============================
@@ -108,11 +108,11 @@ public class MemberService {
     //[회원] 로그인 메인 메소드
     public MemberAuthResponse loginMember(@Valid MemberLoginDto memberLoginDto) {
         // 1. 이메일로 회원 정보 조회 및 검증
-        Optional<MemberInfo> memberInfo = memberInfoRepository.findByEmail(memberLoginDto.email());
+        Optional<MemberInfo> memberInfo = memberInfoRepository.findByEmail(memberLoginDto.getEmail());
         Member member = validateMemberLogin(memberInfo);
 
         // 2. 비밀번호 검증
-        validatePassword(memberLoginDto.password(), member);
+        validatePassword(memberLoginDto.getPassword(), member);
 
         // 3. API 키 및 Access Token 생성
         String apiKey = member.getMemberInfo().getApiKey();
@@ -127,16 +127,16 @@ public class MemberService {
     //비회원 임시 로그인 메인 메소드
     public GuestResponse loginGuestMember(@Valid GuestDto guestDto) {
         // 1. 닉네임과 클럽 ID로 비회원 조회 및 검증
-        Optional<Member> optionalMember = memberRepository.findByGuestNicknameInClub(guestDto.nickname(), guestDto.clubId());
+        Optional<Member> optionalMember = memberRepository.findByGuestNicknameInClub(guestDto.getNickname(), guestDto.getClubId());
         Member member = validateGuestLogin(optionalMember);
 
         // 2. 비밀번호 검증
-        validatePassword(guestDto.password(), member);
+        validatePassword(guestDto.getPassword(), member);
 
         // 3. Access Token 생성 및 응답
         String accessToken = authService.generateAccessToken(member);
-        String nickname = guestDto.nickname();
-        Long clubId = guestDto.clubId();
+        String nickname = guestDto.getNickname();
+        Long clubId = guestDto.getClubId();
 
         return new GuestResponse(nickname, accessToken, clubId);
     }
@@ -186,14 +186,14 @@ public class MemberService {
 
         // 2. 비밀번호 변경 시 암호화 처리
         String password = member.getPassword();
-        if (dto.password() != null && !dto.password().isBlank()) {
-            password = passwordEncoder.encode(dto.password());
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            password = passwordEncoder.encode(dto.getPassword());
         }
 
         // 3. 닉네임, 태그, 바이오 등 변경 정보 설정 (기본값 유지 포함)
-        String nickname = (dto.nickname() != null) ? dto.nickname() : member.getNickname();
-        String tag = (dto.nickname() != null) ? generateMemberTag(dto.nickname()) : member.getTag();
-        String bio = (dto.bio() != null) ? dto.bio() : memberInfo.getBio();
+        String nickname = (dto.getNickname() != null) ? dto.getNickname() : member.getNickname();
+        String tag = (dto.getNickname() != null) ? generateMemberTag(dto.getNickname()) : member.getTag();
+        String bio = (dto.getBio() != null) ? dto.getBio() : memberInfo.getBio();
 
         // 4. 멤버 및 멤버인포 정보 업데이트
         member.updateInfo(nickname, tag, password);
@@ -229,7 +229,7 @@ public class MemberService {
 
     private void validateDuplicateMember(MemberRegisterDto dto) {
         // 1. 이메일 중복 확인 (소문자 변환 후)
-        String email = dto.email().toLowerCase();
+        String email = dto.getEmail().toLowerCase();
         if (memberInfoRepository.findByEmail(email).isPresent()) {
             throw new ServiceException(400, "이미 사용 중인 이메일입니다.");
         }
@@ -237,9 +237,9 @@ public class MemberService {
 
     private void validateDuplicateGuest(@Valid GuestDto dto) {
         // 1. 비회원용 닉네임 중복 확인
-        String nickname = dto.nickname();
+        String nickname = dto.getNickname();
 
-        if (memberRepository.existsGuestNicknameInClub(nickname, dto.clubId())) {
+        if (memberRepository.existsGuestNicknameInClub(nickname, dto.getClubId())) {
             throw new ServiceException(400, "이미 사용 중인 닉네임입니다.");
         }
     }
@@ -281,19 +281,19 @@ public class MemberService {
 
     private Member createAndSaveMember(MemberRegisterDto dto, String tag) {
         // 1. 비밀번호 암호화
-        String hashedPassword = passwordEncoder.encode(dto.password());
+        String hashedPassword = passwordEncoder.encode(dto.getPassword());
 
         // 2. Member 엔티티 생성 및 저장
-        Member member = Member.Companion.createMember(dto.nickname(), hashedPassword, tag);
+        Member member = Member.Companion.createMember(dto.getNickname(), hashedPassword, tag);
         return memberRepository.save(member);
     }
 
     private Member createAndSaveGuestMember(@Valid GuestDto dto, String tag) {
         // 1. 비밀번호 암호화
-        String hashedPassword = passwordEncoder.encode(dto.password());
+        String hashedPassword = passwordEncoder.encode(dto.getPassword());
 
         // 2. 비회원 Member 엔티티 생성 및 저장
-        Member guest = Member.Companion.createGuest(dto.nickname(), hashedPassword, tag);
+        Member guest = Member.Companion.createGuest(dto.getNickname(), hashedPassword, tag);
         return memberRepository.save(guest);
     }
 
@@ -301,8 +301,8 @@ public class MemberService {
         // 1. MemberInfo 엔티티 생성 및 저장
         MemberInfo info = new MemberInfo(
                 null,             // id
-                dto.email(),
-                dto.bio(),
+                dto.getEmail(),
+                dto.getBio(),
                 "",               // profileImageUrl
                 apiKey,
                 member

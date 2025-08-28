@@ -6,8 +6,6 @@ import com.back.domain.club.club.entity.Club;
 import com.back.domain.club.club.repository.ClubRepository;
 import com.back.domain.club.clubMember.entity.ClubMember;
 import com.back.domain.club.clubMember.repository.ClubMemberRepository;
-import com.back.domain.member.member.dto.request.GuestDto;
-import com.back.domain.member.member.dto.request.MemberRegisterDto;
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.entity.MemberInfo;
 import com.back.domain.member.member.repository.MemberRepository;
@@ -71,7 +69,7 @@ public class ApiV1MemberControllerTest {
     @Autowired
     private AuthService authService;
 
-    @Autowired
+    @Autowiredqq
     private ClubRepository clubRepository;
 
     @Autowired
