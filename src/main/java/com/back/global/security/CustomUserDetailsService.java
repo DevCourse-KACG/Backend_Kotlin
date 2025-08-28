@@ -16,18 +16,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-            try {
-                    Member member = memberService.findMemberByEmail(email);
-                    return new SecurityUser(
-                                    member.getId(),
-                                    member.getNickname(),
-                                    member.getTag(),
-                                    member.getMemberType(),
-                                    member.getPassword(),
-                                    member.getAuthorities()
-                                    );
-                } catch (ServiceException e) {
-                    throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email, e);
-                }
+        try {
+            Member member = memberService.findMemberByEmail(email);
+            return new SecurityUser(
+                    member.getId(),
+                    member.getNickname(),
+                    member.getTag(),
+                    member.getMemberType(),
+                    member.getPassword(),
+                    member.getAuthorities()
+            );
+        } catch (ServiceException e) {
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email, e);
         }
+    }
 }

@@ -8,12 +8,12 @@ import com.back.domain.club.clubMember.entity.ClubMember;
 import com.back.domain.club.clubMember.repository.ClubMemberRepository;
 import com.back.domain.member.member.dto.request.GuestDto;
 import com.back.domain.member.member.dto.request.MemberRegisterDto;
-import com.back.domain.member.member.dto.response.MemberDetailInfoResponse;
 import com.back.domain.member.member.entity.Member;
 import com.back.domain.member.member.entity.MemberInfo;
 import com.back.domain.member.member.repository.MemberRepository;
 import com.back.domain.member.member.service.MemberService;
 import com.back.domain.member.member.support.MemberFixture;
+import com.back.global.aws.S3Service;
 import com.back.global.enums.MemberType;
 import com.back.global.exception.ServiceException;
 import com.back.global.security.SecurityUser;
@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -42,6 +43,9 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -78,6 +82,9 @@ public class ApiV1MemberControllerTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @MockBean
+    private S3Service s3Service;
 
     @Test
     @DisplayName("회원가입 - 정상 기입 / 객체 정상 생성")
@@ -631,8 +638,10 @@ public class ApiV1MemberControllerTest {
     @Test
     @DisplayName("유저 정보 수정 - 성공")
     public void updateUserInfoTest_green() throws Exception {
+        // 1. 회원 생성
         Member member = memberFixture.createMember(1);
 
+        // 2. SecurityUser 생성
         SecurityUser securityUser = new SecurityUser(
                 member.getId(),
                 member.getNickname(),
@@ -642,17 +651,18 @@ public class ApiV1MemberControllerTest {
                 Collections.emptyList()
         );
 
-        MemberDetailInfoResponse response = new MemberDetailInfoResponse(
-                "개나리", "test1@example.com", "노란색 개나리", "http://s3.com/profile.jpg", "newTag");
+        // 3. S3Service Mock 반환값 지정
+        when(s3Service.upload(any(), anyString()))
+                .thenReturn("http://s3.com/profile.jpg");
 
-
+        // 4. 요청 데이터 준비
         String requestBody = """
-                {
-                    "nickname": "개나리",
-                    "password": "newPassword",
-                    "bio": "노란색 개나리"
-                }
-                """;
+            {
+                "nickname": "개나리",
+                "password": "newPassword",
+                "bio": "노란색 개나리"
+            }
+            """;
 
         MockMultipartFile dataPart = new MockMultipartFile(
                 "data", "data",
@@ -666,6 +676,7 @@ public class ApiV1MemberControllerTest {
                 "fake-image-content".getBytes(StandardCharsets.UTF_8)
         );
 
+        // 5. MockMvc 요청 수행
         mockMvc.perform(multipart(HttpMethod.PUT, "/api/v1/members/me")
                         .file(dataPart)
                         .file(imagePart)
@@ -674,15 +685,17 @@ public class ApiV1MemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.nickname").value("개나리"))
                 .andExpect(jsonPath("$.data.bio").value("노란색 개나리"))
-                .andExpect(jsonPath("$.data.profileImage").isNotEmpty());
+                .andExpect(jsonPath("$.data.profileImage").value("http://s3.com/profile.jpg"));
 
+        // 6. DB 검증
         Member updated = memberRepository.findById(member.getId()).orElseThrow();
         assertThat(updated.getNickname()).isEqualTo("개나리");
         assertThat(updated.getTag()).isNotNull();
-        assertThat(updated.getPassword()).isNotEqualTo("newPassword");
+        assertThat(updated.getPassword()).isNotEqualTo("newPassword"); // 패스워드는 암호화
         assertThat(updated.getMemberInfo().getBio()).isEqualTo("노란색 개나리");
-        assertThat(updated.getMemberInfo().getProfileImageUrl()).isNotBlank();
+        assertThat(updated.getMemberInfo().getProfileImageUrl()).isEqualTo("http://s3.com/profile.jpg");
     }
+
 
     @Test
     @DisplayName("회원 정보 수정 - 잘못된 multipart 형식으로 요청 (data part 누락)")
