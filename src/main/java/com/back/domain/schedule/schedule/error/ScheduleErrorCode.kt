@@ -1,10 +1,11 @@
-package com.back.domain.schedule.schedule.error;
+package com.back.domain.schedule.schedule.error
 
-import com.back.global.exception.ErrorCode;
-import lombok.Getter;
+import com.back.global.exception.ErrorCode
 
-@Getter
-public enum ScheduleErrorCode implements ErrorCode {
+enum class ScheduleErrorCode(
+    override val status: Int,
+    override val message: String
+) : ErrorCode {
     // 404
     SCHEDULE_NOT_FOUND(404, "일정을 찾을 수 없습니다."),
     CLUB_NOT_FOUND(404, "모임을 찾을 수 없습니다."),
@@ -19,12 +20,4 @@ public enum ScheduleErrorCode implements ErrorCode {
 
     // 409
     SCHEDULE_CONFLICT(409, "일정이 충돌합니다.");
-
-    private final int status;
-    private final String message;
-
-    ScheduleErrorCode(int status, String message) {
-        this.status = status;
-        this.message = message;
-    }
 }
