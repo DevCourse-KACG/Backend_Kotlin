@@ -2,6 +2,7 @@ package com.back.domain.preset.preset.entity
 
 import com.back.domain.member.member.entity.Member
 import jakarta.persistence.*
+import org.hibernate.Hibernate
 
 /**
  * 중요: 이 엔티티 클래스는 JPA가 기본 생성자를 만들 수 있도록
@@ -34,8 +35,8 @@ class Preset(
     }
 
     fun updatePresetItems(newPresetItems: List<PresetItem>) {
-        // 기존 아이템들을 모두 제거합니다.
-        this.presetItems.clear()
+        // 1) 기존 아이템들과의 연관관계 해제
+        this.presetItems.toList().forEach { removePresetItem(it) }
         // 새로운 아이템들을 추가하면서 양방향 연관관계를 설정합니다.
         newPresetItems.forEach { addPresetItem(it) }
     }
@@ -46,16 +47,19 @@ class Preset(
         presetItem.preset = this
     }
 
+    private fun removePresetItem(presetItem: PresetItem) {
+        this.presetItems.remove(presetItem)
+        presetItem.preset = null
+    }
+
     // id 기반으로 엔티티의 동등성을 비교합니다.
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other == null) return false
+        if (Hibernate.getClass(this) != Hibernate.getClass(other)) return false
         other as Preset
-        if (id == null) return false // id가 없는 새 엔티티는 다른 것과 같을 수 없습니다.
-        return id == other.id
+        return id != null && id == other.id
     }
 
-    override fun hashCode(): Int {
-        return id?.hashCode() ?: 31
-    }
+    override fun hashCode(): Int = javaClass.hashCode()
 }
