@@ -67,12 +67,12 @@ class MemberService(
         val club = clubRepository.findById(dto.clubId)
             .orElseThrow { ServiceException(400, "클럽을 찾을 수 없습니다.") }
 
-        val clubMember = ClubMember.builder()
-            .member(guest)
-            .club(club)
-            .role(ClubMemberRole.PARTICIPANT)
-            .state(ClubMemberState.APPLYING)
-            .build()
+        //임시방편용 코드. clubMember 코틀린 전환 후 개변 예정
+        val clubMember = ClubMember()
+        clubMember.updateMember(guest)
+        clubMember.updateClub(club)
+        clubMember.updateRole(ClubMemberRole.PARTICIPANT)
+        clubMember.updateState(ClubMemberState.APPLYING)
         clubMemberRepository.save(clubMember)
 
         val accessToken = generateAccessToken(guest)
@@ -83,11 +83,13 @@ class MemberService(
     fun loginMember(@Valid dto: MemberLoginDto): MemberAuthResponse {
         val memberInfo = memberInfoRepository.findByEmail(dto.email.lowercase())
             ?: throw ServiceException(400, "해당 사용자를 찾을 수 없습니다.")
-        val member = memberInfo.member
+        val member = memberInfo.getMember()
+            ?: throw ServiceException(400, "해당 사용자를 찾을 수 없습니다.")
 
         validatePassword(dto.password, member)
 
-        val apiKey = member.memberInfo.apiKey
+        val apiKey = member?.getMemberInfo()?.apiKey
+            ?: throw ServiceException(400, "API Key가 없습니다.")
         val accessToken = authService.generateAccessToken(member)
 
         return MemberAuthResponse(apiKey, accessToken)
@@ -109,18 +111,19 @@ class MemberService(
     fun withdrawMember(nickname: String, tag: String): MemberWithdrawMembershipResponse {
         val member = findMemberByNicknameAndTag(nickname, tag)
         deleteMember(member)
-        return MemberWithdrawMembershipResponse(member.nickname, member.tag)
+        return MemberWithdrawMembershipResponse(member.nickname, member.tag ?: "")
     }
 
     // ============================== [회원] 정보 조회/수정 ==============================
     fun getMemberInfo(id: Long): MemberDetailInfoResponse {
-        val member = findMemberById(id)
+        val member : Member = findMemberById(id)
             ?: throw ServiceException(400, "해당 id의 유저가 없습니다.")
-        val info = member.memberInfo
+        val info : MemberInfo = member.getMemberInfo()
+            ?: throw ServiceException(400, "해당 유저의 정보가 없습니다.")
 
         return MemberDetailInfoResponse(
             member.nickname,
-            info.email,
+            info.email!!,
             info.bio,
             info.profileImageUrl,
             member.tag
@@ -131,7 +134,8 @@ class MemberService(
     fun updateMemberInfo(id: Long, dto: UpdateMemberInfoDto, image: MultipartFile?): MemberDetailInfoResponse {
         val member = findMemberById(id)
             ?: throw ServiceException(400, "해당 id의 유저가 없습니다.")
-        val info = member.memberInfo
+        val info = member.getMemberInfo()
+            ?: throw ServiceException(400, "해당 유저의 정보가 없습니다.")
 
         val password = dto.password?.takeIf { it.isNotBlank() }?.let { passwordEncoder.encode(it) } ?: member.password
         val nickname = dto.nickname ?: member.nickname
@@ -154,7 +158,7 @@ class MemberService(
 
         return MemberDetailInfoResponse(
             member.nickname,
-            info.email,
+            info.email!!,
             info.bio,
             info.profileImageUrl,
             member.tag
@@ -211,7 +215,7 @@ class MemberService(
             member = member
         )
         val savedInfo = memberInfoRepository.save(info)
-        member.memberInfo = savedInfo
+        member.setMemberInfo(savedInfo)
         return savedInfo
     }
 
@@ -228,7 +232,7 @@ class MemberService(
 
     fun payload(accessToken: String) = authService.payload(accessToken)
 
-    fun findMemberByEmail(email: String) = memberInfoRepository.findByEmail(email)?.member
+    fun findMemberByEmail(email: String) = memberInfoRepository.findByEmail(email)?.getMember()
         ?: throw ServiceException(400, "사용자를 찾을 수 없습니다.")
 
     private fun deleteMember(member: Member) = memberRepository.delete(member)
@@ -237,7 +241,7 @@ class MemberService(
         memberRepository.findByNicknameAndTag(nickname, tag)
             ?: throw ServiceException(400, "회원 정보를 찾을 수 없습니다.")
 
-    fun findMemberById(id: Long) = memberRepository.findById(id)
+    fun findMemberById(id: Long): Member? = memberRepository.findById(id).orElse(null)
 
     fun getMember(memberId: Long) =
         findMemberById(memberId) ?: throw NoSuchElementException("멤버가 존재하지 않습니다.")
@@ -245,6 +249,6 @@ class MemberService(
     fun generateAccessToken(member: Member) = authService.generateAccessToken(member)
 
     fun findMemberByApiKey(apiKey: String) =
-        memberInfoRepository.findByApiKey(apiKey)?.member
+        memberInfoRepository.findByApiKey(apiKey)?.getMember()
             ?: throw ServiceException(400, "유효하지 않은 Refresh Token 입니다.")
 }
