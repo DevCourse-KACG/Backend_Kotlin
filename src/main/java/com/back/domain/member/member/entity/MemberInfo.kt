@@ -27,20 +27,18 @@ class MemberInfo(
     //===============================컴패니언 객체 (Builder 대체)==========================
     companion object {
         fun create(
-            email: String?,
-            bio: String?,
-            profileImageUrl: String?,
-            member: Member?,
-            apiKey: String?
-        ): MemberInfo {
-            return MemberInfo(
-                email = email,
-                bio = bio,
-                profileImageUrl = profileImageUrl,
-                member = member,
-                apiKey = apiKey
-            )
-        }
+                    email: String?,
+                    bio: String?,
+                    profileImageUrl: String?,
+                    apiKey: String?
+                ): MemberInfo {
+                        return MemberInfo(
+                                email = email,
+                                bio = bio,
+                                profileImageUrl = profileImageUrl,
+                                apiKey = apiKey
+                                    )
+                    }
     }
 
     //===========================커스텀 getter/setter=======================
@@ -57,4 +55,12 @@ class MemberInfo(
     fun updateBio(bio: String?) {
         if (bio != null) this.bio = bio
     }
+
+    override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (other !is MemberInfo) return false
+                return id != null && id == other.id
+            }
+
+        override fun hashCode(): Int = id?.hashCode() ?: System.identityHashCode(this)
 }

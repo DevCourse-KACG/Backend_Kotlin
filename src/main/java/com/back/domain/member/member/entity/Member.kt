@@ -16,6 +16,8 @@ import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import org.springframework.data.jpa.domain.AbstractPersistable_
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
@@ -98,4 +100,12 @@ class Member(
         this.memberInfo = memberInfo
         memberInfo?.setMember(this)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Member) return false
+        return this.id != null && this.id == other.id
+    }
+
+    override fun hashCode(): Int = AbstractPersistable_.id?.hashCode() ?: System.identityHashCode(this)
 }
