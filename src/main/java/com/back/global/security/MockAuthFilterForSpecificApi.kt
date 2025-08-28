@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.core.annotation.Order
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
@@ -40,7 +41,7 @@ class MockAuthFilterForSpecificApi : OncePerRequestFilter() {
                 tag = "fakeTag",
                 memberType = MemberType.MEMBER,
                 password = "password1",
-                authorities = listOf()
+                authorities = listOf(SimpleGrantedAuthority("ROLE_USER"))
             )
 
             val auth = UsernamePasswordAuthenticationToken(
