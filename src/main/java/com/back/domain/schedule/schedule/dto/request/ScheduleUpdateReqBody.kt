@@ -5,10 +5,7 @@ import jakarta.validation.constraints.NotEmpty
 import java.time.LocalDateTime
 
 @JvmRecord
-data class ScheduleCreateReqBody(
-    @Schema(description = "모임 ID")
-    val clubId: Long,
-
+data class ScheduleUpdateReqBody(
     @Schema(description = "일정 제목")
     @field:NotEmpty
     val title: String,
@@ -18,10 +15,10 @@ data class ScheduleCreateReqBody(
     val content: String,
 
     @Schema(description = "일정 시작일")
-    val startDate: LocalDateTime?,
+    val startDate: LocalDateTime,
 
     @Schema(description = "일정 종료일")
-    val endDate: LocalDateTime?,
+    val endDate: LocalDateTime,
 
     @Schema(description = "일정 장소")
     val spot: String
