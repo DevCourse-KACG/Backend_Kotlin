@@ -12,6 +12,6 @@ enum class ClubMemberState(val description: String) {
         @JvmStatic
         fun fromString(state: String): ClubMemberState =
             values().firstOrNull { it.name.equals(state.trim(), ignoreCase = true) }
-                ?: throw ServiceException(400, "Unknown member state: $state")
+                ?: throw ServiceException(400, "Unknown Member state: $state")
     }
 }
