@@ -4,6 +4,7 @@ import com.back.domain.checkList.checkList.entity.CheckList
 import com.back.domain.club.club.entity.Club
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
+import org.hibernate.Hibernate
 import java.time.LocalDateTime
 
 @Entity
@@ -17,7 +18,7 @@ class Schedule(
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L
+    var id: Long = 0L
 
     var title: String = title
         private set
@@ -54,7 +55,6 @@ class Schedule(
         this.checkList = checkList
     }
 
-    // 일정 수정
     fun modify(title: String, content: String, startDate: LocalDateTime, endDate: LocalDateTime, spot: String) {
         this.title = title
         this.content = content
@@ -63,28 +63,21 @@ class Schedule(
         this.spot = spot
     }
 
-    // 일정 비활성화
     fun deactivate() {
         isActive = false
     }
 
-    // 일정 db 삭제 가능 여부
     fun canDelete(): Boolean {
         return checkList == null || checkList?.isActive == false
     }
 
-    // id 기준 동등성 비교
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
         other as Schedule
 
-        if (id == 0L) return false
-        return id == other.id
+        return this.id == other.id
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = javaClass.hashCode()
 }
