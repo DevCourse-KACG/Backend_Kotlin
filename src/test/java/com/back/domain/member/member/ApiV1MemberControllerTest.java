@@ -18,7 +18,7 @@ import com.back.global.enums.MemberType;
 import com.back.global.exception.ServiceException;
 import com.back.global.security.SecurityUser;
 import com.jayway.jsonpath.JsonPath;
-import io.jsonwebtoken.lang.Collections;
+import java.util.Collections;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -221,7 +221,7 @@ public class ApiV1MemberControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.message").value("nickname-NotBlank-닉네임은 필수 입력값입니다."));
+                .andExpect(jsonPath("$.message").value("요청 본문이 올바르지 않습니다."));
     }
 
 
