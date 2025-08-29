@@ -12,9 +12,9 @@ import java.util.*
  */
 data class ClubMemberRegisterInfo(
     @field:NotBlank
-    val email: String?,
+    val email: String,
     @field:NotBlank
-    val role: String?
+    val role: String
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -30,26 +30,26 @@ data class ClubMemberRegisterInfo(
 
 data class ClubMemberRegisterRequest(
     @field:NotEmpty
-    val members: List<ClubMemberRegisterInfo>?
+    val members: List<ClubMemberRegisterInfo>
 )
 
 data class ClubMemberRoleChangeRequest(
     @field:NotBlank
-    val role : String?
+    val role : String
 )
 
 data class ClubMemberInfo(
-    val clubMemberId: Long?,
-    val memberId: Long?,
-    val nickname: String?,
-    val tag: String?,
-    val role: ClubMemberRole?,
-    val email: String?,
-    val memberType: MemberType?,
+    val clubMemberId: Long,
+    val memberId: Long,
+    val nickname: String,
+    val tag: String,
+    val role: ClubMemberRole,
+    val email: String,
+    val memberType: MemberType,
     val profileImageUrl: String?,
-    val state: ClubMemberState?
+    val state: ClubMemberState
 )
 
 data class ClubMemberResponse(
-    val members: MutableList<ClubMemberInfo?>?
+    val members: MutableList<ClubMemberInfo>
 )
