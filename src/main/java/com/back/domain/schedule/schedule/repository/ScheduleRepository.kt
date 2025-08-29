@@ -14,6 +14,7 @@ interface ScheduleRepository : JpaRepository<Schedule, Long> {
     @Query(
         """
             SELECT s FROM Schedule s 
+            JOIN FETCH s.club
             WHERE s.club.id = :clubId 
             AND s.isActive = true 
             AND s.startDate < :endDateTime
@@ -30,8 +31,8 @@ interface ScheduleRepository : JpaRepository<Schedule, Long> {
     // 나의 모든 모임 일정 목록을 월단위로 시작 날짜 기준으로 오름차순 정렬하여 조회
     @Query(
         """
-            SELECT s FROM Schedule s
-            JOIN s.club c
+            SELECT DISTINCT s FROM Schedule s
+            JOIN FETCH s.club c
             JOIN c.clubMembers cm
             WHERE cm.member.id = :memberId
             AND s.isActive = true
