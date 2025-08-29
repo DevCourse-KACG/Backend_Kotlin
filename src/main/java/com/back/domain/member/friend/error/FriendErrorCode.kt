@@ -1,10 +1,11 @@
-package com.back.domain.member.friend.error;
+package com.back.domain.member.friend.error
 
-import com.back.global.exception.ErrorCode;
-import lombok.Getter;
+import com.back.global.exception.ErrorCode
 
-@Getter
-public enum FriendErrorCode implements ErrorCode {
+enum class FriendErrorCode(
+    override val status: Int,
+    override val message: String
+) : ErrorCode {
     // 404
     FRIEND_NOT_FOUND(404, "친구 요청이 존재하지 않습니다."),
     FRIEND_MEMBER_NOT_FOUND(404, "친구 회원을 찾을 수 없습니다."),
@@ -29,12 +30,4 @@ public enum FriendErrorCode implements ErrorCode {
 
     // 403 권한 관련 오류
     FRIEND_ACCESS_DENIED(403, "로그인한 회원과 관련된 친구가 아닙니다.");
-
-    private final int status;
-    private final String message;
-
-    FriendErrorCode(int status, String message) {
-        this.status = status;
-        this.message = message;
-    }
 }
