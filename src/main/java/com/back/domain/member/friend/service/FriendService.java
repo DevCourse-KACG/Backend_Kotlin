@@ -73,7 +73,7 @@ public class FriendService {
 
         // 친구 목록 조회
         return filteredFriendsStream
-                .map(friend -> new FriendDto(friend, friend.getOther(member))) // DTO 변환
+                .map(friend -> FriendDto.from(friend, friend.getOther(member))) // DTO 변환
                 .sorted(Comparator.comparing(FriendDto::friendNickname))             // 이름 오름차순
                 .collect(Collectors.toList());
     }
@@ -146,7 +146,7 @@ public class FriendService {
         // 친구 요청 저장
         friendRepository.save(friend);
 
-        return new FriendDto(friend, responder);
+        return FriendDto.from(friend, responder);
     }
 
     /**
@@ -182,7 +182,7 @@ public class FriendService {
         // 친구 요청 수락
         friend.setStatus(FriendStatus.ACCEPTED);
 
-        return new FriendDto(friend, friendMember);
+        return FriendDto.from(friend, friendMember);
     }
 
     /**
@@ -216,7 +216,7 @@ public class FriendService {
 
         // 친구 요청을 보낸 회원
         Member friendMember = friend.getOther(me);
-        return new FriendDto(friend, friendMember);
+        return FriendDto.from(friend, friendMember);
     }
 
     /**
