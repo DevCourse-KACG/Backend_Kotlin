@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,12 +60,12 @@ public class FriendService {
                 // 내가 보낸 요청
                 case SENT -> allFriends
                         .filter(friend ->
-                                friend.getStatus() == FriendStatus.PENDING && friend.getRequestedBy().getId().equals(memberId)
+                                friend.getStatus() == FriendStatus.PENDING && Objects.equals(friend.getRequestedBy().getId(), memberId)
                         );
                 // 내가 받은 요청
                 case RECEIVED -> allFriends
                         .filter(friend ->
-                                friend.getStatus() == FriendStatus.PENDING && !friend.getRequestedBy().getId().equals(memberId)
+                                friend.getStatus() == FriendStatus.PENDING && !Objects.equals(friend.getRequestedBy().getId(), memberId)
                         );
                 default -> Stream.empty();
             };
@@ -135,12 +136,12 @@ public class FriendService {
                 });
 
         // 친구 요청 생성
-        Friend friend = Friend.builder()
-                .requestedBy(requester)
-                .member1(lowerMember)
-                .member2(higherMember)
-                .status(FriendStatus.PENDING)
-                .build();
+        Friend friend = new Friend(
+            requester,
+            lowerMember,
+            higherMember,
+            FriendStatus.PENDING
+        );
 
         // 친구 요청 저장
         friendRepository.save(friend);
