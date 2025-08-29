@@ -1,6 +1,5 @@
 package com.back.domain.checkList.checkList.service;
 
-import com.back.domain.checkList.checkList.dto.CheckListDto;
 import com.back.domain.checkList.checkList.dto.CheckListUpdateReqDto;
 import com.back.domain.checkList.checkList.dto.CheckListWriteReqDto;
 import com.back.domain.checkList.checkList.entity.CheckList;
