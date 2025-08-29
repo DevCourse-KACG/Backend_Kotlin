@@ -3,7 +3,6 @@ package com.back.domain.member.member.service
 import com.back.domain.api.service.ApiKeyService
 import com.back.domain.auth.service.AuthService
 import com.back.domain.club.club.repository.ClubRepository
-import com.back.domain.club.clubMember.entity.ClubMember
 import com.back.domain.club.clubMember.repository.ClubMemberRepository
 import com.back.domain.member.member.dto.request.GuestDto
 import com.back.domain.member.member.dto.request.MemberLoginDto
@@ -17,18 +16,18 @@ import com.back.domain.member.member.entity.MemberInfo
 import com.back.domain.member.member.repository.MemberInfoRepository
 import com.back.domain.member.member.repository.MemberRepository
 import com.back.global.aws.S3Service
-import com.back.global.enums.ClubMemberRole
-import com.back.global.enums.ClubMemberState
 import com.back.global.exception.ServiceException
 import jakarta.validation.Valid
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
 import java.util.*
 
 @Service
+@Validated
 @Transactional(readOnly = true)
 class MemberService(
     private val memberRepository: MemberRepository,
@@ -82,7 +81,8 @@ class MemberService(
 
     // ============================== [회원] 로그인 ==============================
     fun loginMember(@Valid dto: MemberLoginDto): MemberAuthResponse {
-        val memberInfo = memberInfoRepository.findByEmail(dto.email)
+        val email = dto.email.lowercase(Locale.getDefault())
+        val memberInfo = memberInfoRepository.findByEmail(email)
             .orElseThrow { ServiceException(400, "해당 사용자를 찾을 수 없습니다.") }
 
         val member = memberInfo.getMember()
@@ -91,7 +91,7 @@ class MemberService(
         validatePassword(dto.password, member)
 
         val apiKey = member.getMemberInfo()?.apiKey
-            ?: throw ServiceException(400, "api키가 존재하지 않습니다..")
+            ?: throw ServiceException(400, "API 키가 존재하지 않습니다..")
         val accessToken = authService.generateAccessToken(member)
 
         return MemberAuthResponse(apiKey, accessToken)
@@ -123,9 +123,10 @@ class MemberService(
         val info: MemberInfo = member.getMemberInfo()
             ?: throw ServiceException(400, "해당 유저의 정보가 없습니다.")
 
+        val email = requireNotNull(info.email) { "회원 이메일이 누락되었습니다." }
         return MemberDetailInfoResponse(
             member.nickname,
-            info.email!!,
+            email,
             info.bio,
             info.profileImageUrl,
             member.tag
@@ -154,13 +155,14 @@ class MemberService(
                 val imageUrl = s3Service.upload(image, "member/${info.id}/profile")
                 info.updateImageUrl(imageUrl)
             } catch (e: IOException) {
-                throw ServiceException(400, "이미지 업로드 중 오류가 발생했습니다.")
+                throw ServiceException(400, "이미지 업로드 중 오류가 발생했습니다.: ${e.message}")
             }
         }
 
+        val email = requireNotNull(info.email) { "회원 이메일이 누락되었습니다." }
         return MemberDetailInfoResponse(
             member.nickname,
-            info.email!!,
+            email,
             info.bio,
             info.profileImageUrl,
             member.tag
@@ -183,7 +185,7 @@ class MemberService(
 
     private fun validatePassword(password: String, member: Member) {
         if (!passwordEncoder.matches(password, member.password)) {
-            throw ServiceException(400, "해당 사용자를 찾을 수 없습니다.")
+            throw ServiceException(401, "비밀번호가 일치하지 않습니다.")
         }
     }
 
@@ -209,8 +211,9 @@ class MemberService(
     }
 
     private fun createAndSaveMemberInfo(dto: MemberRegisterDto, member: Member, apiKey: String): MemberInfo {
+        val normalizedEmail = dto.email.lowercase(Locale.getDefault())
         val info = MemberInfo(
-            email = dto.email,
+            email = normalizedEmail,
             bio = dto.bio,
             profileImageUrl = "",
             apiKey = apiKey,
@@ -235,9 +238,10 @@ class MemberService(
 
     fun payload(accessToken: String) = authService.payload(accessToken)
 
-    fun findMemberByEmail(email: String) = memberInfoRepository.findByEmail(email)
-        .orElseThrow { ServiceException(400, "사용자를 찾을 수 없습니다.") }
-        .getMember()
+    fun findMemberByEmail(email: String): Member =
+                memberInfoRepository.findByEmail(email.lowercase(Locale.getDefault()))
+                .orElseThrow { ServiceException(400, "사용자를 찾을 수 없습니다.") }
+                .getMember() ?: throw ServiceException(400, "사용자를 찾을 수 없습니다.")
 
     private fun deleteMember(member: Member) = memberRepository.delete(member)
 
@@ -252,8 +256,8 @@ class MemberService(
 
     fun generateAccessToken(member: Member) = authService.generateAccessToken(member)
 
-    fun findMemberByApiKey(apiKey: String) =
-        memberInfoRepository.findByApiKey(apiKey)
-            .orElseThrow { ServiceException(400, "유효하지 않은 Refresh Token 입니다.") }
-            .getMember()
+    fun findMemberByApiKey(apiKey: String): Member =
+                memberInfoRepository.findByApiKey(apiKey)
+                .orElseThrow { ServiceException(401, "유효하지 않은 API Key입니다.") }
+                .getMember() ?: throw ServiceException(400, "사용자를 찾을 수 없습니다.")
 }
