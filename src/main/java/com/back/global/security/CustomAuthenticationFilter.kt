@@ -34,11 +34,16 @@ class CustomAuthenticationFilter(
             work(request, response, filterChain)
         } catch (e: ServiceException) {
             val rsData: RsData<*> = e.getRsData()
-            response.contentType = "application/json"
+            response.contentType = "application/json;charset=UTF-8"
             response.status = rsData.code
             response.writer.write(Ut.json.toString(rsData))
+            return
         } catch (e: Exception) {
-            throw e
+            logger.error("Unhandled exception in CustomAuthenticationFilter", e)
+            response.contentType = "application/json;charset=UTF-8"
+            response.status = 500
+            response.writer.write("""{"code":500,"msg":"서버 오류가 발생했습니다."}""")
+            return
         }
     }
 
@@ -57,19 +62,17 @@ class CustomAuthenticationFilter(
             "/api/v1/members/auth/guest-login",
             "/api/v1/clubs/public"
         )
-        if (request.requestURI in openApis) {
+        if (request.requestURI in openApis || request.requestURI.startsWith("/api/v1/clubs/public/")) {
             filterChain.doFilter(request, response)
             return
         }
 
-        val accessToken: String = rq.getHeader("Authorization", "")
+        val accessToken: String = rq.getHeader("Authorization", "").trim()
             .takeIf { it.isNotBlank() }?.let {
-                if (!it.startsWith("Bearer ") || it.length <= 7)
+                if (!it.startsWith("Bearer ", ignoreCase = true) || it.length <= 7)
                     throw ServiceException(401, "Authorization 헤더가 Bearer 형식이 아닙니다.")
-                it.substring(7)
-            } ?: rq.getCookieValue("accessToken", "")
-
-        logger.debug("accessToken : $accessToken")
+                it.substring(7).trim()
+            } ?: rq.getCookieValue("accessToken", "").trim()
 
         if (accessToken.isBlank()) {
             filterChain.doFilter(request, response)
@@ -81,17 +84,21 @@ class CustomAuthenticationFilter(
 
         // accessToken이 존재하는 경우, 해당 토큰의 유효성을 검사
         if (accessToken.isNotBlank()) {
-            val payload = memberService.payload(accessToken)
-            val email = payload?.get("email") as? String
-
-            if (!email.isNullOrBlank()) {
-                val dbMember = memberService.findMemberByEmail(email)
-                if (dbMember != null) {
-                    member = dbMember
-                    isAccessTokenValid = true
+            try {
+                val payload = memberService.payload(accessToken)
+                val email = payload?.get("email") as? String
+                if (!email.isNullOrBlank()) {
+                    val dbMember = memberService.findMemberByEmail(email)
+                    if (dbMember != null) {
+                        member = dbMember
+                        isAccessTokenValid = true
+                    }
                 }
+            } catch (ex: Exception) {
+                isAccessTokenValid = false
             }
         }
+
 
         if (!isAccessTokenValid) {
             throw ServiceException(499, "access token이 유효하지 않습니다.")
@@ -103,16 +110,17 @@ class CustomAuthenticationFilter(
             member.tag ?: throw ServiceException(400, "회원 tag가 없습니다."),
             member.memberType,
             member.password ?: throw ServiceException(400, "비밀번호가 없습니다."),
-            emptyList()
+            member.getAuthorities()
         )
 
-        val authentication: Authentication = UsernamePasswordAuthenticationToken(
+        val auth = UsernamePasswordAuthenticationToken(
             user,
-            user.password,
+            null,
             user.authorities
         )
+        auth.details = org.springframework.security.web.authentication.WebAuthenticationDetailsSource().buildDetails(request)
+        SecurityContextHolder.getContext().authentication = auth
 
-        SecurityContextHolder.getContext().authentication = authentication
 
         filterChain.doFilter(request, response)
     }
