@@ -1,6 +1,5 @@
 package com.back.global.security
 
-import com.back.global.rsData.RsData
 import com.back.global.rsData.RsData.Companion.of
 import com.back.standard.util.Ut
 import org.springframework.context.annotation.Bean

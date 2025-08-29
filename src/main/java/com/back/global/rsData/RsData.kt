@@ -12,7 +12,7 @@ data class RsData<T>(
             RsData(code, message, data)
 
         @JvmStatic
-        fun <T> of(code: Int, message: String): RsData<T> =
+        fun <T> of(code: Int, message: String?): RsData<T> =
             RsData(code, message, null)
 
         // 성공 편의 메소드
