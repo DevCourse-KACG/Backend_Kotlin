@@ -2,7 +2,10 @@ package com.back.domain.club.clubMember.service;
 
 import com.back.domain.club.club.entity.Club;
 import com.back.domain.club.club.service.ClubService;
-import com.back.domain.club.clubMember.dtos.ClubMemberDtos;
+import com.back.domain.club.clubMember.dtos.ClubMemberInfo;
+import com.back.domain.club.clubMember.dtos.ClubMemberRegisterInfo;
+import com.back.domain.club.clubMember.dtos.ClubMemberRegisterRequest;
+import com.back.domain.club.clubMember.dtos.ClubMemberResponse;
 import com.back.domain.club.clubMember.entity.ClubMember;
 import com.back.domain.club.clubMember.repository.ClubMemberRepository;
 import com.back.domain.member.member.entity.Member;
@@ -62,13 +65,13 @@ public class ClubMemberService {
      * @param reqBody 클럽 멤버 등록 요청 DTO
      */
     @Transactional
-    public void addMembersToClub(Long clubId, ClubMemberDtos.ClubMemberRegisterRequest reqBody) {
+    public void addMembersToClub(Long clubId, ClubMemberRegisterRequest reqBody) {
         Club club = clubService.getClubById(clubId);
 
         // 1. 요청 데이터에서 이메일 기준 중복 제거 (나중에 들어온 정보가 우선)
-        Map<String, ClubMemberDtos.ClubMemberRegisterInfo> uniqueMemberInfoByEmail = reqBody.members().stream()
+        Map<String, ClubMemberRegisterInfo> uniqueMemberInfoByEmail = reqBody.getMembers().stream()
                 .collect(Collectors.toMap(
-                        ClubMemberDtos.ClubMemberRegisterInfo::email,
+                        ClubMemberRegisterInfo::getEmail,
                         info -> info,
                         (existing, replacement) -> replacement // 키가 중복될 경우, 기존 값(existing)을 새로운 값(replacement)으로 덮어씀
                 ));
@@ -81,16 +84,16 @@ public class ClubMemberService {
 
         // 3. 신규 추가/상태 변경할 멤버 목록 준비
         List<ClubMember> membersToSave = new ArrayList<>();
-        List<ClubMemberDtos.ClubMemberRegisterInfo> newMemberRequests = new ArrayList<>();
+        List<ClubMemberRegisterInfo> newMemberRequests = new ArrayList<>();
 
         uniqueMemberInfoByEmail.values().forEach(memberInfo -> {
-            ClubMember existingMember = existingMembersByEmail.get(memberInfo.email());
+            ClubMember existingMember = existingMembersByEmail.get(memberInfo.getEmail());
 
             if (existingMember != null) {
                 if (existingMember.getState() == ClubMemberState.WITHDRAWN) {
                     existingMember.updateState(ClubMemberState.INVITED);
                     // 요청된 역할로 업데이트
-                    existingMember.updateRole(ClubMemberRole.fromString(memberInfo.role().toUpperCase()));
+                    existingMember.updateRole(ClubMemberRole.fromString(memberInfo.getRole().toUpperCase()));
                     membersToSave.add(existingMember);
                 }
             } else {
@@ -105,12 +108,12 @@ public class ClubMemberService {
         }
 
         // 5. 새로운 멤버 엔티티 생성
-        for (ClubMemberDtos.ClubMemberRegisterInfo memberInfo : newMemberRequests) {
-            Member member = memberService.findMemberByEmail(memberInfo.email());
+        for (ClubMemberRegisterInfo memberInfo : newMemberRequests) {
+            Member member = memberService.findMemberByEmail(memberInfo.getEmail());
 
             ClubMember newClubMember = new ClubMember(
                     member,
-                    ClubMemberRole.fromString(memberInfo.role().toUpperCase()),
+                    ClubMemberRole.fromString(memberInfo.getRole().toUpperCase()),
                     ClubMemberState.INVITED
             );
 
@@ -185,7 +188,7 @@ public class ClubMemberService {
      * @return 클럽 멤버 목록 DTO
      */
     @Transactional(readOnly = true)
-    public ClubMemberDtos.ClubMemberResponse getClubMembers(Long clubId, String state) {
+    public ClubMemberResponse getClubMembers(Long clubId, String state) {
         // 클럽 확인
         Club club = clubService.getClubById(clubId);
 
@@ -199,13 +202,16 @@ public class ClubMemberService {
         }
 
         // 클럽 멤버 정보를 DTO로 변환
-        List<ClubMemberDtos.ClubMemberInfo> memberInfos = clubMembers.stream()
-                .filter(clubMember -> clubMember.getMember() != null) // 멤버가 존재하는 경우만 필터링
+        List<ClubMemberInfo> memberInfos = clubMembers.stream()
+                .filter(clubMember -> {
+                    clubMember.getMember();
+                    return true;
+                }) // 멤버가 존재하는 경우만 필터링
                 .filter(clubMember -> clubMember.getState() != ClubMemberState.WITHDRAWN) // 탈퇴한 멤버 제외
                 .map(clubMember -> {
                     Member m = clubMember.getMember();
 
-                    return new ClubMemberDtos.ClubMemberInfo(
+                    return new ClubMemberInfo(
                             clubMember.getId(),
                             m.getId(),
                             m.getNickname(),
@@ -222,7 +228,7 @@ public class ClubMemberService {
                     );
                 }).toList();
 
-        return new ClubMemberDtos.ClubMemberResponse(memberInfos);
+        return new ClubMemberResponse(memberInfos);
 
     }
 

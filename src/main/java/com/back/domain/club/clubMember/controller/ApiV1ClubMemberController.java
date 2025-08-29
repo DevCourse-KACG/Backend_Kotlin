@@ -1,6 +1,8 @@
 package com.back.domain.club.clubMember.controller;
 
-import com.back.domain.club.clubMember.dtos.ClubMemberDtos;
+import com.back.domain.club.clubMember.dtos.ClubMemberRegisterRequest;
+import com.back.domain.club.clubMember.dtos.ClubMemberResponse;
+import com.back.domain.club.clubMember.dtos.ClubMemberRoleChangeRequest;
 import com.back.domain.club.clubMember.service.ClubMemberService;
 import com.back.global.rsData.RsData;
 import com.back.global.security.SecurityUser;
@@ -28,7 +30,7 @@ public class ApiV1ClubMemberController {
     @PreAuthorize("@clubAuthorizationChecker.isActiveClubHost(#clubId, #user.id)")
     public RsData<Void> addMembersToClub(
             @PathVariable Long clubId,
-            @RequestBody @Valid ClubMemberDtos.ClubMemberRegisterRequest reqBody,
+            @RequestBody @Valid ClubMemberRegisterRequest reqBody,
             @AuthenticationPrincipal SecurityUser user
 
     ) {
@@ -56,10 +58,10 @@ public class ApiV1ClubMemberController {
     public RsData<Void> changeMemberRole(
             @PathVariable Long clubId,
             @PathVariable Long memberId,
-            @RequestBody @Valid ClubMemberDtos.ClubMemberRoleChangeRequest reqBody,
+            @RequestBody @Valid ClubMemberRoleChangeRequest reqBody,
             @AuthenticationPrincipal SecurityUser user
     ) {
-        clubMemberService.changeMemberRole(clubId, memberId, reqBody.role());
+        clubMemberService.changeMemberRole(clubId, memberId, reqBody.getRole());
 
         return RsData.of(200, "멤버의 권한이 변경됐습니다.", null);
     }
@@ -67,12 +69,12 @@ public class ApiV1ClubMemberController {
     @GetMapping
     @Operation(summary = "클럽 멤버 목록 조회")
     @PreAuthorize("@clubAuthorizationChecker.isClubMember(#clubId, #user.id)")
-    public RsData<ClubMemberDtos.ClubMemberResponse> getClubMembers(
+    public RsData<ClubMemberResponse> getClubMembers(
             @PathVariable Long clubId,
             @RequestParam(required = false) String state, // Optional: 상태 필터링
             @AuthenticationPrincipal SecurityUser user
     ) {
-        ClubMemberDtos.ClubMemberResponse clubMemberResponse = clubMemberService.getClubMembers(clubId, state);
+        ClubMemberResponse clubMemberResponse = clubMemberService.getClubMembers(clubId, state);
 
         return RsData.of(200, "클럽 멤버 목록이 조회됐습니다.", clubMemberResponse);
     }
