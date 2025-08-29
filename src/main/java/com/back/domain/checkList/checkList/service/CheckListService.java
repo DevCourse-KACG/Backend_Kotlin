@@ -55,7 +55,7 @@ public class CheckListService {
 //    if (schedule.getCheckList() != null) return RsData.of(409, "이미 체크리스트가 존재합니다");
 
     // Schedule 엔티티에서 클럽 조회 멤버 조회
-    Optional<ClubMember> otnClubMember = schedule.getClub().getClubMembers().stream()
+    Optional<ClubMember> otnClubMember = schedule.getClub().clubMembers.stream()
         .filter(clubMember ->
             clubMember.getMember().getId().equals(member.getId())).findFirst();
 
@@ -76,7 +76,7 @@ public class CheckListService {
                   .stream()
                   .map(itemAssignReq -> {
                     // 클럽 멤버 조회 (Optional 안전 처리)
-                    ClubMember clubMember = schedule.getClub().getClubMembers().stream().filter(
+                    ClubMember clubMember = schedule.getClub().clubMembers.stream().filter(
                             cm -> cm.getId().equals(itemAssignReq.clubMemberId()))
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("클럽 멤버를 찾을 수 없습니다"));
@@ -122,7 +122,7 @@ public class CheckListService {
 //    if (checkList.getSchedule() == null) return RsData.of(404, "체크리스트에 연동된 일정이 없습니다");
 
     // 체크리스트의 연동된 일정의 클럽 멤버 조회
-    Optional<ClubMember> otnClubMember = checkList.getSchedule().getClub().getClubMembers().stream()
+    Optional<ClubMember> otnClubMember = checkList.getSchedule().getClub().clubMembers.stream()
         .filter(clubMember -> clubMember.getMember().getId().equals(member.getId())).findFirst();
 
     // 클럽 멤버가 아닌 경우 RsData 반환
@@ -149,7 +149,7 @@ public class CheckListService {
 //    if (checkList.getSchedule() == null) return RsData.of(404, "체크리스트에 연동된 일정이 없습니다");
 
     // 체크리스트의 연동된 일정의 클럽 멤버 조회
-    Optional<ClubMember> otnClubMember = checkList.getSchedule().getClub().getClubMembers().stream()
+    Optional<ClubMember> otnClubMember = checkList.getSchedule().getClub().clubMembers.stream()
         .filter(clubMember -> clubMember.getMember().getId().equals(member.getId())).findFirst();
 
     // 클럽 멤버가 아닌 경우 RsData 반환
@@ -171,7 +171,7 @@ public class CheckListService {
                   .stream()
                   .map(itemAssignReq -> {
                     // 클럽 멤버 조회 (Optional 안전 처리)
-                    ClubMember clubMember = checkList.getSchedule().getClub().getClubMembers().stream().filter(
+                    ClubMember clubMember = checkList.getSchedule().getClub().clubMembers.stream().filter(
                             cm -> cm.getId().equals(itemAssignReq.clubMemberId()))
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("클럽 멤버를 찾을 수 없습니다"));
@@ -211,7 +211,7 @@ public class CheckListService {
 //    if (checkList.getSchedule() == null) return RsData.of(404, "체크리스트에 연동된 일정이 없습니다");
 
     // 체크리스트의 연동된 일정의 클럽 멤버 조회
-    Optional<ClubMember> otnClubMember = checkList.getSchedule().getClub().getClubMembers().stream()
+    Optional<ClubMember> otnClubMember = checkList.getSchedule().getClub().clubMembers.stream()
         .filter(clubMember -> clubMember.getMember().getId().equals(member.getId())).findFirst();
 
     // 클럽 멤버가 아닌 경우 RsData 반환
@@ -235,7 +235,7 @@ public class CheckListService {
     Club club = otnClub.get();
 
     // 클럽 멤버 조회
-    Optional<ClubMember> otnClubMember = club.getClubMembers().stream()
+    Optional<ClubMember> otnClubMember = club.clubMembers.stream()
         .filter(clubMember -> clubMember.getMember().getId().equals(member.getId())).findFirst();
 
     // 클럽 멤버가 아닌 경우 RsData 반환
@@ -244,12 +244,12 @@ public class CheckListService {
     }
 
     // 클럽의 체크리스트 조회
-    List<CheckList> checkLists = otnClubMember.get().getClub().getClubSchedules().stream()
+    List<CheckList> checkLists = otnClubMember.get().getClub().clubSchedules.stream()
         .map(Schedule::getCheckList)
         .filter(checkList -> checkList != null && checkList.isActive())
         .toList();
 
-    otnClubMember.get().getClub().getClubSchedules().forEach(schedule -> {
+    otnClubMember.get().getClub().clubSchedules.forEach(schedule -> {
       System.out.println("Schedule ID: " + schedule.getId() + ", CheckList: " + schedule.getCheckList());
     });
 

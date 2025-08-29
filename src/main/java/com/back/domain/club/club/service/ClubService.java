@@ -124,20 +124,24 @@ public class ClubService {
 
         // 1. 이미지 없이 클럽 생성
         Club club = clubRepository.saveAndFlush(
-                Club.builder()
-                .name(reqBody.getName())
-                .bio(reqBody.getBio())
-                .category(ClubCategory.fromString(reqBody.getCategory().toUpperCase()))
-                .mainSpot(reqBody.getMainSpot())
-                .maximumCapacity(reqBody.getMaximumCapacity())
-                .eventType(EventType.fromString(reqBody.getEventType().toUpperCase()))
-                .startDate(LocalDate.parse(reqBody.getStartDate()))
-                .endDate(LocalDate.parse(reqBody.getEndDate()))
-                .isPublic(reqBody.isPublic())
-                .leaderId(Optional.ofNullable(rq.getActor())
-                        .map(Member::getId)
-                        .orElseThrow(() -> new ServiceException(401, "인증되지 않은 사용자입니다.")))
-                .build()
+                new Club(
+                        null, // id는 DB에서 생성되므로 null
+                        reqBody.getName(),
+                        reqBody.getBio(), // Kotlin에서는 nullable이므로 그대로 전달 가능
+                        ClubCategory.fromString(reqBody.getCategory().toUpperCase()),
+                        reqBody.getMainSpot(),
+                        reqBody.getMaximumCapacity(),
+                        true, // recruitingStatus 기본값
+                        EventType.fromString(reqBody.getEventType().toUpperCase()),
+                        LocalDate.parse(reqBody.getStartDate()),
+                        LocalDate.parse(reqBody.getEndDate()),
+                        null, // optional
+                        reqBody.isPublic(),
+                        Optional.ofNullable(rq.getActor())
+                                .map(Member::getId)
+                                .orElseThrow(() -> new ServiceException(401, "인증되지 않은 사용자입니다.")),
+                        true // state 기본값
+                )
         );
         // 2. 이미지가 제공된 경우 S3에 업로드
         if (image != null && !image.isEmpty()){
@@ -199,7 +203,7 @@ public class ClubService {
         ClubCategory category = dto.getCategory() != null ? ClubCategory.fromString(dto.getCategory().toUpperCase()) : club.getCategory();
         String mainSpot = dto.getMainSpot() != null ? dto.getMainSpot() : club.getMainSpot();
         int maximumCapacity = dto.getMaximumCapacity() != null ? dto.getMaximumCapacity() : club.getMaximumCapacity();
-        boolean recruitingStatus = dto.getRecruitingStatus() != null ? dto.getRecruitingStatus() : club.isRecruitingStatus();
+        boolean recruitingStatus = dto.getRecruitingStatus() != null ? dto.getRecruitingStatus() : club.getRecruitingStatus();
         EventType eventType = dto.getEventType() != null ? EventType.fromString(dto.getEventType().toUpperCase()) : club.getEventType();
         LocalDate startDate = dto.getStartDate() != null ? LocalDate.parse(dto.getStartDate()) : club.getStartDate();
         LocalDate endDate = dto.getEndDate() != null ? LocalDate.parse(dto.getEndDate()) : club.getEndDate();
@@ -252,7 +256,7 @@ public class ClubService {
         }
 
         // 비활성화된 클럽인 경우 예외 처리
-        if (!club.isState()) {
+        if (!club.getState()) {
             throw new ServiceException(404, "해당 클럽은 비활성화 상태입니다.");
         }
 
@@ -263,7 +267,7 @@ public class ClubService {
                 club.getCategory().toString(),
                 club.getMainSpot(),
                 club.getMaximumCapacity(),
-                club.isRecruitingStatus(),
+                club.getRecruitingStatus(),
                 club.getEventType().toString(),
                 club.getStartDate().toString(),
                 club.getEndDate().toString(),

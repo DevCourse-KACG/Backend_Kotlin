@@ -51,7 +51,7 @@ public class MyClubService {
         if(accept) {
             clubMember.updateState(ClubMemberState.JOINING); // 초대 수락
         } else {
-            club.getClubMembers().remove(clubMember); // 클럽에서 멤버 제거
+            club.clubMembers.remove(clubMember); // 클럽에서 멤버 제거
             clubMemberRepository.delete(clubMember); // 초대 거절
         }
 
