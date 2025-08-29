@@ -272,7 +272,7 @@ public class ApiV1PresetControllerTest {
     )
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value(400))
-        .andExpect(jsonPath("$.message").value("파라미터 'presetId'의 타입이 올바르지 않습니다. 요구되는 타입: Long"))
+        .andExpect(jsonPath("$.message").value("파라미터 'presetId'의 타입이 올바르지 않습니다. 요구되는 타입: long"))
         .andDo(print());
   }
 
@@ -411,7 +411,7 @@ public class ApiV1PresetControllerTest {
     )
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value(400))
-        .andExpect(jsonPath("$.message").value("파라미터 'presetId'의 타입이 올바르지 않습니다. 요구되는 타입: Long"))
+        .andExpect(jsonPath("$.message").value("파라미터 'presetId'의 타입이 올바르지 않습니다. 요구되는 타입: long"))
         .andDo(print());
   }
 
