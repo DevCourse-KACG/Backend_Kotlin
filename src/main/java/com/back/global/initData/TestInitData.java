@@ -133,32 +133,32 @@ public class TestInitData {
 
         // 친구 요청을 보낸 회원
         Member responder1 = members.get("이영희");
-        Friend friend1 = Friend.builder()
-                .requestedBy(requester)
-                .member1(requester)
-                .member2(responder1)
-                .status(FriendStatus.PENDING)
-                .build();
+        Friend friend1 = new Friend(
+            requester,
+            requester,
+            responder1,
+            FriendStatus.PENDING
+        );
         friendRepository.save(friend1);
 
         // 친구 요청을 수락한 회원
         Member responder2 = members.get("최지우");
-        Friend friend2 = Friend.builder()
-                .requestedBy(requester)
-                .member1(requester)
-                .member2(responder2)
-                .status(FriendStatus.ACCEPTED)
-                .build();
+        Friend friend2 = new Friend(
+            requester,
+            requester,
+            responder2,
+            FriendStatus.ACCEPTED
+        );
         friendRepository.save(friend2);
 
         // 친구 요청을 거절한 회원
         Member responder3 = members.get("박민수");
-        Friend friend3 = Friend.builder()
-                .requestedBy(requester)
-                .member1(requester)
-                .member2(responder3)
-                .status(FriendStatus.REJECTED)
-                .build();
+        Friend friend3 = new Friend(
+            requester,
+            requester,
+            responder3,
+            FriendStatus.REJECTED
+        );
         friendRepository.save(friend3);
     }
 
