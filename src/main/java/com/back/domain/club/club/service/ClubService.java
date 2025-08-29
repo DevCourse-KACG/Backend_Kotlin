@@ -62,8 +62,11 @@ public class ClubService {
      * @return 마지막으로 생성된 클럽
      */
     public Club getLastCreatedClub() {
-        return clubRepository.findFirstByOrderByIdDesc()
-                .orElseThrow(() -> new IllegalStateException("마지막으로 생성된 클럽이 없습니다."));
+        Club lastClub = clubRepository.findFirstByOrderByIdDesc();
+        if (lastClub == null) {
+            throw new IllegalStateException("마지막으로 생성된 클럽이 없습니다.");
+        }
+        return lastClub;
     }
 
     /**
@@ -91,8 +94,11 @@ public class ClubService {
      * @return 활성화된 모임 엔티티
      */
     public Club getActiveClub(Long clubId) {
-        return clubRepository.findByIdAndStateIsTrue(clubId)
-                .orElseThrow(() -> new NoSuchElementException(ClubErrorCode.CLUB_NOT_FOUND.getMessage()));
+        Club club = clubRepository.findByIdAndStateIsTrue(clubId);
+        if (club == null) {
+            throw new NoSuchElementException(ClubErrorCode.CLUB_NOT_FOUND.getMessage());
+        }
+        return club;
     }
     /**
      * 모임 ID로 종료일 안지난 활성화된 모임 조회
@@ -100,9 +106,11 @@ public class ClubService {
      * @return 활성화된 모임 엔티티
      */
     public Club getValidAndActiveClub(Long clubId) {
-        return clubRepository
-                .findValidAndActiveClub(clubId)
-                .orElseThrow(() -> new NoSuchElementException(ClubErrorCode.CLUB_NOT_FOUND.getMessage()));
+        Club club = clubRepository.findValidAndActiveClub(clubId);
+        if (club == null){
+            throw new NoSuchElementException(ClubErrorCode.CLUB_NOT_FOUND.getMessage());
+        }
+        return club;
     }
 
     /**
