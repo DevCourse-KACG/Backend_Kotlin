@@ -1,6 +1,5 @@
 package com.back.domain.preset.preset.service
 
-import com.back.domain.member.member.entity.Member
 import com.back.domain.preset.preset.dto.PresetDto
 import com.back.domain.preset.preset.dto.PresetWriteReqDto
 import com.back.domain.preset.preset.entity.Preset
