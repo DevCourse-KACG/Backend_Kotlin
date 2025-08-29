@@ -42,6 +42,16 @@ public class CheckList {
         }
     }
 
+    // TODO: 코틀린과의 호환성을 위한 임시 getter. CheckList 엔티티가 코틀린으로 전환되면 삭제해주세요.
+    public Long getId() {
+        return this.id;
+    }
+
+    // TODO: 코틀린과의 호환성을 위한 임시 getter. CheckList 엔티티가 코틀린으로 전환되면 삭제해주세요.
+    public boolean isActive() {
+        return this.isActive;
+    }
+
     public void deactivate() {
         this.isActive = false;
     }
@@ -51,7 +61,7 @@ public class CheckList {
 
         // 양방향 관계 설정
         if (schedule.getCheckList() != this) {
-            schedule.setCheckList(this);
+            schedule.updateCheckList(this);
         }
     }
 

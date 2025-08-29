@@ -368,86 +368,86 @@ public class TestInitData {
         Club club1 = clubs.get("산책 모임");
 
         for (int i = 1; i <= 4; i++) {
-            Schedule schedule = Schedule.builder()
-                    .title("제 %s회 걷기 일정".formatted(i))
-                    .content("서울에서 함께 산책합니다")
-                    .startDate(LocalDateTime.parse("2025-07-05T10:00:00").plusDays(i * 7))
-                    .endDate(LocalDateTime.parse("2025-07-05T15:00:00").plusDays(i * 7))
-                    .spot("서울시 서초동")
-                    .club(club1)
-                    .build();
+            Schedule schedule = new Schedule(
+                    "제 %s회 걷기 일정".formatted(i),
+                    "서울에서 함께 산책합니다",
+                    LocalDateTime.parse("2025-07-05T10:00:00").plusDays(i * 7),
+                    LocalDateTime.parse("2025-07-05T15:00:00").plusDays(i * 7),
+                    "서울시 서초동",
+                    club1
+            );
             scheduleRepository.save(schedule);
         }
 
         // 모임 2의 일정 초기 데이터
         Club club2 = clubs.get("친구 모임");
 
-        Schedule schedule2 = Schedule.builder()
-                .title("맛집 탐방")
-                .content("시장 맛집 탐방")
-                .startDate(LocalDateTime.parse("2025-05-07T18:00:00"))
-                .endDate(LocalDateTime.parse("2025-05-07T21:30:00"))
-                .spot("단양시장")
-                .club(club2)
-                .build();
+        Schedule schedule2 = new Schedule(
+                "맛집 탐방",
+                "시장 맛집 탐방",
+                LocalDateTime.parse("2025-05-07T18:00:00"),
+                LocalDateTime.parse("2025-05-07T21:30:00"),
+                "단양시장",
+                club2
+        );
         scheduleRepository.save(schedule2);
 
-        Schedule schedule3 = Schedule.builder()
-                .title("강릉 여행")
-                .content("1박 2일 강릉 여행")
-                .startDate(LocalDateTime.parse("2025-07-23T08:10:00"))
-                .endDate(LocalDateTime.parse("2025-07-24T15:00:00"))
-                .spot("강릉")
-                .club(club2)
-                .build();
+        Schedule schedule3 = new Schedule(
+                "강릉 여행",
+                "1박 2일 강릉 여행",
+                LocalDateTime.parse("2025-07-23T08:10:00"),
+                LocalDateTime.parse("2025-07-24T15:00:00"),
+                "강릉",
+                club2
+        );
         scheduleRepository.save(schedule3);
 
         // 모임 3의 일정 초기 데이터
         Club club3 = clubs.get("친구 모임2");
-        Schedule schedule4 = Schedule.builder()
-                .title("제주도 여행")
-                .content("제주도에서 함께 여행해요")
-                .startDate(LocalDateTime.parse("2025-07-01T09:00:00"))
-                .endDate(LocalDateTime.parse("2025-07-05T18:00:00"))
-                .spot("제주도")
-                .club(club3)
-                .build();
+        Schedule schedule4 = new Schedule(
+                "제주도 여행",
+                "제주도에서 함께 여행해요",
+                LocalDateTime.parse("2025-07-01T09:00:00"),
+                LocalDateTime.parse("2025-07-05T18:00:00"),
+                "제주도",
+                club3
+        );
         scheduleRepository.save(schedule4);
 
         // 모임 3의 일정 초기 데이터 - 비활성화된 일정
-        Schedule schedule5 = Schedule.builder()
-                .title("제주도 여행 (비활성화)")
-                .content("제주도에서 함께 여행해요")
-                .startDate(LocalDateTime.parse("2025-10-01T09:00:00"))
-                .endDate(LocalDateTime.parse("2025-10-05T18:00:00"))
-                .spot("제주도")
-                .club(club3)
-                .build();
+        Schedule schedule5 = new Schedule(
+                "제주도 여행 (비활성화)",
+                "제주도에서 함께 여행해요",
+                LocalDateTime.parse("2025-10-01T09:00:00"),
+                LocalDateTime.parse("2025-10-05T18:00:00"),
+                "제주도",
+                club3
+        );
         scheduleRepository.save(schedule5);
         schedule5.deactivate();
 
         // 모임 4의 일정 초기 데이터
         Club club4 = clubs.get("A도시 러닝 대회");
-        Schedule schedule6 = Schedule.builder()
-                .title("A도시 러닝 대회")
-                .content("A도시에서 열리는 러닝 대회에 참여해요")
-                .startDate(LocalDateTime.parse("2025-08-10T07:00:00"))
-                .endDate(LocalDateTime.parse("2025-08-10T12:00:00"))
-                .spot("서울 A도시")
-                .club(club4)
-                .build();
+        Schedule schedule6 = new Schedule(
+                "A도시 러닝 대회",
+                "A도시에서 열리는 러닝 대회에 참여해요",
+                LocalDateTime.parse("2025-08-10T07:00:00"),
+                LocalDateTime.parse("2025-08-10T12:00:00"),
+                "서울 A도시",
+                club4
+        );
         scheduleRepository.save(schedule6);
 
         // 종료된 모임 일정
         Club nClub1 = clubs.get("독서 모임");
-        Schedule nSchedule1 = Schedule.builder()
-                .title("독서 모임 일정")
-                .content("부산에서 함께 독서해요")
-                .startDate(LocalDateTime.parse("2025-07-12T10:00:00"))
-                .endDate(LocalDateTime.parse("2025-07-12T15:00:00"))
-                .spot("부산")
-                .club(nClub1)
-                .build();
+        Schedule nSchedule1 = new Schedule(
+                "독서 모임 일정",
+                "부산에서 함께 독서해요",
+                LocalDateTime.parse("2025-07-12T10:00:00"),
+                LocalDateTime.parse("2025-07-12T15:00:00"),
+                "부산",
+                nClub1
+        );
         scheduleRepository.save(nSchedule1);
     }
 

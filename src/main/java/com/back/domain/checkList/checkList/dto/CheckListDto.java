@@ -17,7 +17,7 @@ public record CheckListDto(
     this(
         checkList.getId(),
         checkList.isActive(),
-        new ScheduleDto(checkList.getSchedule()),
+        ScheduleDto.from(checkList.getSchedule()),
         Optional.ofNullable(checkList.getCheckListItems())
             .orElse(Collections.emptyList())
             .stream()
