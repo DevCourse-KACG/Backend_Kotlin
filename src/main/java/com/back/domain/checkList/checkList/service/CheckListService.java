@@ -46,7 +46,7 @@ public class CheckListService {
     Member member = Optional.ofNullable(rq.getActor()).orElseThrow(() -> new ServiceException(404, "멤버를 찾을 수 없습니다"));
 
     // 전달 받은 checkListWriteReqDto에서 scheduleId로 Schedule 엔티티 조회
-    Optional<Schedule> otnSchedule = scheduleRepository.findById(checkListWriteReqDto.scheduleId());
+    Optional<Schedule> otnSchedule = scheduleRepository.findById(checkListWriteReqDto.scheduleId);
 //    if (otnSchedule.isEmpty()) return RsData.of(404, "일정을 찾을 수 없습니다");
     Schedule schedule = otnSchedule.get();
 
@@ -66,12 +66,12 @@ public class CheckListService {
     List<CheckListItem> checkListItems;
     // 전달 받은 checkListWriteReqDto에서 Request받은 CheckListItem를 CheckListItem 엔티티로 변환 해서 리스트로 변환
     try {
-      checkListItems = checkListWriteReqDto.checkListItems().stream()
+      checkListItems = checkListWriteReqDto.checkListItems.stream()
           .map(req -> CheckListItem.builder()
-              .content(req.content())
-              .category(req.category())
-              .sequence(req.sequence())
-              .itemAssigns(Optional.ofNullable(req.itemAssigns())
+              .content(req.content)
+              .category(req.category)
+              .sequence(req.sequence)
+              .itemAssigns(Optional.ofNullable(req.itemAssigns)
                   .orElse(Collections.emptyList())
                   .stream()
                   .map(itemAssignReq -> {
@@ -159,14 +159,14 @@ public class CheckListService {
     if (otnClubMember.get().getRole().equals(ClubMemberRole.PARTICIPANT)) return RsData.of(403, "호스트 또는 관리자만 체크리스트를 수정할 수 있습니다");
     List<CheckListItem> checkListItems;
     try {
-      checkListItems = checkListUpdateReqDto.checkListItems().stream()
+      checkListItems = checkListUpdateReqDto.checkListItems.stream()
           .map(req -> CheckListItem.builder()
-              .content(req.content())
-              .category(req.category())
-              .sequence(req.sequence())
-              .isChecked(req.isChecked())
+              .content(req.content)
+              .category(req.category)
+              .sequence(req.sequence)
+              .isChecked(req.isChecked)
               .checkList(checkList)
-              .itemAssigns(Optional.ofNullable(req.itemAssigns())
+              .itemAssigns(Optional.ofNullable(req.itemAssigns)
                   .orElse(Collections.emptyList())
                   .stream()
                   .map(itemAssignReq -> {
