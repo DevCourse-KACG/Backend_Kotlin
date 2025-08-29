@@ -3,7 +3,6 @@ package com.back.domain.member.member.controller
 import com.back.domain.api.request.TokenRefreshRequest
 import com.back.domain.member.member.dto.request.*
 import com.back.domain.member.member.dto.response.*
-import com.back.domain.member.member.entity.Member
 import com.back.domain.member.member.error.MemberErrorCode
 import com.back.domain.member.member.service.MemberService
 import com.back.global.exception.ServiceException
@@ -12,11 +11,11 @@ import com.back.global.rsData.RsData
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.Valid
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
-import jakarta.validation.Valid
 
 @RestController
 @RequestMapping("api/v1/members")
