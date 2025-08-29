@@ -56,4 +56,30 @@ public class ClubMember {
     }
 
     public void updateRole(ClubMemberRole newRole) { this.role = newRole; }
+
+    // TODO : 임시 getter (코를린 변환 후 삭제)
+
+    public Long getId() {
+        return id;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public ClubMemberRole getRole() {
+        return role;
+    }
+
+    public ClubMemberState getState() {
+        return state;
+    }
+
+    public Club getClub() {
+        return club;
+    }
+
+    public List<ItemAssign> getItemAssigns() {
+        return itemAssigns;
+    }
 }

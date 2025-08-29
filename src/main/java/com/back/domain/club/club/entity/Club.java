@@ -16,7 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Club {
   @Id
@@ -90,15 +89,58 @@ public class Club {
   @Builder.Default
   private List<Schedule> clubSchedules = new ArrayList<>();
 
-  // TODO: 코틀린과의 호환성을 위한 임시 getter. Club 엔티티가 코틀린으로 전환되면 삭제해주세요.
+  // TODO : 임시 getter (코틀린 호환성)
+
   public Long getId() {
     return this.id;
   }
 
-  // TODO: 코틀린과의 호환성을 위한 임시 getter. Club 엔티티가 코틀린으로 전환되면 삭제해주세요.
   public String getName() {
     return this.name;
   }
+
+  public String getBio() {
+        return this.bio;
+    }
+    public ClubCategory getCategory() {
+        return this.category;
+    }
+    public String getMainSpot() {
+        return this.mainSpot;
+    }
+    public int getMaximumCapacity() {
+        return this.maximumCapacity;
+    }
+    public boolean isRecruitingStatus() {
+        return this.recruitingStatus;
+    }
+    public EventType getEventType() {
+        return this.eventType;
+    }
+    public LocalDate getStartDate() {
+        return this.startDate;
+    }
+    public LocalDate getEndDate() {
+        return this.endDate;
+    }
+    public String getImageUrl() {
+        return this.imageUrl;
+    }
+    public boolean isPublic() {
+        return this.isPublic;
+    }
+    public Long getLeaderId() {
+        return this.leaderId;
+    }
+    public boolean isState() {
+        return this.state;
+    }
+    public List<ClubMember> getClubMembers() {
+        return this.clubMembers;
+    }
+    public List<Schedule> getClubSchedules() {
+        return this.clubSchedules;
+    }
 
   // ---------------- 메서드 ----------------
     /**
