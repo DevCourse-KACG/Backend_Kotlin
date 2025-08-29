@@ -1,6 +1,9 @@
 package com.back.domain.club.club.service;
 
-import com.back.domain.club.club.dtos.ClubControllerDtos;
+import com.back.domain.club.club.dtos.ClubInfoResponse;
+import com.back.domain.club.club.dtos.CreateClubRequest;
+import com.back.domain.club.club.dtos.SimpleClubInfoWithoutLeader;
+import com.back.domain.club.club.dtos.UpdateClubRequest;
 import com.back.domain.club.club.entity.Club;
 import com.back.domain.club.club.error.ClubErrorCode;
 import com.back.domain.club.club.repository.ClubRepository;
@@ -114,7 +117,7 @@ public class ClubService {
 
     @Transactional
     public Club createClub(
-            ClubControllerDtos.CreateClubRequest reqBody,
+            CreateClubRequest reqBody,
             MultipartFile image
     ) throws IOException {
 
@@ -122,14 +125,14 @@ public class ClubService {
         // 1. 이미지 없이 클럽 생성
         Club club = clubRepository.saveAndFlush(
                 Club.builder()
-                .name(reqBody.name())
-                .bio(reqBody.bio())
-                .category(ClubCategory.fromString(reqBody.category().toUpperCase()))
-                .mainSpot(reqBody.mainSpot())
-                .maximumCapacity(reqBody.maximumCapacity())
-                .eventType(EventType.fromString(reqBody.eventType().toUpperCase()))
-                .startDate(LocalDate.parse(reqBody.startDate()))
-                .endDate(LocalDate.parse(reqBody.endDate()))
+                .name(reqBody.getName())
+                .bio(reqBody.getBio())
+                .category(ClubCategory.fromString(reqBody.getCategory().toUpperCase()))
+                .mainSpot(reqBody.getMainSpot())
+                .maximumCapacity(reqBody.getMaximumCapacity())
+                .eventType(EventType.fromString(reqBody.getEventType().toUpperCase()))
+                .startDate(LocalDate.parse(reqBody.getStartDate()))
+                .endDate(LocalDate.parse(reqBody.getEndDate()))
                 .isPublic(reqBody.isPublic())
                 .leaderId(Optional.ofNullable(rq.getActor())
                         .map(Member::getId)
@@ -159,15 +162,15 @@ public class ClubService {
         club.addClubMember(clubLeader); // 연관관계 편의 메서드를 사용하여 Club에 ClubMember 추가
 
         // 클럽 멤버 설정
-        Arrays.stream(reqBody.clubMembers()).forEach(memberInfo -> {
+        reqBody.getClubMembers().stream().forEach(memberInfo -> {
             // 멤버 ID로 Member 엔티티 조회
-            Member member = memberService.findMemberById(memberInfo.id())
-              .orElseThrow(() -> new NoSuchElementException("ID " + memberInfo.id() + "에 해당하는 멤버를 찾을 수 없습니다."));
+            Member member = memberService.findMemberById(memberInfo.getId())
+              .orElseThrow(() -> new NoSuchElementException("ID " + memberInfo.getId() + "에 해당하는 멤버를 찾을 수 없습니다."));
 
             // ClubMember 엔티티 생성
             ClubMember clubMember = ClubMember.builder()
                     .member(member)
-                    .role(ClubMemberRole.fromString(memberInfo.role().toUpperCase())) // 문자열을 Enum으로 변환
+                    .role(ClubMemberRole.fromString(memberInfo.getRole().toUpperCase())) // 문자열을 Enum으로 변환
                     .state(ClubMemberState.INVITED) // 초기 상태는 INVITED로 설정
                     .build();
 
@@ -186,20 +189,20 @@ public class ClubService {
      * @throws IOException 이미지 업로드 중 발생할 수 있는 예외
      */
     @Transactional
-    public Club updateClub (Long clubId, ClubControllerDtos.@Valid UpdateClubRequest dto, MultipartFile image) throws IOException {
+    public Club updateClub (Long clubId, @Valid UpdateClubRequest dto, MultipartFile image) throws IOException {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다."));
 
         // 클럽 정보 업데이트
-        String name = dto.name() != null ? dto.name() : club.getName();
-        String bio = dto.bio() != null ? dto.bio() : club.getBio();
-        ClubCategory category = dto.category() != null ? ClubCategory.fromString(dto.category().toUpperCase()) : club.getCategory();
-        String mainSpot = dto.mainSpot() != null ? dto.mainSpot() : club.getMainSpot();
-        int maximumCapacity = dto.maximumCapacity() != null ? dto.maximumCapacity() : club.getMaximumCapacity();
-        boolean recruitingStatus = dto.recruitingStatus() != null ? dto.recruitingStatus() : club.isRecruitingStatus();
-        EventType eventType = dto.eventType() != null ? EventType.fromString(dto.eventType().toUpperCase()) : club.getEventType();
-        LocalDate startDate = dto.startDate() != null ? LocalDate.parse(dto.startDate()) : club.getStartDate();
-        LocalDate endDate = dto.endDate() != null ? LocalDate.parse(dto.endDate()) : club.getEndDate();
+        String name = dto.getName() != null ? dto.getName() : club.getName();
+        String bio = dto.getBio() != null ? dto.getBio() : club.getBio();
+        ClubCategory category = dto.getCategory() != null ? ClubCategory.fromString(dto.getCategory().toUpperCase()) : club.getCategory();
+        String mainSpot = dto.getMainSpot() != null ? dto.getMainSpot() : club.getMainSpot();
+        int maximumCapacity = dto.getMaximumCapacity() != null ? dto.getMaximumCapacity() : club.getMaximumCapacity();
+        boolean recruitingStatus = dto.getRecruitingStatus() != null ? dto.getRecruitingStatus() : club.isRecruitingStatus();
+        EventType eventType = dto.getEventType() != null ? EventType.fromString(dto.getEventType().toUpperCase()) : club.getEventType();
+        LocalDate startDate = dto.getStartDate() != null ? LocalDate.parse(dto.getStartDate()) : club.getStartDate();
+        LocalDate endDate = dto.getEndDate() != null ? LocalDate.parse(dto.getEndDate()) : club.getEndDate();
         boolean isPublic = dto.isPublic() != null ? dto.isPublic() : club.isPublic();
 
         club.updateInfo(name, bio, category, mainSpot, maximumCapacity, recruitingStatus, eventType, startDate, endDate, isPublic);
@@ -234,7 +237,7 @@ public class ClubService {
      * @return 클럽 정보 DTO
      */
     @Transactional(readOnly = true)
-    public ClubControllerDtos.ClubInfoResponse getClubInfo(Long clubId) {
+    public ClubInfoResponse getClubInfo(Long clubId) {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다."));
 
@@ -253,7 +256,7 @@ public class ClubService {
             throw new ServiceException(404, "해당 클럽은 비활성화 상태입니다.");
         }
 
-        return new ClubControllerDtos.ClubInfoResponse(
+        return new ClubInfoResponse(
                 club.getId(),
                 club.getName(),
                 club.getBio(),
@@ -281,7 +284,7 @@ public class ClubService {
      * @return 공개 클럽 목록 페이지
      */
     @Transactional(readOnly = true)
-    public Page<ClubControllerDtos.SimpleClubInfoWithoutLeader> getPublicClubs(
+    public Page<SimpleClubInfoWithoutLeader> getPublicClubs(
             Pageable pageable, String name, String mainSpot, ClubCategory category, EventType eventType
             ) {
         // 1. 기본 조건인 '공개된 클럽'으로 Specification을 시작합니다.
@@ -303,7 +306,7 @@ public class ClubService {
 
         // 3. 최종적으로 조합된 Specification과 Pageable 객체로 JpaSpecificationExecutor의 findAll을 호출합니다.
         return clubRepository.findAll(spec, pageable)
-                .map(club -> new ClubControllerDtos.SimpleClubInfoWithoutLeader(
+                .map(club -> new SimpleClubInfoWithoutLeader(
                         club.getId(),
                         club.getName(),
                         club.getCategory().toString(),
@@ -312,7 +315,7 @@ public class ClubService {
                         club.getEventType().toString(),
                         club.getStartDate().toString(),
                         club.getEndDate().toString(),
-                        club.getBio()
+                        club.getBio() != null ? club.getBio() : ""
                 ));
     }
 

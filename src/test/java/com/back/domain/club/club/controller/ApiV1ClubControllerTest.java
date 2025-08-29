@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -717,11 +718,9 @@ class ApiV1ClubControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(
-                multipart("/api/v1/clubs/public")
-                        .with(request -> {
-                            request.setMethod("GET"); // GET 메소드로 요청
-                            return request;
-                        })
+                get("/api/v1/clubs/public")
+                .param("page", "0")
+                .param("size", "20")
         ).andDo(print());
 
         // then
