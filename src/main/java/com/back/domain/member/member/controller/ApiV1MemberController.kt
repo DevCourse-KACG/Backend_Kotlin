@@ -161,7 +161,7 @@ class ApiV1MemberController(
         @RequestBody requestBody: TokenRefreshRequest,
         response: HttpServletResponse
     ): RsData<MemberAuthResponse> {
-        val apiKey = requestBody.refreshToken()
+        val apiKey = requestBody.refreshToken
         if (apiKey.isNullOrBlank()) {
             return RsData.of(401, "Refresh Token이 존재하지 않습니다.")
         }
