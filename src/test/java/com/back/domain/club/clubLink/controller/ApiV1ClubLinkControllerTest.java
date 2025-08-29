@@ -60,7 +60,6 @@ public class ApiV1ClubLinkControllerTest {
     @Test
     @DisplayName("초대 링크 생성 - 링크 생성 성공")
     @WithUserDetails(value = "hgd222@test.com")
-        // 1번 멤버로 로그인
     void createClubLink_Success() throws Exception {
 
         MvcResult result = mockMvc.perform(post("/api/v1/clubs/1/members/invitation-link"))
@@ -71,7 +70,6 @@ public class ApiV1ClubLinkControllerTest {
                 .andExpect(jsonPath("$.data.link").value(org.hamcrest.Matchers.containsString("https://supplies.com/clubs/invite?token=")))
                 .andReturn();
 
-        // 응답 JSON 에서 link 추출
         String responseBody = result.getResponse().getContentAsString();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode root = objectMapper.readTree(responseBody);
@@ -90,7 +88,6 @@ public class ApiV1ClubLinkControllerTest {
 
             assertNotNull(inviteCodeFromResponse);
 
-            // DB 에서 실제 저장된 초대 코드 확인
             Club club = clubRepository.findById(1L).orElseThrow();
             Optional<ClubLink> savedLink = clubLinkRepository.findByClubAndExpiresAtAfter(club, LocalDateTime.now());
             assertTrue(savedLink.isPresent());
@@ -121,23 +118,20 @@ public class ApiV1ClubLinkControllerTest {
     @Test
     @DisplayName("초대 링크 생성 - 기존 유효한 링크가 존재할 경우 해당 링크 반환")
     @WithUserDetails("hgd222@test.com")
-        // HOST 또는 MANAGER 권한을 가진 사용자
     void createClubLink_ExistingLink_Returned() throws Exception {
-        // given
         Club club = clubRepository.findById(1L).orElseThrow();
-
-        // 이미 존재하는 링크 저장
         String existingCode = "existing-code-123";
-        ClubLink existingLink = ClubLink.builder()
-                .inviteCode(existingCode)
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .expiresAt(LocalDateTime.now().plusDays(7)) // 아직 유효한 링크
-                .club(club)
-                .build();
+
+        ClubLink existingLink = new ClubLink(
+                null,
+                existingCode,
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(7),
+                club
+        );
 
         clubLinkRepository.save(existingLink);
 
-        // when
         mockMvc.perform(post("/api/v1/clubs/1/members/invitation-link"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
@@ -148,21 +142,20 @@ public class ApiV1ClubLinkControllerTest {
     @Test
     @DisplayName("초대 링크 조회 성공 - 유효한 초대 링크가 존재하면 반환")
     @WithUserDetails("hgd222@test.com")
-        // HOST 또는 MANAGER
     void getExistingClubLink_success() throws Exception {
-        // given
         Club club = clubRepository.findById(1L).orElseThrow();
         String inviteCode = "valid-code-456";
 
-        ClubLink clubLink = ClubLink.builder()
-                .inviteCode(inviteCode)
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .expiresAt(LocalDateTime.now().plusDays(7))
-                .club(club)
-                .build();
+        ClubLink clubLink = new ClubLink(
+                null,
+                inviteCode,
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(7),
+                club
+        );
+
         clubLinkRepository.save(clubLink);
 
-        // when & then
         mockMvc.perform(get("/api/v1/clubs/1/members/invitation-link"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
@@ -174,11 +167,9 @@ public class ApiV1ClubLinkControllerTest {
     @DisplayName("초대 링크 조회 실패 - 유효한 링크가 없을 때 예외 발생")
     @WithUserDetails("hgd222@test.com")
     void getExistingClubLink_fail_noLink() throws Exception {
-        // given
         Club club = clubRepository.findById(1L).orElseThrow();
-        clubLinkRepository.deleteAll(); // 링크 제거
+        clubLinkRepository.deleteAll();
 
-        // when & then
         mockMvc.perform(get("/api/v1/clubs/1/members/invitation-link"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(400))
@@ -187,7 +178,7 @@ public class ApiV1ClubLinkControllerTest {
 
     @Test
     @DisplayName("초대 링크 조회 실패 - 권한 없는 멤버일 경우 예외 발생")
-    @WithUserDetails("lyh3@test.com")// MEMBER 권한만 있음
+    @WithUserDetails("lyh3@test.com")
     void getExistingClubLink_fail_noPermission() throws Exception {
         mockMvc.perform(get("/api/v1/clubs/1/members/invitation-link"))
                 .andExpect(status().isBadRequest())
@@ -209,14 +200,16 @@ public class ApiV1ClubLinkControllerTest {
     @DisplayName("초대 링크 가입 신청 성공 - 유효한 토큰, 미가입자")
     @WithUserDetails("lcw@test.com")
     void applyToPrivateClub_success() throws Exception {
-        Club club = clubRepository.findById(2L).orElseThrow(); // 2L: "친구 모임"
+        Club club = clubRepository.findById(2L).orElseThrow();
 
-        ClubLink clubLink = ClubLink.builder()
-                .inviteCode("valid-token-123")
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .expiresAt(LocalDateTime.now().plusDays(7))
-                .club(club)
-                .build();
+        ClubLink clubLink = new ClubLink(
+                null,
+                "valid-token-123",
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(7),
+                club
+        );
+
         clubLinkRepository.save(clubLink);
 
         mockMvc.perform(post("/api/v1/clubs/invitations/valid-token-123/apply"))
@@ -239,14 +232,16 @@ public class ApiV1ClubLinkControllerTest {
     @DisplayName("초대 링크 실패 - 토큰 만료")
     @WithUserDetails("hgd222@test.com")
     void applyToPrivateClub_fail_expiredToken() throws Exception {
-        Club club = clubRepository.findById(2L).orElseThrow(); // "친구 모임"
+        Club club = clubRepository.findById(2L).orElseThrow();
 
-        ClubLink clubLink = ClubLink.builder()
-                .inviteCode("expired-token-456")
-                .createdAt(LocalDateTime.now().minusDays(10))
-                .expiresAt(LocalDateTime.now().minusDays(1)) // 만료
-                .club(club)
-                .build();
+        ClubLink clubLink = new ClubLink(
+                null,
+                "expired-token-456",
+                LocalDateTime.now().minusDays(10),
+                LocalDateTime.now().minusDays(1),
+                club
+        );
+
         clubLinkRepository.save(clubLink);
 
         mockMvc.perform(post("/api/v1/clubs/invitations/expired-token-456/apply"))
@@ -258,17 +253,18 @@ public class ApiV1ClubLinkControllerTest {
     @Test
     @DisplayName("초대 링크 실패 - 이미 가입 상태 (JOINING)")
     @WithUserDetails("chs4s@test.com")
-        // 김철수 로그인
     void applyToPrivateClub_fail_alreadyJoined() throws Exception {
-        Club club = clubRepository.findById(2L).orElseThrow(); // "친구 모임"
+        Club club = clubRepository.findById(2L).orElseThrow();
         Member member = findMemberByEmail("chs4s@test.com");
 
-        ClubLink clubLink = ClubLink.builder()
-                .inviteCode("joined-token")
-                .createdAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusDays(1))
-                .club(club)
-                .build();
+        ClubLink clubLink = new ClubLink(
+                null,
+                "joined-token",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                club
+        );
+
         clubLinkRepository.save(clubLink);
 
         ClubMember joinedMember = ClubMember.builder()
@@ -287,26 +283,27 @@ public class ApiV1ClubLinkControllerTest {
     @Test
     @DisplayName("초대 링크 실패 - 이미 신청 상태 (APPLYING)")
     @WithUserDetails("lcw@test.com")
-        // 이채원 로그인
     void applyToPrivateClub_fail_applying() throws Exception {
-        Club club = clubRepository.findById(2L).orElseThrow(); // "친구 모임"
+        Club club = clubRepository.findById(2L).orElseThrow();
         Member member = findMemberByEmail("lcw@test.com");
 
-        ClubLink clubLink = ClubLink.builder()
-                .inviteCode("applying-token")
-                .createdAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusDays(1))
-                .club(club)
-                .build();
+        ClubLink clubLink = new ClubLink(
+                null,
+                "applying-token",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                club
+        );
+
         clubLinkRepository.save(clubLink);
 
         ClubMember applyingMember = ClubMember.builder()
-                                .member(member)
-                                .club(club)
-                                .role(ClubMemberRole.PARTICIPANT)
-                                .state(ClubMemberState.APPLYING)
-                                .build();
-                clubMemberRepository.save(applyingMember);
+                .member(member)
+                .club(club)
+                .role(ClubMemberRole.PARTICIPANT)
+                .state(ClubMemberState.APPLYING)
+                .build();
+        clubMemberRepository.save(applyingMember);
 
         mockMvc.perform(post("/api/v1/clubs/invitations/applying-token/apply"))
                 .andExpect(status().isBadRequest())
@@ -320,12 +317,14 @@ public class ApiV1ClubLinkControllerTest {
         Club club = clubRepository.findById(2L).orElseThrow();
         Member member = findMemberByEmail("hyh@test.com");
 
-        ClubLink clubLink = ClubLink.builder()
-                .inviteCode("invited-token")
-                .createdAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusDays(1))
-                .club(club)
-                .build();
+        ClubLink clubLink = new ClubLink(
+                null,
+                "invited-token",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                club
+        );
+
         clubLinkRepository.save(clubLink);
 
         ClubMember invitedMember = ClubMember.builder()
@@ -345,19 +344,19 @@ public class ApiV1ClubLinkControllerTest {
     @DisplayName("초대 링크 조회 성공 - 유효한 토큰")
     @WithUserDetails("uny@test.com")
     void getClubInfoByInvitationToken_success() throws Exception {
-        // given
-        Club club = clubRepository.findById(2L).orElseThrow(); // 친구 모임
+        Club club = clubRepository.findById(2L).orElseThrow();
         String token = "token-success-123";
 
-        ClubLink clubLink = ClubLink.builder()
-                .inviteCode(token)
-                .createdAt(LocalDateTime.now().minusDays(1))
-                .expiresAt(LocalDateTime.now().plusDays(1))
-                .club(club)
-                .build();
+        ClubLink clubLink = new ClubLink(
+                null,
+                token,
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(1),
+                club
+        );
+
         clubLinkRepository.save(clubLink);
 
-        // when & then
         mockMvc.perform(get("/api/v1/clubs/invitations/{token}", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
@@ -376,7 +375,6 @@ public class ApiV1ClubLinkControllerTest {
     @DisplayName("초대 링크 조회 실패 - 존재하지 않는 토큰")
     @WithUserDetails("uny@test.com")
     void getClubInfoByInvitationToken_fail_invalidToken() throws Exception {
-        // when & then
         mockMvc.perform(get("/api/v1/clubs/invitations/invalid-token-123"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(400))
@@ -387,29 +385,28 @@ public class ApiV1ClubLinkControllerTest {
     @DisplayName("초대 링크 조회 실패 - 만료된 토큰")
     @WithUserDetails("uny@test.com")
     void getClubInfoByInvitationToken_fail_expiredToken() throws Exception {
-        // given
         Club club = clubRepository.findById(2L).orElseThrow();
         String token = "expired-token-789";
 
-        ClubLink clubLink = ClubLink.builder()
-                .inviteCode(token)
-                .createdAt(LocalDateTime.now().minusDays(10))
-                .expiresAt(LocalDateTime.now().minusDays(1)) // 만료됨
-                .club(club)
-                .build();
+        ClubLink clubLink = new ClubLink(
+                null,
+                token,
+                LocalDateTime.now().minusDays(10),
+                LocalDateTime.now().minusDays(1),
+                club
+        );
+
         clubLinkRepository.save(clubLink);
 
-        // when & then
         mockMvc.perform(get("/api/v1/clubs/invitations/{token}", token))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.message").value("초대 토큰이 만료되었습니다."));
     }
 
-
-    //================기타 메서드========================
-
     private Member findMemberByEmail(String email) {
         return memberRepository.findByMemberInfo_Email(email)
-                            .orElseThrow(() -> new IllegalArgumentException("멤버를 찾을 수 없습니다: " + email));    }
+                .orElseThrow(() -> new IllegalArgumentException("멤버를 찾을 수 없습니다: " + email));
+    }
 }
+

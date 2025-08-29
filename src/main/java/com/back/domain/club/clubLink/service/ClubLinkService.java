@@ -3,7 +3,7 @@ package com.back.domain.club.clubLink.service;
 import com.back.domain.club.club.dtos.SimpleClubInfoResponse;
 import com.back.domain.club.club.entity.Club;
 import com.back.domain.club.club.repository.ClubRepository;
-import com.back.domain.club.clubLink.dtos.ClubLinkDtos;
+import com.back.domain.club.clubLink.dtos.CreateClubLinkResponse;
 import com.back.domain.club.clubLink.entity.ClubLink;
 import com.back.domain.club.clubLink.repository.ClubLinkRepository;
 import com.back.domain.club.clubMember.entity.ClubMember;
@@ -33,7 +33,7 @@ public class ClubLinkService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public ClubLinkDtos.CreateClubLinkResponse createClubLink(Member user, Long clubId) {
+    public CreateClubLinkResponse createClubLink(Member user, Long clubId) {
         Club club = isClubExist(clubId);
 
         //권한 체크하여 Host, Manager이 아닐 시 에러
@@ -47,7 +47,7 @@ public class ClubLinkService {
             String existingCode = existingLink.get().getInviteCode();
             // 기존 링크가 존재하면, 완전한 URL 형태로 반환
             String link = "http://localhost:3000/clubs/invite?token=" + existingCode;
-            return new ClubLinkDtos.CreateClubLinkResponse(link);
+            return new CreateClubLinkResponse(link);
         }
 
         //UUID 기반 초대 코드 생성
@@ -56,20 +56,21 @@ public class ClubLinkService {
         LocalDateTime expireAt = now.plusDays(7);
 
         //클럽 링크 객체 생성 및 db 저장
-        ClubLink clubLink = ClubLink.builder()
-                .inviteCode(inviteCode)
-                .createdAt(now)
-                .expiresAt(expireAt)
-                .club(club)
-                .build();
+        ClubLink clubLink = new ClubLink(
+                null,
+                inviteCode,
+                now,
+                expireAt,
+                club
+        );
 
         clubLinkRepository.save(clubLink);
 
         String link = "http://localhost:3000/clubs/invite?token=" + inviteCode;
-        return new ClubLinkDtos.CreateClubLinkResponse(link);
+        return new CreateClubLinkResponse(link);
     }
 
-    public ClubLinkDtos.CreateClubLinkResponse getExistingClubLink(Member user, @Positive Long clubId) {
+    public CreateClubLinkResponse getExistingClubLink(Member user, @Positive Long clubId) {
         Club club = isClubExist(clubId);
 
         //권한 체크하여 Host, Manager이 아닐 시 에러
@@ -82,7 +83,7 @@ public class ClubLinkService {
 
         // 기존 링크를 완전한 URL 형태로 반환
         String link = "http://localhost:3000/clubs/invite?token=" + existingLink.getInviteCode();
-        return new ClubLinkDtos.CreateClubLinkResponse(link);
+        return new CreateClubLinkResponse(link);
     }
 
     public ClubApplyResult applyToPrivateClub(Member user, String token) {

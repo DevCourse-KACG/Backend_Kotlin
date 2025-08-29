@@ -1,7 +1,7 @@
 package com.back.domain.club.clubLink.controller;
 
 import com.back.domain.club.club.dtos.SimpleClubInfoResponse;
-import com.back.domain.club.clubLink.dtos.ClubLinkDtos;
+import com.back.domain.club.clubLink.dtos.CreateClubLinkResponse;
 import com.back.domain.club.clubLink.service.ClubLinkService;
 import com.back.domain.member.member.entity.Member;
 import com.back.global.enums.ClubApplyResult;
@@ -21,20 +21,20 @@ public class ApiV1ClubLinkController {
 
     @PostMapping("/{clubId}/members/invitation-link")
     @Operation(summary = "클럽 초대 링크 생성")
-    public RsData<ClubLinkDtos.CreateClubLinkResponse> createClubLink(@PathVariable @Positive Long clubId) {
+    public RsData<CreateClubLinkResponse> createClubLink(@PathVariable @Positive Long clubId) {
 
         Member user = rq.getActor();
-        ClubLinkDtos.CreateClubLinkResponse response = clubLinkService.createClubLink(user, clubId);
+        CreateClubLinkResponse response = clubLinkService.createClubLink(user, clubId);
 
         return new RsData<>(200, "클럽 초대 링크가 생성되었습니다.", response);
     }
 
     @GetMapping("/{clubId}/members/invitation-link")
     @Operation(summary = "클럽 초대 링크 반환")
-    public RsData<ClubLinkDtos.CreateClubLinkResponse> getExistingClubLink(@PathVariable @Positive Long clubId) {
+    public RsData<CreateClubLinkResponse> getExistingClubLink(@PathVariable @Positive Long clubId) {
 
         Member user = rq.getActor();
-        ClubLinkDtos.CreateClubLinkResponse response = clubLinkService.getExistingClubLink(user, clubId);
+        CreateClubLinkResponse response = clubLinkService.getExistingClubLink(user, clubId);
 
         return new RsData<>(200, "클럽 초대 링크가 반환되었습니다.", response);
     }
