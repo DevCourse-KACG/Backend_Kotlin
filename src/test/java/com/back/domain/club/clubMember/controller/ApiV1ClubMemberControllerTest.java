@@ -56,7 +56,7 @@ class ApiV1ClubMemberControllerTest {
     void addMemberToClub() throws Exception {
         // given
         // 테스트 클럽 생성
-        Long clubId = 1L; // 테스트를 위해 클럽 ID를 1로 고정
+        long clubId = 1L; // 테스트를 위해 클럽 ID를 1로 고정
         Club club = clubService.findClubById(clubId)
                 .orElseThrow(() -> new IllegalStateException("클럽이 존재하지 않습니다."));
 
@@ -107,13 +107,25 @@ class ApiV1ClubMemberControllerTest {
         // 추가 검증: 클럽에 멤버가 실제로 추가되었는지 확인
         club = clubService.getClubById(club.getId());
 
-        assertThat(club.getClubMembers().size()).isEqualTo(5); // 멤버가 총 3명 인지 확인 (호스트 포함)
+        // 1. 전체 멤버 수 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(5); // 기존 3명 + 신규 2명
+
+        // 2. 호스트 멤버 확인 (이건 순서가 보장된다면 그대로 둬도 무방)
         assertThat(club.getClubMembers().get(0).getMember().getEmail()).isEqualTo(hostMember.getEmail());
         assertThat(club.getClubMembers().get(0).getRole()).isEqualTo(ClubMemberRole.HOST);
-        assertThat(club.getClubMembers().get(4).getMember().getEmail()).isEqualTo(member1.getEmail());
-        assertThat(club.getClubMembers().get(4).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
-        assertThat(club.getClubMembers().get(3).getMember().getEmail()).isEqualTo(member2.getEmail());
-        assertThat(club.getClubMembers().get(3).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
+
+        // 3. 새로 추가된 멤버들이 '포함'되어 있는지, 그리고 그들의 '역할'이 올바른지 확인 (순서 무관)
+        // member1 (cjw5@test.com) 검증
+        assertThat(club.getClubMembers().stream()
+                .anyMatch(cm -> cm.getMember().getEmail().equals(member1.getEmail()) &&
+                        cm.getRole() == ClubMemberRole.PARTICIPANT))
+                .isTrue();
+
+        // member2 (pms4@test.com) 검증
+        assertThat(club.getClubMembers().stream()
+                .anyMatch(cm -> cm.getMember().getEmail().equals(member2.getEmail()) &&
+                        cm.getRole() == ClubMemberRole.PARTICIPANT))
+                .isTrue();
     }
 
     @Test
@@ -506,7 +518,7 @@ class ApiV1ClubMemberControllerTest {
     void withdrawMemberFromClub_UnauthorizedMember() throws Exception {
         // given
         // 테스트 클럽 생성
-        Long clubId = 1L; // 테스트를 위해 클럽 ID를 1로 고정
+        long clubId = 1L; // 테스트를 위해 클럽 ID를 1로 고정
         Club club = clubService.findClubById(clubId)
                 .orElseThrow(() -> new IllegalStateException("클럽이 존재하지 않습니다."));
 

@@ -67,27 +67,18 @@ class ClubMemberService (
         val club = clubService.getClubById(clubId)
 
         // 1. 요청 데이터에서 이메일 기준 중복 제거 (나중에 들어온 정보가 우선)
-        val uniqueMemberInfoByEmail = reqBody.members.stream()
-            .collect(
-                Collectors.toMap(
-                    ClubMemberRegisterInfo::email,
-                    Function { info: ClubMemberRegisterInfo? -> info },
-                    BinaryOperator { existing: ClubMemberRegisterInfo?, replacement: ClubMemberRegisterInfo? -> replacement } // 키가 중복될 경우, 기존 값(existing)을 새로운 값(replacement)으로 덮어씀
-                ))
+        val uniqueMemberInfoByEmail = reqBody.members
+            .associateBy { it.email }
 
         // 2. 요청된 이메일 목록을 한 번에 조회하여 Map으로 변환 (효율적인 탐색을 위해)
-        val requestEmails: MutableList<String> = ArrayList<String>(uniqueMemberInfoByEmail.keys)
-        val existingMembersByEmail = clubMemberRepository.findClubMembersByClubIdAndEmails(clubId, requestEmails)
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    Function { cm: ClubMember? -> cm!!.member.getMemberInfo()!!.email },
-                    Function { cm: ClubMember? -> cm })
-            )
+        val requestEmails = uniqueMemberInfoByEmail.keys.toList()
+        val existingMembersByEmail = clubMemberRepository
+            .findClubMembersByClubIdAndEmails(clubId, requestEmails as MutableList<String>)
+            .associateBy { it.member.getMemberInfo()?.email }
 
         // 3. 신규 추가/상태 변경할 멤버 목록 준비
-        val membersToSave: MutableList<ClubMember> = ArrayList<ClubMember>()
-        val newMemberRequests: MutableList<ClubMemberRegisterInfo> = ArrayList<ClubMemberRegisterInfo>()
+        val membersToSave = mutableListOf<ClubMember>()
+        val newMemberRequests = mutableListOf<ClubMemberRegisterInfo>()
 
         uniqueMemberInfoByEmail.values.forEach(Consumer { memberInfo: ClubMemberRegisterInfo? ->
             val existingMember = existingMembersByEmail[memberInfo!!.email]
@@ -112,7 +103,6 @@ class ClubMemberService (
         // 5. 새로운 멤버 엔티티 생성
         for (memberInfo in newMemberRequests) {
             val member = memberService.findMemberByEmail(memberInfo.email)
-
             val newClubMember = ClubMember(
                 member,
                 ClubMemberRole.fromString(memberInfo.role.uppercase(Locale.getDefault())),
@@ -120,13 +110,12 @@ class ClubMemberService (
             )
 
             club.addClubMember(newClubMember) // 양방향 연관관계 설정
-
             membersToSave.add(newClubMember)
         }
 
         // 6. 변경/추가된 모든 멤버 정보를 한 번에 저장 (Batch Insert/Update)
-        if (!membersToSave.isEmpty()) {
-            clubMemberRepository.saveAll<ClubMember?>(membersToSave)
+        if (membersToSave.isNotEmpty()) {
+            clubMemberRepository.saveAll(membersToSave)
         }
     }
 
@@ -142,7 +131,7 @@ class ClubMemberService (
         val member = memberService.findMemberById(memberId)
             .orElseThrow{ServiceException(404, "멤버가 존재하지 않습니다.")}
         val clubMember = clubMemberRepository.findByClubAndMember(club, member)
-        if (clubMember == null) throw ServiceException(404, "클럽 멤버가 존재하지 않습니다.")
+            ?: throw ServiceException(404, "클럽 멤버가 존재하지 않습니다.")
 
         // 호스트 본인이 탈퇴하려는 경우 예외 처리
         if (user.id == memberId && clubMember.role == ClubMemberRole.HOST) {
@@ -166,9 +155,7 @@ class ClubMemberService (
         val member = memberService.findMemberById(memberId)
             .orElseThrow{ServiceException(404, "멤버가 존재하지 않습니다.")}
         val clubMember = clubMemberRepository.findByClubAndMember(club, member)
-        if (clubMember == null) {
-            throw ServiceException(404, "클럽 멤버가 존재하지 않습니다.")
-        }
+            ?: throw ServiceException(404, "클럽 멤버가 존재하지 않습니다.")
 
         // 호스트 본인이 역할을 변경하려는 경우 예외 처리
         if (member.id == rq.actor?.id) {
@@ -197,38 +184,30 @@ class ClubMemberService (
         val club = clubService.getClubById(clubId)
 
         // 클럽멤버 목록 반환
-        val clubMembers: MutableList<ClubMember>
-        if (state != null) {
-            clubMembers = clubMemberRepository.findByClubAndState(club, ClubMemberState.fromString(state))
+        val clubMembers = if (state != null) {
+            clubMemberRepository.findByClubAndState(club, ClubMemberState.fromString(state))
         } else {
-            clubMembers = clubMemberRepository.findByClub(club)
+            clubMemberRepository.findByClub(club)
         }
 
         // 클럽 멤버 정보를 DTO로 변환
-        val memberInfos = clubMembers.stream()
-            .filter { clubMember: ClubMember ->
-                clubMember.member
-                true
-            }  // 멤버가 존재하는 경우만 필터링
-            .filter { clubMember: ClubMember -> clubMember.state != ClubMemberState.WITHDRAWN }  // 탈퇴한 멤버 제외
-            .map<ClubMemberInfo?> { clubMember: ClubMember ->
-                val m = clubMember.member
+        val memberInfos = clubMembers
+            .filter { it.state != ClubMemberState.WITHDRAWN }
+            .map { cm ->
+                val m = cm.member
                 ClubMemberInfo(
-                    clubMember.id!!,
-                    m.id!!,
-                    m.nickname,
-                    m.tag!!,
-                    clubMember.role,
-                    Optional.ofNullable<MemberInfo?>(m.getMemberInfo())
-                        .map<String?>(MemberInfo::email)
-                        .orElse(""),
-                    m.memberType,
-                    Optional.ofNullable<MemberInfo?>(m.getMemberInfo())
-                        .map<String?>(MemberInfo::profileImageUrl)
-                        .orElse(""),
-                    clubMember.state
+                    clubMemberId = cm.id!!,
+                    memberId = m.id!!,
+                    nickname = m.nickname,
+                    tag = m.tag!!,
+                    role = cm.role,
+                    email = m.getMemberInfo()?.email ?: "",
+                    memberType = m.memberType,
+                    profileImageUrl = m.getMemberInfo()?.profileImageUrl ?: "",
+                    state = cm.state
                 )
-            }.toList()
+            }
+            .toMutableList()
 
         return ClubMemberResponse(memberInfos)
     }
@@ -240,10 +219,8 @@ class ClubMemberService (
      * @return 클럽 멤버 엔티티
      */
     fun getClubMember(club: Club, member: Member): ClubMember {
-        val clubMember = clubMemberRepository.findByClubAndMemberAndState(club, member, ClubMemberState.JOINING)
-        if (clubMember == null) throw AccessDeniedException("권한이 없습니다.")
-
-        return clubMember
+        return clubMemberRepository.findByClubAndMemberAndState(club, member, ClubMemberState.JOINING)
+            ?: throw AccessDeniedException("권한이 없습니다.")
     }
 
     /**
@@ -267,9 +244,9 @@ class ClubMemberService (
     fun handleMemberApplication(clubId: Long, memberId: Long, approve: Boolean) {
         val club = clubService.getClubById(clubId)
         val member = memberService.findMemberById(memberId)
-            .orElseThrow<ServiceException?>(Supplier { ServiceException(404, "멤버가 존재하지 않습니다.") })
+            .orElseThrow { ServiceException(404, "멤버가 존재하지 않습니다.") }
         val clubMember = clubMemberRepository.findByClubAndMember(club, member)
-        if (clubMember == null) throw ServiceException(400, "가입 신청 상태가 아닙니다.")
+            ?: throw ServiceException(400, "가입 신청 상태가 아닙니다.")
 
         // 현재 상태가 APPLYING이 아닌 경우 예외 처리
         if (clubMember.state != ClubMemberState.APPLYING) {
