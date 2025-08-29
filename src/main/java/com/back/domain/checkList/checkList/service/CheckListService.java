@@ -246,7 +246,7 @@ public class CheckListService {
     // 클럽의 체크리스트 조회
     List<CheckList> checkLists = otnClubMember.get().getClub().getClubSchedules().stream()
         .map(Schedule::getCheckList)
-        .filter(checkList -> checkList != null && checkList.isActive())
+        .filter(checkList -> checkList != null && checkList.isActive)
         .toList();
 
     otnClubMember.get().getClub().getClubSchedules().forEach(schedule -> {
