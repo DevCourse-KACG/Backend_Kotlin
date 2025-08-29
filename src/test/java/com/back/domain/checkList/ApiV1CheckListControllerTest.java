@@ -67,17 +67,17 @@ public class ApiV1CheckListControllerTest {
   void setUp() {
     member = memberRepository.findById(1L).orElseThrow(() -> new IllegalStateException("테스트용 멤버(ID: 1)가 존재하지 않습니다"));
 
-    clubMember = ClubMember.builder()
-        .member(member)
-        .role(ClubMemberRole.MANAGER)
-        .state(ClubMemberState.JOINING)
-        .build();
+    clubMember = new ClubMember(
+        member,
+        ClubMemberRole.MANAGER,
+        ClubMemberState.JOINING
+    );
 
-    clubMember2 = ClubMember.builder()
-        .member(member)
-        .role(ClubMemberRole.MANAGER)
-        .state(ClubMemberState.JOINING)
-        .build();
+    clubMember2 = new ClubMember(
+        member,
+        ClubMemberRole.MANAGER,
+        ClubMemberState.JOINING
+    );
 
     // 클럽 생성
     Club clubBuilder = Club.builder()

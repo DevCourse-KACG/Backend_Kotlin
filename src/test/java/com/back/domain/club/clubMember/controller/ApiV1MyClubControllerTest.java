@@ -108,9 +108,9 @@ class ApiV1MyClubControllerTest {
                 .andExpect(jsonPath("$.data.clubName").value(club.getName()));
 
         // 추가 검증: 클럽 멤버 목록에 초대된 멤버가 포함되어 있는지 확인
-        assertThat(club.clubMembers.get(1).getMember().getId()).isEqualTo(invitedMember.getId());
-        assertThat(club.clubMembers.get(1).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
-        assertThat(club.clubMembers.get(1).getState()).isEqualTo(ClubMemberState.JOINING);
+        assertThat(club.getClubMembers().get(1).getMember().getId()).isEqualTo(invitedMember.getId());
+        assertThat(club.getClubMembers().get(1).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
+        assertThat(club.getClubMembers().get(1).getState()).isEqualTo(ClubMemberState.JOINING);
     }
 
     @Test
@@ -170,8 +170,8 @@ class ApiV1MyClubControllerTest {
                 .andExpect(jsonPath("$.data.clubName").value(club.getName()));
 
         // 추가 검증:
-        assertThat(club.clubMembers.size()).isEqualTo(1); // 초대된 멤버가 거절했으므로 클럽 멤버 수는 1명이어야 함
-        assertThat(club.clubMembers.get(0).getMember().getId()).isEqualTo(hostMember.getId());
+        assertThat(club.getClubMembers().size()).isEqualTo(1); // 초대된 멤버가 거절했으므로 클럽 멤버 수는 1명이어야 함
+        assertThat(club.getClubMembers().get(0).getMember().getId()).isEqualTo(hostMember.getId());
     }
 
     @Test
@@ -399,9 +399,9 @@ class ApiV1MyClubControllerTest {
                 .andExpect(jsonPath("$.data.clubName").value(club.getName()));
 
         // 추가 검증: 클럽 멤버 목록에 신청한 멤버가 포함되어 있는지 확인
-        assertThat(club.clubMembers.get(1).getMember().getId()).isEqualTo(1L);
-        assertThat(club.clubMembers.get(1).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
-        assertThat(club.clubMembers.get(1).getState()).isEqualTo(ClubMemberState.APPLYING);
+        assertThat(club.getClubMembers().get(1).getMember().getId()).isEqualTo(1L);
+        assertThat(club.getClubMembers().get(1).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
+        assertThat(club.getClubMembers().get(1).getState()).isEqualTo(ClubMemberState.APPLYING);
     }
 
     @Test
@@ -934,8 +934,8 @@ class ApiV1MyClubControllerTest {
                 .andExpect(jsonPath("$.data.clubName").value(club.getName()));
 
         // 추가 검증: 클럽 멤버 목록에서 가입 신청 중인 멤버가 제거되었는지 확인
-        assertThat(club.clubMembers.size()).isEqualTo(1); // 호스트 멤버만 남아 있어야 함
-        assertThat(club.clubMembers.get(0).getMember().getId()).isEqualTo(hostMember.getId());
+        assertThat(club.getClubMembers().size()).isEqualTo(1); // 호스트 멤버만 남아 있어야 함
+        assertThat(club.getClubMembers().get(0).getMember().getId()).isEqualTo(hostMember.getId());
     }
 
     @Test

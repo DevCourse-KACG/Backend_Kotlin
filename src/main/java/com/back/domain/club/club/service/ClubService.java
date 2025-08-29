@@ -158,11 +158,14 @@ public class ClubService {
         // 클럽 생성 시 유저를 리더로 설정하고 멤버에 추가
         Member leader = memberService.findMemberById(rq.getActor().getId())
                 .orElseThrow(() -> new NoSuchElementException("ID " + rq.getActor().getId() + "에 해당하는 리더를 찾을 수 없습니다."));
-        ClubMember clubLeader = ClubMember.builder()
-                .member(leader)
-                .role(ClubMemberRole.HOST) // 클럽 생성자는 HOST 역할
-                .state(ClubMemberState.JOINING) // 초기 상태는 JOINING으로 설정
-                .build();
+
+        ClubMember clubLeader  = new ClubMember(
+                leader,
+                ClubMemberRole.HOST, // 클럽 생성자는 HOST 역할
+                ClubMemberState.JOINING // 초기 상태는 JOINING으로 설정
+        );
+
+
         club.addClubMember(clubLeader); // 연관관계 편의 메서드를 사용하여 Club에 ClubMember 추가
 
         // 클럽 멤버 설정
@@ -172,11 +175,11 @@ public class ClubService {
               .orElseThrow(() -> new NoSuchElementException("ID " + memberInfo.getId() + "에 해당하는 멤버를 찾을 수 없습니다."));
 
             // ClubMember 엔티티 생성
-            ClubMember clubMember = ClubMember.builder()
-                    .member(member)
-                    .role(ClubMemberRole.fromString(memberInfo.getRole().toUpperCase())) // 문자열을 Enum으로 변환
-                    .state(ClubMemberState.INVITED) // 초기 상태는 INVITED로 설정
-                    .build();
+            ClubMember clubMember = new ClubMember(
+                    member,
+                    ClubMemberRole.fromString(memberInfo.getRole().toUpperCase()), // 문자열을 Enum으로 변환
+                    ClubMemberState.INVITED // 초기 상태는 INVITED로 설정
+            );
 
             // 연관관계 편의 메서드를 사용하여 Club에 ClubMember 추가
             club.addClubMember(clubMember);

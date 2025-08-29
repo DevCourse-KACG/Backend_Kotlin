@@ -8,6 +8,7 @@ import jakarta.persistence.*
 import java.time.LocalDate
 
 @Entity
+
 class Club(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -116,4 +117,55 @@ class Club(
     }
 
     override fun hashCode(): Int = id?.hashCode() ?: 0
+
+    // --- builder(자바 호환성) ---
+    companion object {
+        @JvmStatic
+        fun builder() = Builder()
+    }
+    class Builder {
+        private var name: String = ""
+        private var bio: String? = null
+        private var category: ClubCategory = ClubCategory.SPORTS
+        private var mainSpot: String = ""
+        private var maximumCapacity: Int = 0
+        private var recruitingStatus: Boolean = true
+        private var eventType: EventType = EventType.ONE_TIME
+        private var startDate: LocalDate? = null
+        private var endDate: LocalDate? = null
+        private var imageUrl: String? = null
+        private var isPublic: Boolean = true
+        private var leaderId: Long? = null
+        private var state: Boolean = true
+
+        fun name(name: String) = apply { this.name = name }
+        fun bio(bio: String?) = apply { this.bio = bio }
+        fun category(category: ClubCategory) = apply { this.category = category }
+        fun mainSpot(mainSpot: String) = apply { this.mainSpot = mainSpot }
+        fun maximumCapacity(capacity: Int) = apply { this.maximumCapacity = capacity }
+        fun recruitingStatus(recruitingStatus: Boolean) = apply { this.recruitingStatus = recruitingStatus }
+        fun eventType(eventType: EventType) = apply { this.eventType = eventType }
+        fun startDate(startDate: LocalDate?) = apply { this.startDate = startDate }
+        fun endDate(endDate: LocalDate?) = apply { this.endDate = endDate }
+        fun imageUrl(imageUrl: String?) = apply { this.imageUrl = imageUrl }
+        fun isPublic(isPublic: Boolean) = apply { this.isPublic = isPublic }
+        fun leaderId(leaderId: Long?) = apply { this.leaderId = leaderId }
+        fun state(state: Boolean) = apply { this.state = state }
+
+        fun build() = Club(
+            name = name,
+            bio = bio,
+            category = category,
+            mainSpot = mainSpot,
+            maximumCapacity = maximumCapacity,
+            recruitingStatus = recruitingStatus,
+            eventType = eventType,
+            startDate = startDate,
+            endDate = endDate,
+            imageUrl = imageUrl,
+            isPublic = isPublic,
+            leaderId = leaderId,
+            state = state
+        )
+    }
 }

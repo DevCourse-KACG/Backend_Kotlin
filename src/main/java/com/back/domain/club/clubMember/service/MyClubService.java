@@ -51,7 +51,7 @@ public class MyClubService {
         if(accept) {
             clubMember.updateState(ClubMemberState.JOINING); // 초대 수락
         } else {
-            club.clubMembers.remove(clubMember); // 클럽에서 멤버 제거
+            club.getClubMembers().remove(clubMember); // 클럽에서 멤버 제거
             clubMemberRepository.delete(clubMember); // 초대 거절
         }
 
@@ -97,11 +97,11 @@ public class MyClubService {
         }
 
         // 클럽 멤버 생성 및 저장
-        ClubMember clubMember = ClubMember.builder()
-                .member(user)
-                .role(ClubMemberRole.PARTICIPANT) // 기본 역할은 PARTICIPANT
-                .state(ClubMemberState.APPLYING) // 가입 신청 상태로 설정
-                .build();
+        ClubMember clubMember = new ClubMember(
+                user,
+                ClubMemberRole.PARTICIPANT, // 기본 역할은 PARTICIPANT
+                ClubMemberState.APPLYING // 가입 신청 상태로 설정
+        );
         club.addClubMember(clubMember); // 클럽에 멤버 추가
         clubMemberRepository.save(clubMember); // 클럽 멤버 저장
 

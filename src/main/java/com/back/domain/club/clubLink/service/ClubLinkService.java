@@ -101,12 +101,12 @@ public class ClubLinkService {
             };
         }
 
-        ClubMember clubMember = ClubMember.builder()
-                .member(user)
-                .role(ClubMemberRole.PARTICIPANT)
-                .state(ClubMemberState.APPLYING)
-                .club(club)
-                .build();
+        ClubMember clubMember = new ClubMember(
+                user,
+                ClubMemberRole.PARTICIPANT,
+                ClubMemberState.APPLYING
+        );
+        clubMember.setClub(club);
 
         clubMemberRepository.save(clubMember);
 

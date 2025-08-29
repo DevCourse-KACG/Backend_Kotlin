@@ -109,13 +109,13 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("클럽이 존재하지 않습니다.")
         );
 
-        assertThat(club.clubMembers.size()).isEqualTo(5); // 멤버가 총 3명 인지 확인 (호스트 포함)
-        assertThat(club.clubMembers.get(0).getMember().getEmail()).isEqualTo(hostMember.getEmail());
-        assertThat(club.clubMembers.get(0).getRole()).isEqualTo(ClubMemberRole.HOST);
-        assertThat(club.clubMembers.get(4).getMember().getEmail()).isEqualTo(member1.getEmail());
-        assertThat(club.clubMembers.get(4).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
-        assertThat(club.clubMembers.get(3).getMember().getEmail()).isEqualTo(member2.getEmail());
-        assertThat(club.clubMembers.get(3).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
+        assertThat(club.getClubMembers().size()).isEqualTo(5); // 멤버가 총 3명 인지 확인 (호스트 포함)
+        assertThat(club.getClubMembers().get(0).getMember().getEmail()).isEqualTo(hostMember.getEmail());
+        assertThat(club.getClubMembers().get(0).getRole()).isEqualTo(ClubMemberRole.HOST);
+        assertThat(club.getClubMembers().get(4).getMember().getEmail()).isEqualTo(member1.getEmail());
+        assertThat(club.getClubMembers().get(4).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
+        assertThat(club.getClubMembers().get(3).getMember().getEmail()).isEqualTo(member2.getEmail());
+        assertThat(club.getClubMembers().get(3).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
     }
 
     @Test
@@ -171,9 +171,9 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("클럽이 존재하지 않습니다.")
         );
 
-        assertThat(club.clubMembers.size()).isEqualTo(4); // 중복된 멤버는 하나만 추가
-        assertThat(club.clubMembers.get(3).getMember().getEmail()).isEqualTo(member1.getEmail());
-        assertThat(club.clubMembers.get(3).getRole()).isEqualTo(ClubMemberRole.MANAGER); // 나중에 추가한 역할이 유지됨
+        assertThat(club.getClubMembers().size()).isEqualTo(4); // 중복된 멤버는 하나만 추가
+        assertThat(club.getClubMembers().get(3).getMember().getEmail()).isEqualTo(member1.getEmail());
+        assertThat(club.getClubMembers().get(3).getRole()).isEqualTo(ClubMemberRole.MANAGER); // 나중에 추가한 역할이 유지됨
     }
 
     @Test
@@ -194,7 +194,7 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("멤버가 존재하지 않습니다.")
         );
 
-        assertThat(club.clubMembers.size()).isEqualTo(3);
+        assertThat(club.getClubMembers().size()).isEqualTo(3);
 
         // JSON 데이터 파트 생성
         String jsonData = """
@@ -229,11 +229,11 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("클럽이 존재하지 않습니다.")
         );
 
-        assertThat(club.clubMembers.size()).isEqualTo(3);
-        assertThat(club.clubMembers.get(0).getMember().getEmail()).isEqualTo(hostMember.getEmail());
-        assertThat(club.clubMembers.get(0).getRole()).isEqualTo(ClubMemberRole.HOST);
-        assertThat(club.clubMembers.get(2).getMember().getEmail()).isEqualTo(member1.getEmail());
-        assertThat(club.clubMembers.get(2).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
+        assertThat(club.getClubMembers().size()).isEqualTo(3);
+        assertThat(club.getClubMembers().get(0).getMember().getEmail()).isEqualTo(hostMember.getEmail());
+        assertThat(club.getClubMembers().get(0).getRole()).isEqualTo(ClubMemberRole.HOST);
+        assertThat(club.getClubMembers().get(2).getMember().getEmail()).isEqualTo(member1.getEmail());
+        assertThat(club.getClubMembers().get(2).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT);
     }
 
     @Test
@@ -411,7 +411,7 @@ class ApiV1ClubMemberControllerTest {
         club = clubService.getClubById(club.getId()).orElseThrow(
                 () -> new IllegalStateException("클럽이 존재하지 않습니다.")
         );
-        assertThat(club.clubMembers.size()).isEqualTo(3); // 클럽에 멤버가 2명만 있어야 함 (호스트 + 참여자)
+        assertThat(club.getClubMembers().size()).isEqualTo(3); // 클럽에 멤버가 2명만 있어야 함 (호스트 + 참여자)
     }
 
     @Test
@@ -430,7 +430,7 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("멤버가 존재하지 않습니다.")
         );
 
-        assertThat(club.clubMembers.size()).isEqualTo(3); // 클럽에 멤버가 1명 추가되었는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(3); // 클럽에 멤버가 1명 추가되었는지 확인
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -452,10 +452,10 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("클럽이 존재하지 않습니다.")
         );
 
-        assertThat(club.clubMembers.size()).isEqualTo(3); // 클럽에 멤버가 여전히 존재해야 함
-        assertThat(club.clubMembers.get(1).getMember().getEmail()).isEqualTo(member1.getEmail());
-        assertThat(club.clubMembers.get(1).getRole()).isEqualTo(ClubMemberRole.MANAGER);
-        assertThat(club.clubMembers.get(1).getState()).isEqualTo(ClubMemberState.WITHDRAWN); // 상태가 WITHDRAWN으로 변경되었는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(3); // 클럽에 멤버가 여전히 존재해야 함
+        assertThat(club.getClubMembers().get(1).getMember().getEmail()).isEqualTo(member1.getEmail());
+        assertThat(club.getClubMembers().get(1).getRole()).isEqualTo(ClubMemberRole.MANAGER);
+        assertThat(club.getClubMembers().get(1).getState()).isEqualTo(ClubMemberState.WITHDRAWN); // 상태가 WITHDRAWN으로 변경되었는지 확인
     }
 
     @Test
@@ -526,7 +526,7 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("멤버가 존재하지 않습니다.")
         );
 
-        assertThat(club.clubMembers.size()).isEqualTo(3); // 클럽에 멤버가 3명 추가되었는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(3); // 클럽에 멤버가 3명 추가되었는지 확인
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -591,8 +591,8 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("멤버가 존재하지 않습니다.")
         );
 
-        assertThat(club.clubMembers.size()).isEqualTo(3);
-        assertThat(club.clubMembers.get(2).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT); // 참여자 역할 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(3);
+        assertThat(club.getClubMembers().get(2).getRole()).isEqualTo(ClubMemberRole.PARTICIPANT); // 참여자 역할 확인
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -615,11 +615,11 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("클럽이 존재하지 않습니다.")
         );
 
-        assertThat(club.clubMembers.size()).isEqualTo(3);
-        assertThat(club.clubMembers.get(0).getMember().getEmail()).isEqualTo(hostMember.getEmail());
-        assertThat(club.clubMembers.get(0).getRole()).isEqualTo(ClubMemberRole.HOST);
-        assertThat(club.clubMembers.get(2).getMember().getEmail()).isEqualTo(member1.getEmail());
-        assertThat(club.clubMembers.get(2).getRole()).isEqualTo(ClubMemberRole.MANAGER); // 역할이 MANAGER로 변경되었는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(3);
+        assertThat(club.getClubMembers().get(0).getMember().getEmail()).isEqualTo(hostMember.getEmail());
+        assertThat(club.getClubMembers().get(0).getRole()).isEqualTo(ClubMemberRole.HOST);
+        assertThat(club.getClubMembers().get(2).getMember().getEmail()).isEqualTo(member1.getEmail());
+        assertThat(club.getClubMembers().get(2).getRole()).isEqualTo(ClubMemberRole.MANAGER); // 역할이 MANAGER로 변경되었는지 확인
     }
 
     @Test
@@ -692,7 +692,7 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("멤버가 존재하지 않습니다.")
         );
 
-        assertThat(club.clubMembers.size()).isEqualTo(3); // 클럽에 멤버가 1명 추가되었는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(3); // 클럽에 멤버가 1명 추가되었는지 확인
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -726,7 +726,7 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("멤버가 존재하지 않습니다.")
         );
 
-        assertThat(club.clubMembers.size()).isEqualTo(3); // 클럽에 멤버가 3명 추가되었는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(3); // 클럽에 멤버가 3명 추가되었는지 확인
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -825,8 +825,8 @@ class ApiV1ClubMemberControllerTest {
         Member member2 = memberService.findMemberById(3L)
                 .orElseThrow(() -> new IllegalStateException("멤버가 존재하지 않습니다."));
 
-        ClubMember clubMember1 = club.clubMembers.get(1);
-        ClubMember clubMember2 = club.clubMembers.get(2);
+        ClubMember clubMember1 = club.getClubMembers().get(1);
+        ClubMember clubMember2 = club.getClubMembers().get(2);
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -851,7 +851,7 @@ class ApiV1ClubMemberControllerTest {
                 .andExpect(jsonPath("$.data.members[0].email").value(hostMember.getEmail()))
                 .andExpect(jsonPath("$.data.members[0].memberType").value(hostMember.getMemberType().name()))
                 .andExpect(jsonPath("$.data.members[0].profileImageUrl").value("")) // 호스트는 이미지 URL이 없으므로 빈 문자열
-                .andExpect(jsonPath("$.data.members[0].state").value(club.clubMembers.get(0).getState().name())) // 호스트의 상태 확인
+                .andExpect(jsonPath("$.data.members[0].state").value(club.getClubMembers().get(0).getState().name())) // 호스트의 상태 확인
 
                 .andExpect(jsonPath("$.data.members[1].clubMemberId").value(clubMember1.getId()))
                 .andExpect(jsonPath("$.data.members[1].memberId").value(member1.getId()))
@@ -892,8 +892,8 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("멤버가 존재하지 않습니다.")
         );
 
-        ClubMember clubMember1 = club.clubMembers.get(1); // member1의 클럽 멤버
-        ClubMember clubMember2 = club.clubMembers.get(2); // member2의 클럽 멤버
+        ClubMember clubMember1 = club.getClubMembers().get(1); // member1의 클럽 멤버
+        ClubMember clubMember2 = club.getClubMembers().get(2); // member2의 클럽 멤버
 
         // 클럽 멤버의 상태 변경
         clubMember1.updateState(ClubMemberState.INVITED); // member2를 JOINING 상태로 변경
@@ -995,15 +995,15 @@ class ApiV1ClubMemberControllerTest {
                 () -> new IllegalStateException("멤버가 존재하지 않습니다.")
         );
 
-        ClubMember clubMember1 = club.clubMembers.get(1); // member1의 클럽 멤버
-        ClubMember clubMember2 = club.clubMembers.get(2); // member2의 클럽 멤버
+        ClubMember clubMember1 = club.getClubMembers().get(1); // member1의 클럽 멤버
+        ClubMember clubMember2 = club.getClubMembers().get(2); // member2의 클럽 멤버
 
 
         // 클럽 멤버 상태를 WITHDRAWN으로 변경
         clubMember1.updateState(ClubMemberState.WITHDRAWN);
         clubMemberRepository.saveAndFlush(clubMember1); // 상태 변경된 클럽 멤버 저장
 
-        assertThat(club.clubMembers.size()).isEqualTo(3); // 클럽에 멤버가 2명 추가되었는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(3); // 클럽에 멤버가 2명 추가되었는지 확인
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -1027,7 +1027,7 @@ class ApiV1ClubMemberControllerTest {
                 .andExpect(jsonPath("$.data.members[0].email").value(hostMember.getEmail()))
                 .andExpect(jsonPath("$.data.members[0].memberType").value(hostMember.getMemberType().name()))
                 .andExpect(jsonPath("$.data.members[0].profileImageUrl").value("")) // 호스트는 이미지 URL이 없으므로 빈 문자열
-                .andExpect(jsonPath("$.data.members[0].state").value(club.clubMembers.get(0).getState().name())) // 호스트의 상태 확인
+                .andExpect(jsonPath("$.data.members[0].state").value(club.getClubMembers().get(0).getState().name())) // 호스트의 상태 확인
 
                 .andExpect(jsonPath("$.data.members[1].clubMemberId").value(clubMember2.getId()))
                 .andExpect(jsonPath("$.data.members[1].memberId").value(member2.getId()))
@@ -1061,7 +1061,7 @@ class ApiV1ClubMemberControllerTest {
         clubMember1.updateState(ClubMemberState.APPLYING); // 가입 신청 상태로 변경
         clubMemberRepository.saveAndFlush(clubMember1); // 상태 변경된 클럽 멤버 저장
 
-        assertThat(club.clubMembers.size()).isEqualTo(4); // 클럽에 멤버가 2명 추가되었는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(4); // 클럽에 멤버가 2명 추가되었는지 확인
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -1166,7 +1166,7 @@ class ApiV1ClubMemberControllerTest {
         clubMember1.updateState(ClubMemberState.WITHDRAWN); // WITHDRAWN 상태로 변경
         clubMemberRepository.saveAndFlush(clubMember1); // 상태 변경된 클럽 멤버 저장
 
-        assertThat(club.clubMembers.size()).isEqualTo(4); // 클럽에 멤버가 2명 추가되었는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(4); // 클럽에 멤버가 2명 추가되었는지 확인
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -1204,7 +1204,7 @@ class ApiV1ClubMemberControllerTest {
         clubMember1.updateState(ClubMemberState.INVITED); // INVITED 상태로 변경
         clubMemberRepository.saveAndFlush(clubMember1); // 상태 변경된 클럽 멤버 저장
 
-        assertThat(club.clubMembers.size()).isEqualTo(4); // 클럽에 멤버가 2명 추가되었는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(4); // 클럽에 멤버가 2명 추가되었는지 확인
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -1242,7 +1242,7 @@ class ApiV1ClubMemberControllerTest {
         clubMember1.updateState(ClubMemberState.APPLYING); // 가입 신청 상태로 변경
         clubMemberRepository.saveAndFlush(clubMember1); // 상태 변경된 클럽 멤버 저장
 
-        assertThat(club.clubMembers.size()).isEqualTo(4);
+        assertThat(club.getClubMembers().size()).isEqualTo(4);
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -1309,7 +1309,7 @@ class ApiV1ClubMemberControllerTest {
         clubMember1.updateState(ClubMemberState.APPLYING); // 가입 신청 상태로 변경
         clubMemberRepository.save(clubMember1); // 상태 변경된 클럽 멤버 저장
 
-        assertThat(club.clubMembers.size()).isEqualTo(4); // 클럽에 멤버가 2명 추가되었는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(4); // 클럽에 멤버가 2명 추가되었는지 확인
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -1327,7 +1327,7 @@ class ApiV1ClubMemberControllerTest {
                 .andExpect(jsonPath("$.message").value("가입 신청이 거절됐습니다."));
 
         // 클럽 멤버가 삭제됐는지 확인
-        assertThat(club.clubMembers.size()).isEqualTo(3); // 클럽에 멤버가 1명(호스트) 남아있는지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(3); // 클럽에 멤버가 1명(호스트) 남아있는지 확인
         assertThat(clubMemberRepository.existsById(clubMember1.getId())).isFalse(); // 클럽 멤버가 삭제되었는지 확인
     }
 

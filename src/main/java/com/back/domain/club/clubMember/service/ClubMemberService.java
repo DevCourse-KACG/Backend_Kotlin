@@ -46,11 +46,11 @@ public class ClubMemberService {
         Club club = clubService.getClubById(clubId)
                 .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
 
-        ClubMember clubMember = ClubMember.builder()
-                .member(member)
-                .role(role) // 기본 역할은 MEMBER
-                .state(ClubMemberState.INVITED) // 기본 상태는 INVITED
-                .build();
+        ClubMember clubMember = new ClubMember(
+                member,
+                role,
+                ClubMemberState.INVITED
+        );
 
         club.addClubMember(clubMember);
 
@@ -109,12 +109,15 @@ public class ClubMemberService {
         // 5. 새로운 멤버 엔티티 생성
         for (ClubMemberDtos.ClubMemberRegisterInfo memberInfo : newMemberRequests) {
             Member member = memberService.findMemberByEmail(memberInfo.email());
-            ClubMember newClubMember = ClubMember.builder()
-                    .member(member)
-                    .role(ClubMemberRole.fromString(memberInfo.role().toUpperCase()))
-                    .state(ClubMemberState.INVITED)
-                    .build();
+
+            ClubMember newClubMember = new ClubMember(
+                    member,
+                    ClubMemberRole.fromString(memberInfo.role().toUpperCase()),
+                    ClubMemberState.INVITED
+            );
+
             club.addClubMember(newClubMember); // 양방향 연관관계 설정
+
             membersToSave.add(newClubMember);
         }
 

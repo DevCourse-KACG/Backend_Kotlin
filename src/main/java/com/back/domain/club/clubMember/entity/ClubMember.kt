@@ -6,6 +6,7 @@ import com.back.domain.member.member.entity.Member
 import com.back.global.enums.ClubMemberRole
 import com.back.global.enums.ClubMemberState
 import jakarta.persistence.*
+import lombok.Builder
 
 @Entity
 class ClubMember(
@@ -55,5 +56,33 @@ class ClubMember(
 
     override fun hashCode(): Int {
         return id?.hashCode() ?: 0
+    }
+
+    fun setClub(club: Club) {
+        this.club = club
+    }
+
+    // --- builder(자바 호환성) ---
+    companion object {
+        @JvmStatic
+        fun builder() = Builder()
+    }
+
+    class Builder {
+        private lateinit var member: Member
+        private lateinit var role: ClubMemberRole
+        private lateinit var state: ClubMemberState
+        private var club: Club? = null
+
+        fun member(member: Member) = apply { this.member = member }
+        fun role(role: ClubMemberRole) = apply { this.role = role }
+        fun state(state: ClubMemberState) = apply { this.state = state }
+        fun club(club: Club) = apply { this.club = club }
+
+        fun build(): ClubMember {
+            val cm = ClubMember(member, role, state)
+            cm.club = this.club
+            return cm
+        }
     }
 }

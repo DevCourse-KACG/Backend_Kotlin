@@ -89,12 +89,12 @@ public class MemberService {
                 .orElseThrow(() -> new ServiceException(400, "클럽을 찾을 수 없습니다."));
 
         // 4. ClubMember 엔티티 생성 및 저장
-        ClubMember clubMember = ClubMember.builder()
-                .member(guest)
-                .club(club)
-                .role(ClubMemberRole.PARTICIPANT)
-                .state(ClubMemberState.APPLYING)
-                .build();
+        ClubMember clubMember = new ClubMember(
+                guest,
+                ClubMemberRole.PARTICIPANT,
+                ClubMemberState.APPLYING
+        );
+        clubMember.setClub(club);
 
         clubMemberRepository.save(clubMember);
 

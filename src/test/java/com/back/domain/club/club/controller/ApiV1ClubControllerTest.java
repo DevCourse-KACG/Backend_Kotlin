@@ -111,8 +111,8 @@ class ApiV1ClubControllerTest {
         assertThat(club.getEndDate()).isEqualTo(LocalDate.of(2023, 10, 31));
         assertThat(club.isPublic()).isTrue();
         assertThat(club.getLeaderId()).isEqualTo(1L);
-        assertThat(club.isState()).isTrue(); // 활성화 상태가 true인지 확인
-        assertThat(club.clubMembers.size()).isEqualTo(1); // 구성원이 한명(호스트)인지 확인
+        assertThat(club.getState()).isTrue(); // 활성화 상태가 true인지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(1); // 구성원이 한명(호스트)인지 확인
     }
 
     @Test
@@ -240,18 +240,18 @@ class ApiV1ClubControllerTest {
         assertThat(club.getEndDate()).isEqualTo(LocalDate.of(2023, 10, 31));
         assertThat(club.isPublic()).isTrue();
         assertThat(club.getLeaderId()).isEqualTo(1L);
-        assertThat(club.isState()).isTrue(); // 활성화 상태가 true인지 확인
-        assertThat(club.clubMembers.size()).isEqualTo(4); // 클럽 멤버가 4명인지 확인
+        assertThat(club.getState()).isTrue(); // 활성화 상태가 true인지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(4); // 클럽 멤버가 4명인지 확인
 
         // 클럽 멤 검증
-        assertThat(club.clubMembers.get(0).getRole().name()).isEqualTo("HOST");
-        assertThat(club.clubMembers.get(0).getMember().getId()).isEqualTo(1L);
-        assertThat(club.clubMembers.get(1).getRole().name()).isEqualTo("MANAGER");
-        assertThat(club.clubMembers.get(1).getMember().getId()).isEqualTo(2L);
-        assertThat(club.clubMembers.get(2).getRole().name()).isEqualTo("PARTICIPANT");
-        assertThat(club.clubMembers.get(2).getMember().getId()).isEqualTo(3L);
-        assertThat(club.clubMembers.get(3).getRole().name()).isEqualTo("PARTICIPANT");
-        assertThat(club.clubMembers.get(3).getMember().getId()).isEqualTo(4L);
+        assertThat(club.getClubMembers().get(0).getRole().name()).isEqualTo("HOST");
+        assertThat(club.getClubMembers().get(0).getMember().getId()).isEqualTo(1L);
+        assertThat(club.getClubMembers().get(1).getRole().name()).isEqualTo("MANAGER");
+        assertThat(club.getClubMembers().get(1).getMember().getId()).isEqualTo(2L);
+        assertThat(club.getClubMembers().get(2).getRole().name()).isEqualTo("PARTICIPANT");
+        assertThat(club.getClubMembers().get(2).getMember().getId()).isEqualTo(3L);
+        assertThat(club.getClubMembers().get(3).getRole().name()).isEqualTo("PARTICIPANT");
+        assertThat(club.getClubMembers().get(3).getMember().getId()).isEqualTo(4L);
 
     }
 
@@ -336,9 +336,9 @@ class ApiV1ClubControllerTest {
         assertThat(club.getEndDate()).isEqualTo(LocalDate.of(2024, 10, 31));
         assertThat(club.isPublic()).isTrue();
         assertThat(club.getLeaderId()).isEqualTo(1L);
-        assertThat(club.isRecruitingStatus()).isFalse(); // 모집 상태가 false인지 확인
-        assertThat(club.isState()).isTrue(); // 활성화 상태가 true인지 확인
-        assertThat(club.clubMembers.size()).isEqualTo(3);
+        assertThat(club.getRecruitingStatus()).isFalse(); // 모집 상태가 false인지 확인
+        assertThat(club.getState()).isTrue(); // 활성화 상태가 true인지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(3);
     }
 
     @Test
@@ -424,9 +424,9 @@ class ApiV1ClubControllerTest {
         assertThat(club.getEndDate()).isEqualTo(LocalDate.of(2024, 10, 31));
         assertThat(club.isPublic()).isTrue();
         assertThat(club.getLeaderId()).isEqualTo(originalLeaderId); // leaderId는 수정하지 않았으므로 원래 값과 동일
-        assertThat(club.isRecruitingStatus()).isFalse(); // 모집 상태가 false인지 확인
-        assertThat(club.isState()).isTrue(); // 활성화 상태가 true인지 확인
-        assertThat(club.clubMembers.size()).isEqualTo(3);
+        assertThat(club.getRecruitingStatus()).isFalse(); // 모집 상태가 false인지 확인
+        assertThat(club.getState()).isTrue(); // 활성화 상태가 true인지 확인
+        assertThat(club.getClubMembers().size()).isEqualTo(3);
     }
 
     @Test
@@ -564,7 +564,7 @@ class ApiV1ClubControllerTest {
         club = clubService.getClubById(club.getId()).orElseThrow(
                 () -> new IllegalStateException("클럽이 존재하지 않습니다.")
         );
-        assertThat(club.isState()).isFalse(); // 활성화 상태가 false인지 확인
+        assertThat(club.getState()).isFalse(); // 활성화 상태가 false인지 확인
     }
 
     @Test
@@ -671,7 +671,7 @@ class ApiV1ClubControllerTest {
                 .andExpect(jsonPath("$.data.category").value(club.getCategory().name()))
                 .andExpect(jsonPath("$.data.mainSpot").value(club.getMainSpot()))
                 .andExpect(jsonPath("$.data.maximumCapacity").value(club.getMaximumCapacity()))
-                .andExpect(jsonPath("$.data.recruitingStatus").value(club.isRecruitingStatus()))
+                .andExpect(jsonPath("$.data.recruitingStatus").value(club.getRecruitingStatus()))
                 .andExpect(jsonPath("$.data.eventType").value(club.getEventType().name()))
                 .andExpect(jsonPath("$.data.startDate").value(club.getStartDate().toString()))
                 .andExpect(jsonPath("$.data.endDate").value(club.getEndDate().toString()))
