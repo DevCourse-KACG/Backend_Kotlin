@@ -245,7 +245,7 @@ public class FriendService {
         // 친구 삭제
         friendRepository.delete(friend);
 
-        return new FriendMemberDto(friendMember);
+        return FriendMemberDto.from(friendMember);
     }
 
     /**
