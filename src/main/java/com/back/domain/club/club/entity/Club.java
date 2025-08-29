@@ -90,6 +90,16 @@ public class Club {
   @Builder.Default
   private List<Schedule> clubSchedules = new ArrayList<>();
 
+  // TODO: 코틀린과의 호환성을 위한 임시 getter. Club 엔티티가 코틀린으로 전환되면 삭제해주세요.
+  public Long getId() {
+    return this.id;
+  }
+
+  // TODO: 코틀린과의 호환성을 위한 임시 getter. Club 엔티티가 코틀린으로 전환되면 삭제해주세요.
+  public String getName() {
+    return this.name;
+  }
+
   // ---------------- 메서드 ----------------
     /**
      * 클럽 활성화 상태를 변경합니다.
@@ -122,7 +132,6 @@ public class Club {
    */
   public void addClubSchedule(Schedule schedule) {
       this.clubSchedules.add(schedule);
-      schedule.setClub(this); // 양방향 연관관계 설정
   }
   /**
    * 클럽의 이미지 URL을 업데이트합니다.
