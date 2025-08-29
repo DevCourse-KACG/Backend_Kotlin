@@ -474,8 +474,8 @@ public class ApiV1MemberControllerTest {
         mockMvc.perform(post("/api/v1/members/auth/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.message").value("유효하지 않은 Refresh Token 입니다."))
+                .andExpect(jsonPath("$.code").value(401))
+                .andExpect(jsonPath("$.message").value("유효하지 않은 API Key입니다."))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
