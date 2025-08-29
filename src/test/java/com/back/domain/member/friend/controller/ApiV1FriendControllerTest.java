@@ -166,7 +166,7 @@ class ApiV1FriendControllerTest {
         // 로그인 회원(친구 요청 보낸 회원)
         Member me = memberRepository.findById(1L).orElseThrow();
         // 친구 엔티티
-        Friend friend = friendRepository.findFirstByRequestedByOrderByIdDesc(me).orElseThrow();
+        Friend friend = friendRepository.findFirstByRequestedByOrderByIdDesc(me);
 
         resultActions
                 .andExpect(handler().handlerType(ApiV1FriendController.class))

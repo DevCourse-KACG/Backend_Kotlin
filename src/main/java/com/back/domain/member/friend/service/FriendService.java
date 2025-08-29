@@ -114,26 +114,25 @@ public class FriendService {
         Member higherMember = memberId < responder.getId() ? responder : requester;
 
         // 이미 친구인 경우 예외 처리
-        friendRepository
-                .findByMembers(requester, responder)
-                .ifPresent(existingFriend -> {
-                    ErrorCode errorCode;
-                    // 친구 관계 상태에 따라 에러 메시지
-                    switch (existingFriend.getStatus()) {
-                        case PENDING -> {
-                            // 요청자 여부에 따라 에러 메시지
-                            if (existingFriend.getRequestedBy().equals(requester)) {
-                                errorCode = FriendErrorCode.FRIEND_ALREADY_REQUEST_PENDING;
-                            } else {
-                                errorCode = FriendErrorCode.FRIEND_ALREADY_RESPOND_PENDING;
-                            }
-                        }
-                        case ACCEPTED -> errorCode = FriendErrorCode.FRIEND_ALREADY_ACCEPTED;
-                        case REJECTED -> errorCode = FriendErrorCode.FRIEND_ALREADY_REJECTED;
-                        default -> errorCode = FriendErrorCode.FRIEND_STATUS_UNHANDLED;
+        Friend existingFriend = friendRepository.findByMembers(requester, responder);
+        if (existingFriend != null) {
+            ErrorCode errorCode;
+            // 친구 관계 상태에 따라 에러 메시지
+            switch (existingFriend.getStatus()) {
+                case PENDING -> {
+                    // 요청자 여부에 따라 에러 메시지
+                    if (existingFriend.getRequestedBy().equals(requester)) {
+                        errorCode = FriendErrorCode.FRIEND_ALREADY_REQUEST_PENDING;
+                    } else {
+                        errorCode = FriendErrorCode.FRIEND_ALREADY_RESPOND_PENDING;
                     }
-                    throw new ServiceException(errorCode);
-                });
+                }
+                case ACCEPTED -> errorCode = FriendErrorCode.FRIEND_ALREADY_ACCEPTED;
+                case REJECTED -> errorCode = FriendErrorCode.FRIEND_ALREADY_REJECTED;
+                default -> errorCode = FriendErrorCode.FRIEND_STATUS_UNHANDLED;
+            }
+            throw new ServiceException(errorCode);
+        }
 
         // 친구 요청 생성
         Friend friend = new Friend(
