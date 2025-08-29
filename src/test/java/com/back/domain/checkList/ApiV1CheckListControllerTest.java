@@ -67,17 +67,9 @@ public class ApiV1CheckListControllerTest {
   void setUp() {
     member = memberRepository.findById(1L).orElseThrow(() -> new IllegalStateException("테스트용 멤버(ID: 1)가 존재하지 않습니다"));
 
-    clubMember = ClubMember.builder()
-        .member(member)
-        .role(ClubMemberRole.MANAGER)
-        .state(ClubMemberState.JOINING)
-        .build();
+    clubMember = new ClubMember(member, ClubMemberRole.MANAGER, ClubMemberState.JOINING);
 
-    clubMember2 = ClubMember.builder()
-        .member(member)
-        .role(ClubMemberRole.MANAGER)
-        .state(ClubMemberState.JOINING)
-        .build();
+    clubMember2 = new ClubMember(member, ClubMemberRole.MANAGER, ClubMemberState.JOINING);
 
     // 클럽 생성
     Club clubBuilder = Club.builder()
@@ -145,18 +137,9 @@ public class ApiV1CheckListControllerTest {
     );
 
     List<CheckListItem> checkListItems = new ArrayList<>();
-    checkListItems.add(CheckListItem.builder()
-        .content("테스트 체크리스트 아이템1")
-        .category(CheckListItemCategory.PREPARATION)
-        .sequence(1)
-        .isChecked(false)
-        .build());
+    checkListItems.add(new CheckListItem("테스트 체크리스트 아이템1", CheckListItemCategory.PREPARATION, 1, false, new ArrayList<>()));
 
-    CheckList checkListBuilder = CheckList.builder()
-            .schedule(scheduleBuilder2)
-            .isActive(true)
-            .checkListItems(checkListItems)
-        .build();
+    CheckList checkListBuilder = new CheckList(true, scheduleBuilder2, checkListItems);
 
 
     scheduleBuilder2.updateCheckList(checkListBuilder);
@@ -317,11 +300,7 @@ public class ApiV1CheckListControllerTest {
   void t4() throws Exception {
     // 새로운 클럽 멤버 생성
     Member anotherMember = memberRepository.findById(2L).isPresent() ? memberRepository.findById(2L).get() : null;
-    ClubMember anotherClubMember = ClubMember.builder()
-        .member(anotherMember)
-        .role(ClubMemberRole.PARTICIPANT) // 호스트 또는 관리자가 아닌 경우
-        .state(ClubMemberState.JOINING)
-        .build();
+    ClubMember anotherClubMember = new ClubMember(anotherMember, ClubMemberRole.PARTICIPANT, ClubMemberState.JOINING); // 호스트 또는 관리자가 아닌 경우
 
     club.addClubMember(anotherClubMember);
     clubRepository.save(club);
@@ -572,11 +551,7 @@ public class ApiV1CheckListControllerTest {
 
     Member anotherMember = memberRepository.findById(2L).isPresent() ? memberRepository.findById(2L).get() : null;
 
-    ClubMember anotherClubMember = ClubMember.builder()
-        .member(anotherMember)
-        .role(ClubMemberRole.PARTICIPANT) // 호스트 또는 관리자가 아닌 경우
-        .state(ClubMemberState.JOINING)
-        .build();
+    ClubMember anotherClubMember = new ClubMember(anotherMember, ClubMemberRole.PARTICIPANT, ClubMemberState.JOINING); // 호스트 또는 관리자가 아닌 경우
 
     club.addClubMember(anotherClubMember);
     clubRepository.save(club);
@@ -655,11 +630,7 @@ public class ApiV1CheckListControllerTest {
     // 새로운 클럽 멤버 생성
     Member anotherMember = memberRepository.findById(2L).isPresent() ? memberRepository.findById(2L).get() : null;
 
-    ClubMember anotherClubMember = ClubMember.builder()
-        .member(anotherMember)
-        .role(ClubMemberRole.PARTICIPANT) // 호스트 또는 관리자가 아닌 경우
-        .state(ClubMemberState.JOINING)
-        .build();
+    ClubMember anotherClubMember = new ClubMember(anotherMember, ClubMemberRole.PARTICIPANT, ClubMemberState.JOINING); // 호스트 또는 관리자가 아닌 경우
 
     club.addClubMember(anotherClubMember);
     clubRepository.save(club);

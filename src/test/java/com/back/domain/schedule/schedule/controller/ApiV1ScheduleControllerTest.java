@@ -512,7 +512,7 @@ class ApiV1ScheduleControllerTest {
 
         // 체크리스트가 비활성화 되었는지 확인
         if( updatedSchedule.getCheckList() != null) {
-            assertThat(updatedSchedule.getCheckList().isActive).isFalse();
+            assertThat(updatedSchedule.getCheckList().isActive()).isFalse();
         }
     }
 
