@@ -170,151 +170,149 @@ public class TestInitData {
         clubs = new HashMap<>();
 
         // 장기 공개 모임 - 모집 중
-        Club club1 = Club.builder()
-                .name("산책 모임")
-                .category(ClubCategory.SPORTS)
-                .mainSpot("서울")
-                .maximumCapacity(25)
-                .recruitingStatus(true)
-                .eventType(EventType.LONG_TERM)
-                .startDate(LocalDate.parse("2025-07-05"))
-                .endDate(LocalDate.parse("2025-08-30"))
-                .isPublic(true)
-                .leaderId(leader1.getId())
-                .state(true).build();
+        Club club1 = new Club(
+                null,
+                "산책 모임",
+                null,
+                ClubCategory.SPORTS,
+                "서울",
+                25,
+                true,
+                EventType.LONG_TERM,
+                LocalDate.parse("2025-07-05"),
+                LocalDate.parse("2025-08-30"),
+                null,
+                true,
+                leader1.getId(),
+                true
+        );
         clubRepository.save(club1);
         clubs.put(club1.getName(), club1);
 
-        ClubMember clubMember1 = ClubMember.builder()
-                .member(leader1)
-                .club(club1)
-                .role(ClubMemberRole.HOST)
-                .state(ClubMemberState.JOINING)
-                .build();
+        ClubMember clubMember1 = new ClubMember(leader1, ClubMemberRole.HOST, ClubMemberState.JOINING);
+        club1.addClubMember(clubMember1);
         clubMemberRepository.save(clubMember1);
 
         // 장기 비공개 모임 - 모집 마감
-        Club club2 = Club.builder()
-                .name("친구 모임")
-                .category(ClubCategory.TRAVEL)
-                .mainSpot("강원도")
-                .maximumCapacity(4)
-                .recruitingStatus(false)
-                .eventType(EventType.LONG_TERM)
-                .startDate(LocalDate.parse("2025-05-01"))
-                .endDate(LocalDate.parse("2026-12-31"))
-                .isPublic(false)
-                .leaderId(leader1.getId())
-                .state(true).build();
+        Club club2 = new Club(
+                null,
+                "친구 모임",
+                null,
+                ClubCategory.TRAVEL,
+                "강원도",
+                4,
+                false,
+                EventType.LONG_TERM,
+                LocalDate.parse("2025-05-01"),
+                LocalDate.parse("2026-12-31"),
+                null,
+                false,
+                leader1.getId(),
+                true
+        );
         clubRepository.save(club2);
         clubs.put(club2.getName(), club2);
 
-        ClubMember clubMember2 = ClubMember.builder()
-                .member(leader1)
-                .club(club2)
-                .role(ClubMemberRole.HOST)
-                .state(ClubMemberState.JOINING)
-                .build();
+        ClubMember clubMember2 = new ClubMember(leader1, ClubMemberRole.HOST, ClubMemberState.JOINING);
+        club2.addClubMember(clubMember2);
         clubMemberRepository.save(clubMember2);
 
         // 단기 비공개 모임 - 모집중
-        Club club3 = Club.builder()
-                .name("친구 모임2")
-                .category(ClubCategory.TRAVEL)
-                .mainSpot("제주도")
-                .maximumCapacity(5)
-                .recruitingStatus(true)
-                .eventType(EventType.SHORT_TERM)
-                .startDate(LocalDate.parse("2025-07-01"))
-                .endDate(LocalDate.parse("2025-12-31"))
-                .isPublic(false)
-                .leaderId(leader1.getId())
-                .state(true).build();
+        Club club3 = new Club(
+                null,
+                "친구 모임2",
+                null,
+                ClubCategory.TRAVEL,
+                "제주도",
+                5,
+                true,
+                EventType.SHORT_TERM,
+                LocalDate.parse("2025-07-01"),
+                LocalDate.parse("2025-12-31"),
+                null,
+                false,
+                leader1.getId(),
+                true
+        );
         clubRepository.save(club3);
         clubs.put(club3.getName(), club3);
 
-        ClubMember clubMember3 = ClubMember.builder()
-                .member(leader1)
-                .club(club3)
-                .role(ClubMemberRole.HOST)
-                .state(ClubMemberState.JOINING)
-                .build();
+        ClubMember clubMember3 = new ClubMember(leader1, ClubMemberRole.HOST, ClubMemberState.JOINING);
+        club3.addClubMember(clubMember3);
         clubMemberRepository.save(clubMember3);
 
         Member leader2 = members.get("최지우");
 
         // 일회성 공개 모임 - 모집 중
-        Club club4 = Club.builder()
-                .name("A도시 러닝 대회")
-                .category(ClubCategory.SPORTS)
-                .mainSpot("서울")
-                .maximumCapacity(50)
-                .recruitingStatus(true)
-                .eventType(EventType.ONE_TIME)
-                .startDate(LocalDate.parse("2025-08-10"))
-                .endDate(LocalDate.parse("2025-08-10"))
-                .isPublic(true)
-                .leaderId(leader2.getId())
-                .state(true).build();
+        Club club4 = new Club(
+                null,
+                "A도시 러닝 대회",
+                null,
+                ClubCategory.SPORTS,
+                "서울",
+                50,
+                true,
+                EventType.ONE_TIME,
+                LocalDate.parse("2025-08-10"),
+                LocalDate.parse("2025-08-10"),
+                null,
+                true,
+                leader2.getId(),
+                true
+        );
         clubRepository.save(club4);
         clubs.put(club4.getName(), club4);
 
-        ClubMember clubMember4 = ClubMember.builder()
-                .member(leader2)
-                .club(club4)
-                .role(ClubMemberRole.HOST)
-                .state(ClubMemberState.JOINING)
-                .build();
+        ClubMember clubMember4 = new ClubMember(leader2, ClubMemberRole.HOST, ClubMemberState.JOINING);
+        club4.addClubMember(clubMember4);
         clubMemberRepository.save(clubMember4);
 
         // 종료일 지난 모임
-        Club nClub1 = Club.builder()
-                .name("독서 모임")
-                .category(ClubCategory.STUDY)
-                .mainSpot("부산")
-                .maximumCapacity(10)
-                .recruitingStatus(true)
-                .eventType(EventType.SHORT_TERM)
-                .startDate(LocalDate.parse("2025-07-12"))
-                .endDate(LocalDate.parse("2025-07-12"))
-                .imageUrl("img3")
-                .isPublic(false)
-                .leaderId(leader2.getId())
-                .state(true).build();
+        Club nClub1 = new Club(
+                null,
+                "독서 모임",
+                null,
+                ClubCategory.STUDY,
+                "부산",
+                10,
+                true,
+                EventType.SHORT_TERM,
+                LocalDate.parse("2025-07-12"),
+                LocalDate.parse("2025-07-12"),
+                "img3",
+                false,
+                leader2.getId(),
+                true
+        );
         clubRepository.save(nClub1);
         clubs.put(nClub1.getName(), nClub1);
 
-        ClubMember nClubMember1 = ClubMember.builder()
-                .member(leader2)
-                .club(nClub1)
-                .role(ClubMemberRole.HOST)
-                .state(ClubMemberState.JOINING)
-                .build();
+        ClubMember nClubMember1 = new ClubMember(leader2, ClubMemberRole.HOST, ClubMemberState.JOINING);
+        nClub1.addClubMember(nClubMember1);
         clubMemberRepository.save(nClubMember1);
 
         // 삭제된 모임
-        Club nClub2 = Club.builder()
-                .name("테니스 모임")
-                .category(ClubCategory.SPORTS)
-                .mainSpot("충청도 A 테니스장")
-                .maximumCapacity(2)
-                .recruitingStatus(false)
-                .eventType(EventType.SHORT_TERM)
-                .startDate(LocalDate.parse("2025-07-05"))
-                .endDate(LocalDate.parse("2025-08-11"))
-                .imageUrl("img4")
-                .isPublic(false)
-                .leaderId(leader1.getId())
-                .state(false).build();
+        Club nClub2 = new Club(
+                null,
+                "테니스 모임",
+                null,
+                ClubCategory.SPORTS,
+                "충청도 A 테니스장",
+                2,
+                false,
+                EventType.SHORT_TERM,
+                LocalDate.parse("2025-07-05"),
+                LocalDate.parse("2025-08-11"),
+                "img4",
+                false,
+                leader1.getId(),
+                false
+        );
         clubRepository.save(nClub2);
         clubs.put(nClub2.getName(), nClub2);
 
-        ClubMember nClubMember2 = ClubMember.builder()
-                .member(leader2)
-                .club(nClub2)
-                .role(ClubMemberRole.HOST)
-                .state(ClubMemberState.JOINING)
-                .build();
+        ClubMember nClubMember2 = new ClubMember(leader2, ClubMemberRole.HOST, ClubMemberState.JOINING);
+        nClub2.addClubMember(nClubMember2);
         clubMemberRepository.save(nClubMember2);
     }
 
@@ -347,12 +345,12 @@ public class TestInitData {
             Club club = clubs.get(gm.clubName());
             Member member = members.get(gm.memberNickname());
 
-            ClubMember clubMember = ClubMember.builder()
-                    .member(member)
-                    .club(club)
-                    .role(gm.role())
-                    .state(ClubMemberState.JOINING)
-                    .build();
+            ClubMember clubMember = new ClubMember(
+                    member,
+                    gm.role(),
+                    ClubMemberState.JOINING
+            );
+            clubMember.setClub(club);
 
             clubMemberRepository.save(clubMember);
         }

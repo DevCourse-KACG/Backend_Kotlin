@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -110,7 +111,7 @@ class ApiV1ClubControllerTest {
         assertThat(club.getEndDate()).isEqualTo(LocalDate.of(2023, 10, 31));
         assertThat(club.isPublic()).isTrue();
         assertThat(club.getLeaderId()).isEqualTo(1L);
-        assertThat(club.isState()).isTrue(); // 활성화 상태가 true인지 확인
+        assertThat(club.getState()).isTrue(); // 활성화 상태가 true인지 확인
         assertThat(club.getClubMembers().size()).isEqualTo(1); // 구성원이 한명(호스트)인지 확인
     }
 
@@ -239,7 +240,7 @@ class ApiV1ClubControllerTest {
         assertThat(club.getEndDate()).isEqualTo(LocalDate.of(2023, 10, 31));
         assertThat(club.isPublic()).isTrue();
         assertThat(club.getLeaderId()).isEqualTo(1L);
-        assertThat(club.isState()).isTrue(); // 활성화 상태가 true인지 확인
+        assertThat(club.getState()).isTrue(); // 활성화 상태가 true인지 확인
         assertThat(club.getClubMembers().size()).isEqualTo(4); // 클럽 멤버가 4명인지 확인
 
         // 클럽 멤 검증
@@ -320,9 +321,7 @@ class ApiV1ClubControllerTest {
 
 
         // 추가 검증: 클럽이 실제로 수정되었는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        club = clubService.getClubById(club.getId());
 
         assertThat(club.getName()).isEqualTo("수정된 테스트 그룹");
         assertThat(club.getBio()).isEqualTo("수정된 테스트 그룹 설명");
@@ -335,8 +334,8 @@ class ApiV1ClubControllerTest {
         assertThat(club.getEndDate()).isEqualTo(LocalDate.of(2024, 10, 31));
         assertThat(club.isPublic()).isTrue();
         assertThat(club.getLeaderId()).isEqualTo(1L);
-        assertThat(club.isRecruitingStatus()).isFalse(); // 모집 상태가 false인지 확인
-        assertThat(club.isState()).isTrue(); // 활성화 상태가 true인지 확인
+        assertThat(club.getRecruitingStatus()).isFalse(); // 모집 상태가 false인지 확인
+        assertThat(club.getState()).isTrue(); // 활성화 상태가 true인지 확인
         assertThat(club.getClubMembers().size()).isEqualTo(3);
     }
 
@@ -408,9 +407,7 @@ class ApiV1ClubControllerTest {
 
 
         // 추가 검증: 클럽이 실제로 수정되었는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        club = clubService.getClubById(club.getId());
 
         assertThat(club.getName()).isEqualTo("수정된 테스트 그룹");
         assertThat(club.getBio()).isEqualTo(originalBio); // bio는 수정하지 않았으므로 원래 값과 동일
@@ -423,8 +420,8 @@ class ApiV1ClubControllerTest {
         assertThat(club.getEndDate()).isEqualTo(LocalDate.of(2024, 10, 31));
         assertThat(club.isPublic()).isTrue();
         assertThat(club.getLeaderId()).isEqualTo(originalLeaderId); // leaderId는 수정하지 않았으므로 원래 값과 동일
-        assertThat(club.isRecruitingStatus()).isFalse(); // 모집 상태가 false인지 확인
-        assertThat(club.isState()).isTrue(); // 활성화 상태가 true인지 확인
+        assertThat(club.getRecruitingStatus()).isFalse(); // 모집 상태가 false인지 확인
+        assertThat(club.getState()).isTrue(); // 활성화 상태가 true인지 확인
         assertThat(club.getClubMembers().size()).isEqualTo(3);
     }
 
@@ -560,10 +557,8 @@ class ApiV1ClubControllerTest {
                 .andExpect(jsonPath("$.message").value("클럽이 삭제됐습니다."));
 
         // 추가 검증: 클럽이 실제로는 삭제되지 않고 활성화 상태가 false로 변경됐는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
-        assertThat(club.isState()).isFalse(); // 활성화 상태가 false인지 확인
+        club = clubService.getClubById(club.getId());
+        assertThat(club.getState()).isFalse(); // 활성화 상태가 false인지 확인
     }
 
     @Test
@@ -670,7 +665,7 @@ class ApiV1ClubControllerTest {
                 .andExpect(jsonPath("$.data.category").value(club.getCategory().name()))
                 .andExpect(jsonPath("$.data.mainSpot").value(club.getMainSpot()))
                 .andExpect(jsonPath("$.data.maximumCapacity").value(club.getMaximumCapacity()))
-                .andExpect(jsonPath("$.data.recruitingStatus").value(club.isRecruitingStatus()))
+                .andExpect(jsonPath("$.data.recruitingStatus").value(club.getRecruitingStatus()))
                 .andExpect(jsonPath("$.data.eventType").value(club.getEventType().name()))
                 .andExpect(jsonPath("$.data.startDate").value(club.getStartDate().toString()))
                 .andExpect(jsonPath("$.data.endDate").value(club.getEndDate().toString()))
@@ -707,21 +702,15 @@ class ApiV1ClubControllerTest {
     void getPublicClubList() throws Exception {
         // given
         // testinitdata의 club 정보 이용
-        Club club1 = clubService.getClubById(1L).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        Club club1 = clubService.getClubById(1L);
 
-        Club club2 = clubService.getClubById(4L).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        Club club2 = clubService.getClubById(4L);
 
         // when
         ResultActions resultActions = mvc.perform(
-                multipart("/api/v1/clubs/public")
-                        .with(request -> {
-                            request.setMethod("GET"); // GET 메소드로 요청
-                            return request;
-                        })
+                get("/api/v1/clubs/public")
+                .param("page", "0")
+                .param("size", "20")
         ).andDo(print());
 
         // then

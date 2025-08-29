@@ -1,6 +1,6 @@
 package com.back.domain.club.clubLink.service;
 
-import com.back.domain.club.club.dtos.ClubControllerDtos;
+import com.back.domain.club.club.dtos.SimpleClubInfoResponse;
 import com.back.domain.club.club.entity.Club;
 import com.back.domain.club.club.repository.ClubRepository;
 import com.back.domain.club.clubLink.dtos.CreateClubLinkResponse;
@@ -102,26 +102,26 @@ public class ClubLinkService {
             };
         }
 
-        ClubMember clubMember = ClubMember.builder()
-                .member(user)
-                .role(ClubMemberRole.PARTICIPANT)
-                .state(ClubMemberState.APPLYING)
-                .club(club)
-                .build();
+        ClubMember clubMember = new ClubMember(
+                user,
+                ClubMemberRole.PARTICIPANT,
+                ClubMemberState.APPLYING
+        );
+        clubMember.setClub(club);
 
         clubMemberRepository.save(clubMember);
 
         return ClubApplyResult.SUCCESS;
     }
 
-    public ClubControllerDtos.SimpleClubInfoResponse getClubInfoByInvitationToken(String token) {
+    public SimpleClubInfoResponse getClubInfoByInvitationToken(String token) {
         ClubLink clubLink = validateInviteTokenOrThrow(token);
         Club club = clubLink.getClub();
 
         Member leader = memberRepository.findById(club.getLeaderId())
                 .orElseThrow(() -> new ServiceException(400, "해당 아이디의 모임장을 찾을 수 없습니다."));
 
-        return new ClubControllerDtos.SimpleClubInfoResponse(
+        return new SimpleClubInfoResponse(
                 club.getId(),
                 club.getName(),
                 club.getCategory().name(),

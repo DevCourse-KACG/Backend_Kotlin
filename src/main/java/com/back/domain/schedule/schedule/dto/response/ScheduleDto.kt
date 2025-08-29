@@ -32,7 +32,7 @@ data class ScheduleDto(
                 title = schedule.title,
                 startDate = schedule.startDate,
                 endDate = schedule.endDate,
-                clubId = schedule.club.getId(),
+                clubId = schedule.club.id !!,
                 checkListId = schedule.checkList?.getId()
             )
         }

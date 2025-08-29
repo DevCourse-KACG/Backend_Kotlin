@@ -40,7 +40,7 @@ data class ScheduleDetailDto(
                 startDate = schedule.startDate,
                 endDate = schedule.endDate,
                 spot = schedule.spot,
-                clubId = schedule.club.id,
+                clubId = schedule.club.id !!,
                 checkListId = schedule.checkList?.id
             )
         }
