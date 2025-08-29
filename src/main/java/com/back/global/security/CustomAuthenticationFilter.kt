@@ -104,14 +104,16 @@ class CustomAuthenticationFilter(
             throw ServiceException(499, "access token이 유효하지 않습니다.")
         }
 
+        val m = member ?: throw ServiceException(401, "Access Token이 유효하지 않습니다.")
         val user = SecurityUser(
-            member!!.id ?: throw ServiceException(400, "회원 id가 없습니다."),
-            member.nickname ?: throw ServiceException(400, "회원 nickname이 없습니다."),
-            member.tag ?: throw ServiceException(400, "회원 tag가 없습니다."),
-            member.memberType,
-            member.password ?: throw ServiceException(400, "비밀번호가 없습니다."),
-            member.getAuthorities()
+            m.id ?: throw ServiceException(400, "회원 id가 없습니다."),
+            m.nickname ?: throw ServiceException(400, "회원 nickname이 없습니다."),
+            m.tag ?: throw ServiceException(400, "회원 tag가 없습니다."),
+            m.memberType,
+            m.password ?: throw ServiceException(400, "비밀번호가 없습니다."),
+            m.getAuthorities()
         )
+
 
         val auth = UsernamePasswordAuthenticationToken(
             user,
