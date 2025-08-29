@@ -36,8 +36,7 @@ public class MyClubService {
         // 멤버 가져오기
         Member user = rq.getActor();
         // 클럽 ID로 클럽 가져오기
-        Club club = clubService.getClubById(clubId)
-                .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
+        Club club = clubService.getClubById(clubId);
         ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, user)
                 .orElseThrow(() -> new ServiceException(400, "클럽 초대 상태가 아닙니다."));
 
@@ -69,8 +68,7 @@ public class MyClubService {
         Member user = memberService.findMemberById(rq.getActor().getId())
                 .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
         // 클럽 ID로 클럽 가져오기
-        Club club = clubService.getClubById(clubId)
-                .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
+        Club club = clubService.getClubById(clubId);
 
         // 클럽이 비공개 상태인지 확인
         if (!club.isPublic()) {
@@ -120,8 +118,7 @@ public class MyClubService {
                 .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
 
         // 클럽 ID로 클럽 가져오기
-        Club club = clubService.getClubById(clubId)
-                .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
+        Club club = clubService.getClubById(clubId);
 
         // 클럽 멤버 정보 조회
         return clubMemberRepository.findByClubAndMember(club, user)
@@ -167,8 +164,7 @@ public class MyClubService {
                 .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
 
         // 클럽 ID로 클럽 가져오기
-        Club club = clubService.getClubById(clubId)
-                .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
+        Club club = clubService.getClubById(clubId);
 
         // 클럽 멤버 정보 조회
         ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, user)

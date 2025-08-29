@@ -43,8 +43,7 @@ public class ClubMemberService {
      */
     @Transactional
     public ClubMember addMemberToClub(Long clubId, Member member, ClubMemberRole role) {
-        Club club = clubService.getClubById(clubId)
-                .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
+        Club club = clubService.getClubById(clubId);
 
         ClubMember clubMember = new ClubMember(
                 member,
@@ -64,8 +63,7 @@ public class ClubMemberService {
      */
     @Transactional
     public void addMembersToClub(Long clubId, ClubMemberDtos.ClubMemberRegisterRequest reqBody) {
-        Club club = clubService.getClubById(clubId)
-                .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
+        Club club = clubService.getClubById(clubId);
 
         // 1. 요청 데이터에서 이메일 기준 중복 제거 (나중에 들어온 정보가 우선)
         Map<String, ClubMemberDtos.ClubMemberRegisterInfo> uniqueMemberInfoByEmail = reqBody.members().stream()
@@ -135,8 +133,7 @@ public class ClubMemberService {
     @Transactional
     public void withdrawMemberFromClub(Long clubId, Long memberId) {
         Member user = rq.getActor();
-        Club club = clubService.getClubById(clubId)
-                .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
+        Club club = clubService.getClubById(clubId);
         Member member = memberService.findMemberById(memberId)
                 .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
         ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, member)
@@ -160,8 +157,7 @@ public class ClubMemberService {
      */
     @Transactional
     public void changeMemberRole(Long clubId, Long memberId, @NotBlank String role) {
-        Club club = clubService.getClubById(clubId)
-                .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
+        Club club = clubService.getClubById(clubId);
         Member member = memberService.findMemberById(memberId)
                 .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
         ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, member)
@@ -191,8 +187,7 @@ public class ClubMemberService {
     @Transactional(readOnly = true)
     public ClubMemberDtos.ClubMemberResponse getClubMembers(Long clubId, String state) {
         // 클럽 확인
-        Club club = clubService.getClubById(clubId)
-                .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
+        Club club = clubService.getClubById(clubId);
 
         // 클럽멤버 목록 반환
         List<ClubMember> clubMembers;
@@ -261,8 +256,7 @@ public class ClubMemberService {
      */
     @Transactional
     public void handleMemberApplication(Long clubId, Long memberId, boolean approve) {
-        Club club = clubService.getClubById(clubId)
-                .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
+        Club club = clubService.getClubById(clubId);
         Member member = memberService.findMemberById(memberId)
                 .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
         ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, member)

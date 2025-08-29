@@ -44,18 +44,6 @@ class ClubService(
     private val s3Service: S3Service,
     private val rq: Rq
 ){
-    /**
-     * 클럽 호스트 권한을 검증합니다.
-     * @param clubId 클럽 ID
-     * @throws ServiceException 권한이 없는 경우 403 예외 발생
-     */
-    fun validateHostPermission(clubId: Long?) {
-        val user = memberService.findMemberById(rq.actor?.id)
-            .orElseThrow<ServiceException?>(Supplier { ServiceException(404, "해당 ID의 유저를 찾을 수 없습니다.") })
-        if (!clubMemberValidService.checkMemberRole(clubId, user.id, arrayOf<ClubMemberRole>(ClubMemberRole.HOST))) {
-            throw ServiceException(403, "권한이 없습니다.")
-        }
-    }
 
     val lastCreatedClub: Club
         /**
@@ -73,18 +61,9 @@ class ClubService(
      * @param clubId 클럽 ID
      * @return 클럽 정보
      */
-    fun getClubById(clubId: Long): Optional<Club?> {
+    fun getClubById(clubId: Long): Club {
         return clubRepository.findById(clubId)
-    }
-
-    /**
-     * 모임 ID로 모임 조회
-     * @param clubId 모임 ID
-     * @return 모임 엔티티
-     */
-    fun getClub(clubId: Long): Club {
-        return clubRepository.findById(clubId)
-            .orElseThrow<NoSuchElementException?>(Supplier { NoSuchElementException(ClubErrorCode.CLUB_NOT_FOUND.message) })
+            .orElseThrow { NoSuchElementException(ClubErrorCode.CLUB_NOT_FOUND.message) }
     }
 
     /**
@@ -93,11 +72,7 @@ class ClubService(
      * @return 활성화된 모임 엔티티
      */
     fun getActiveClub(clubId: Long): Club {
-        val club = clubRepository.findByIdAndStateIsTrue(clubId)
-        if (club == null) {
-            throw NoSuchElementException(ClubErrorCode.CLUB_NOT_FOUND.message)
-        }
-        return club
+        return clubRepository.findByIdAndStateIsTrue(clubId) ?: throw NoSuchElementException(ClubErrorCode.CLUB_NOT_FOUND.message)
     }
 
     /**
@@ -105,12 +80,8 @@ class ClubService(
      * @param clubId 모임 ID
      * @return 활성화된 모임 엔티티
      */
-    fun getValidAndActiveClub(clubId: Long?): Club {
-        val club = clubRepository.findValidAndActiveClub(clubId)
-        if (club == null) {
-            throw NoSuchElementException(ClubErrorCode.CLUB_NOT_FOUND.message)
-        }
-        return club
+    fun getValidAndActiveClub(clubId: Long): Club {
+        return clubRepository.findValidAndActiveClub(clubId) ?: throw NoSuchElementException(ClubErrorCode.CLUB_NOT_FOUND.message)
     }
 
     /**
@@ -130,26 +101,20 @@ class ClubService(
         image: MultipartFile?
     ): Club {
         // 1. 이미지 없이 클럽 생성
-
-
         val club = clubRepository.saveAndFlush<Club>(
             Club(
-                null,  // id는 DB에서 생성되므로 null
-                reqBody.name,
-                reqBody.bio,  // Kotlin에서는 nullable이므로 그대로 전달 가능
-                ClubCategory.fromString(reqBody.category.uppercase(Locale.getDefault())),
-                reqBody.mainSpot,
-                reqBody.maximumCapacity,
-                true,  // recruitingStatus 기본값
-                EventType.fromString(reqBody.eventType.uppercase(Locale.getDefault())),
-                LocalDate.parse(reqBody.startDate),
-                LocalDate.parse(reqBody.endDate),
-                null,  // optional
-                reqBody.isPublic,
-                Optional.ofNullable<Member?>(rq.actor)
-                    .map<Long?>(Member::id)
-                    .orElseThrow<ServiceException?>(Supplier { ServiceException(401, "인증되지 않은 사용자입니다.") }),
-                true // state 기본값
+                name = reqBody.name,
+                bio = reqBody.bio,  // Kotlin에서는 nullable이므로 그대로 전달 가능
+                category = ClubCategory.fromString(reqBody.category.uppercase(Locale.getDefault())),
+                mainSpot = reqBody.mainSpot,
+                maximumCapacity = reqBody.maximumCapacity,
+                recruitingStatus = true,  // recruitingStatus 기본값
+                eventType = EventType.fromString(reqBody.eventType.uppercase(Locale.getDefault())),
+                startDate = LocalDate.parse(reqBody.startDate),
+                endDate = LocalDate.parse(reqBody.endDate),
+                isPublic = reqBody.isPublic,
+                leaderId = rq.actor?.id ?: throw ServiceException(401, "인증되지 않은 사용자입니다."),
+                state = true // state 기본값
             )
         )
         // 2. 이미지가 제공된 경우 S3에 업로드
@@ -174,11 +139,10 @@ class ClubService(
             ClubMemberState.JOINING // 초기 상태는 JOINING으로 설정
         )
 
-
         club.addClubMember(clubLeader) // 연관관계 편의 메서드를 사용하여 Club에 ClubMember 추가
 
         // 클럽 멤버 설정
-        reqBody.clubMembers.stream().forEach { memberInfo: CreateClubRequestMemberInfo? ->
+        reqBody.clubMembers.forEach { memberInfo: CreateClubRequestMemberInfo? ->
             // 멤버 ID로 Member 엔티티 조회
             val member = memberService.findMemberById(memberInfo!!.id)
                 .orElseThrow<NoSuchElementException?>(Supplier { NoSuchElementException("ID " + memberInfo.id + "에 해당하는 멤버를 찾을 수 없습니다.") })
@@ -211,13 +175,13 @@ class ClubService(
             .orElseThrow<ServiceException?>(Supplier { ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다.") })
 
         // 클럽 정보 업데이트
-        val name: String? = if (dto.name != null) dto.name else club.name
-        val bio = if (dto.bio != null) dto.bio else club.bio
+        val name: String? = dto.name ?: club.name
+        val bio = dto.bio ?: club.bio
         val category =
             if (dto.category != null) ClubCategory.fromString(dto.category.uppercase(Locale.getDefault())) else club.category
-        val mainSpot: String? = if (dto.mainSpot != null) dto.mainSpot else club.mainSpot
-        val maximumCapacity = if (dto.maximumCapacity != null) dto.maximumCapacity else club.maximumCapacity
-        val recruitingStatus = if (dto.recruitingStatus != null) dto.recruitingStatus else club.recruitingStatus
+        val mainSpot: String? = dto.mainSpot ?: club.mainSpot
+        val maximumCapacity = dto.maximumCapacity ?: club.maximumCapacity
+        val recruitingStatus = dto.recruitingStatus ?: club.recruitingStatus
         val eventType =
             if (dto.eventType != null) EventType.fromString(dto.eventType.uppercase(Locale.getDefault())) else club.eventType
         val startDate = if (dto.startDate != null) LocalDate.parse(dto.startDate) else club.startDate
@@ -238,9 +202,9 @@ class ClubService(
         )
 
         // 이미지가 제공된 경우 S3에 업로드
-        if (image != null && !image.isEmpty()) {
+        if (image != null && !image.isEmpty) {
             // 이미지 파일 크기 제한 (5MB)
-            if (image.getSize() > (5 * 1024 * 1024)) { // 5MB
+            if (image.size > (5 * 1024 * 1024)) { // 5MB
                 throw ServiceException(400, "이미지 파일 크기는 5MB를 초과할 수 없습니다.")
             }
 

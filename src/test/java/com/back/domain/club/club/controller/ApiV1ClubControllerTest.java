@@ -321,9 +321,7 @@ class ApiV1ClubControllerTest {
 
 
         // 추가 검증: 클럽이 실제로 수정되었는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        club = clubService.getClubById(club.getId());
 
         assertThat(club.getName()).isEqualTo("수정된 테스트 그룹");
         assertThat(club.getBio()).isEqualTo("수정된 테스트 그룹 설명");
@@ -409,9 +407,7 @@ class ApiV1ClubControllerTest {
 
 
         // 추가 검증: 클럽이 실제로 수정되었는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        club = clubService.getClubById(club.getId());
 
         assertThat(club.getName()).isEqualTo("수정된 테스트 그룹");
         assertThat(club.getBio()).isEqualTo(originalBio); // bio는 수정하지 않았으므로 원래 값과 동일
@@ -561,9 +557,7 @@ class ApiV1ClubControllerTest {
                 .andExpect(jsonPath("$.message").value("클럽이 삭제됐습니다."));
 
         // 추가 검증: 클럽이 실제로는 삭제되지 않고 활성화 상태가 false로 변경됐는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        club = clubService.getClubById(club.getId());
         assertThat(club.getState()).isFalse(); // 활성화 상태가 false인지 확인
     }
 
@@ -708,13 +702,9 @@ class ApiV1ClubControllerTest {
     void getPublicClubList() throws Exception {
         // given
         // testinitdata의 club 정보 이용
-        Club club1 = clubService.getClubById(1L).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        Club club1 = clubService.getClubById(1L);
 
-        Club club2 = clubService.getClubById(4L).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        Club club2 = clubService.getClubById(4L);
 
         // when
         ResultActions resultActions = mvc.perform(

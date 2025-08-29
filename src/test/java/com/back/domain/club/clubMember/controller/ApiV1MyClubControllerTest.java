@@ -350,7 +350,7 @@ class ApiV1MyClubControllerTest {
                 .andExpect(handler().methodName("acceptClubInvitation"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(404))
-                .andExpect(jsonPath("$.message").value("클럽이 존재하지 않습니다."));
+                .andExpect(jsonPath("$.message").value("모임을 찾을 수 없습니다."));
     }
 
     @Test
@@ -588,7 +588,7 @@ class ApiV1MyClubControllerTest {
                 .andExpect(handler().methodName("applyForPublicClub"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(404))
-                .andExpect(jsonPath("$.message").value("클럽이 존재하지 않습니다."));
+                .andExpect(jsonPath("$.message").value("모임을 찾을 수 없습니다."));
     }
 
     @Test
@@ -709,7 +709,7 @@ class ApiV1MyClubControllerTest {
                 .andExpect(handler().methodName("getMyClubInfo"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(404))
-                .andExpect(jsonPath("$.message").value("클럽이 존재하지 않습니다."));
+                .andExpect(jsonPath("$.message").value("모임을 찾을 수 없습니다."));
     }
 
     @Test
@@ -954,7 +954,7 @@ class ApiV1MyClubControllerTest {
                 .andExpect(handler().methodName("cancelClubApplication"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(404))
-                .andExpect(jsonPath("$.message").value("클럽이 존재하지 않습니다."));
+                .andExpect(jsonPath("$.message").value("모임을 찾을 수 없습니다."));
     }
 
     @Test

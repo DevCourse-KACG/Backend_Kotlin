@@ -36,7 +36,7 @@ class ClubAuthorizationChecker (
      */
     @Transactional(readOnly = true)
     fun isClubHost(clubId: Long, memberId: Long): Boolean {
-        val club = clubService.getClub(clubId)
+        val club = clubService.getClubById(clubId)
 
         return club.leaderId == memberId
     }
