@@ -56,12 +56,13 @@ public class ClubLinkService {
         LocalDateTime expireAt = now.plusDays(7);
 
         //클럽 링크 객체 생성 및 db 저장
-        ClubLink clubLink = ClubLink.builder()
-                .inviteCode(inviteCode)
-                .createdAt(now)
-                .expiresAt(expireAt)
-                .club(club)
-                .build();
+        ClubLink clubLink = new ClubLink(
+                null,
+                inviteCode,
+                now,
+                expireAt,
+                club
+        );
 
         clubLinkRepository.save(clubLink);
 
