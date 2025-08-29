@@ -4,6 +4,7 @@ import com.back.domain.api.request.TokenRefreshRequest
 import com.back.domain.member.member.dto.request.*
 import com.back.domain.member.member.dto.response.*
 import com.back.domain.member.member.entity.Member
+import com.back.domain.member.member.error.MemberErrorCode
 import com.back.domain.member.member.service.MemberService
 import com.back.global.exception.ServiceException
 import com.back.global.rq.Rq
@@ -60,8 +61,13 @@ class ApiV1MemberController(
     @DeleteMapping("/me")
     fun withdrawMembership(response: HttpServletResponse): RsData<MemberWithdrawMembershipResponse> {
         val user = rq.actor ?: throw ServiceException(401, "인증이 필요합니다.")
-        val responseDto = memberService.withdrawMember(user.nickname,
-            user.tag ?: throw ServiceException(401, "회원을 찾지 못했습니다."))
+        val responseDto = memberService.withdrawMember(
+                        user.nickname,
+                        user.tag ?: throw ServiceException(
+                            MemberErrorCode.MEMBER_NOT_FOUND.status,
+                            MemberErrorCode.MEMBER_NOT_FOUND.message
+                        )
+        )
         response.addCookie(deleteCookie())
         return RsData.of(200, "회원탈퇴 성공", responseDto)
     }
@@ -85,7 +91,10 @@ class ApiV1MemberController(
         @RequestPart("profileImage", required = false) profileImage: MultipartFile?,
     ): RsData<MemberDetailInfoResponse> {
         val user = rq.actor ?: throw ServiceException(401, "인증이 필요합니다.")
-        val memberDetailInfoResponse = memberService.updateMemberInfo(user.id ?: throw ServiceException(401, "회원을 찾지 못했습니다."), dto, profileImage)
+        val memberId = user.id ?: throw ServiceException(
+                        MemberErrorCode.MEMBER_NOT_FOUND.status,
+                        MemberErrorCode.MEMBER_NOT_FOUND.message)
+        val memberDetailInfoResponse = memberService.updateMemberInfo(memberId, dto, profileImage)
         return RsData.of(200, "유저 정보 수정 성공", memberDetailInfoResponse)
     }
 
@@ -137,8 +146,12 @@ class ApiV1MemberController(
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/auth/verify-password")
     fun checkPasswordValidity(@Valid @RequestBody dto: PasswordCheckRequestDto): RsData<MemberPasswordResponse> {
-        val user = rq.actor!!
-        val response = memberService.checkPasswordValidity(user.id ?: throw ServiceException(401, "회원을 찾지 못했습니다."), dto.password)
+        val user = rq.actor ?: throw ServiceException(401, "인증이 필요합니다.")
+        val memberId = user.id ?: throw ServiceException(
+            MemberErrorCode.MEMBER_NOT_FOUND.status,
+            MemberErrorCode.MEMBER_NOT_FOUND.message
+        )
+        val response = memberService.checkPasswordValidity(memberId, dto.password)
         return RsData.of(200, "비밀번호 유효성 반환 성공", response)
     }
 
