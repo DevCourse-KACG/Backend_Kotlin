@@ -5,12 +5,10 @@ import com.back.domain.club.club.service.ClubService
 import com.back.domain.club.clubMember.service.ClubMemberService
 import com.back.domain.member.member.service.MemberService
 import com.back.global.enums.ClubMemberRole
-import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component("clubAuthorizationChecker")
-@RequiredArgsConstructor
 class ClubAuthorizationChecker (
     private val memberService: MemberService,
     private val clubRepository: ClubRepository,

@@ -29,6 +29,6 @@ interface ClubRepository : JpaRepository<Club, Long>, JpaSpecificationExecutor<C
             """
     )
     fun findValidAndActiveClub(
-        @Param("clubId") clubId: Long?
+        @Param("clubId") clubId: Long
     ): Club?
 }

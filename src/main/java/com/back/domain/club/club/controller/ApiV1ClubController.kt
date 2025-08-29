@@ -9,7 +9,6 @@ import com.back.global.security.SecurityUser
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import lombok.RequiredArgsConstructor
 import org.springdoc.core.annotations.ParameterObject
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -22,7 +21,6 @@ import java.io.IOException
 
 @RestController
 @RequestMapping("/api/v1/clubs")
-@RequiredArgsConstructor
 @Tag(name = "ClubController", description = "클럽 관련 API")
 class ApiV1ClubController (
     private val clubService : ClubService
@@ -39,8 +37,8 @@ class ApiV1ClubController (
         return RsData<ClubResponse?>(
             201, "클럽이 생성됐습니다.",
             ClubResponse(
-                club.id!!,
-                club.leaderId!!
+                club.id ?: throw IllegalStateException("클럽 ID가 존재하지 않습니다."),
+                club.leaderId ?: throw IllegalStateException("클럽장 ID가 존재하지 않습니다.")
             )
         )
     }

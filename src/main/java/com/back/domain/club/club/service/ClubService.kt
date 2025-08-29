@@ -11,7 +11,6 @@ import com.back.domain.club.club.repository.ClubSpecification.likeMainSpot
 import com.back.domain.club.club.repository.ClubSpecification.likeName
 import com.back.domain.club.clubMember.entity.ClubMember
 import com.back.domain.club.clubMember.service.ClubMemberValidService
-import com.back.domain.member.member.entity.Member
 import com.back.domain.member.member.service.MemberService
 import com.back.global.aws.S3Service
 import com.back.global.enums.ClubCategory
@@ -21,7 +20,6 @@ import com.back.global.enums.EventType
 import com.back.global.exception.ServiceException
 import com.back.global.rq.Rq
 import jakarta.validation.Valid
-import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
@@ -36,7 +34,6 @@ import java.util.function.Function
 import java.util.function.Supplier
 
 @Service
-@RequiredArgsConstructor
 class ClubService(
     private val clubRepository: ClubRepository,
     private val memberService: MemberService,
@@ -131,7 +128,7 @@ class ClubService(
 
         // 클럽 생성 시 유저를 리더로 설정하고 멤버에 추가
         val leader = memberService.findMemberById(rq.actor?.id!!)
-            .orElseThrow<NoSuchElementException?>(Supplier { NoSuchElementException("ID " + rq.actor!!.id + "에 해당하는 리더를 찾을 수 없습니다.") })
+            .orElseThrow { NoSuchElementException("ID ${rq.actor!!.id}에 해당하는 리더를 찾을 수 없습니다.") }
 
         val clubLeader = ClubMember(
             leader,
@@ -145,7 +142,7 @@ class ClubService(
         reqBody.clubMembers.forEach { memberInfo: CreateClubRequestMemberInfo? ->
             // 멤버 ID로 Member 엔티티 조회
             val member = memberService.findMemberById(memberInfo!!.id)
-                .orElseThrow<NoSuchElementException?>(Supplier { NoSuchElementException("ID " + memberInfo.id + "에 해당하는 멤버를 찾을 수 없습니다.") })
+                .orElseThrow { NoSuchElementException("ID ${memberInfo.id}에 해당하는 멤버를 찾을 수 없습니다.") }
 
             // ClubMember 엔티티 생성
             val clubMember = ClubMember(
@@ -172,7 +169,7 @@ class ClubService(
     @Throws(IOException::class)
     fun updateClub(clubId: Long, dto: @Valid UpdateClubRequest, image: MultipartFile?): Club {
         val club = clubRepository.findById(clubId)
-            .orElseThrow<ServiceException?>(Supplier { ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다.") })
+            .orElseThrow { ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다.") }
 
         // 클럽 정보 업데이트
         val name: String? = dto.name ?: club.name
@@ -218,7 +215,7 @@ class ClubService(
 
     fun deleteClub(clubId: Long) {
         val club = clubRepository.findById(clubId)
-            .orElseThrow<ServiceException?>(Supplier { ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다.") })
+            .orElseThrow { ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다.") }
 
         // 클럽 삭제
         club.changeState(false) // 클럽 상태를 비활성화로 변경
@@ -233,10 +230,10 @@ class ClubService(
     @Transactional(readOnly = true)
     fun getClubInfo(clubId: Long): ClubInfoResponse {
         val club = clubRepository.findById(clubId)
-            .orElseThrow<ServiceException?>(Supplier { ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다.") })
+            .orElseThrow { ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다.") }
 
         val leader = memberService.findMemberById(club.leaderId!!)
-            .orElseThrow<ServiceException?>(Supplier { ServiceException(404, "해당 ID의 클럽 리더를 찾을 수 없습니다.") })
+            .orElseThrow { ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다.") }
 
         // 비공개 클럽인 경우, 현재 로그인한 유저가 클럽 멤버인지 확인
         if (!club.isPublic) {
@@ -300,9 +297,9 @@ class ClubService(
 
         // 3. 최종적으로 조합된 Specification과 Pageable 객체로 JpaSpecificationExecutor의 findAll을 호출합니다.
         return clubRepository.findAll(spec, pageable)
-            .map<SimpleClubInfoWithoutLeader?>(Function { club: Club? ->
+            .map { club ->
                 SimpleClubInfoWithoutLeader(
-                    club!!.id!!,
+                    club.id!!,
                     club.name,
                     club.category.toString(),
                     club.imageUrl,
@@ -310,9 +307,9 @@ class ClubService(
                     club.eventType.toString(),
                     club.startDate.toString(),
                     club.endDate.toString(),
-                    (if (club.bio != null) club.bio else "")!!
+                    club.bio ?: ""
                 )
-            })
+            }
     }
 
     fun findClubById(clubId: Long): Optional<Club?> {
