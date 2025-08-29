@@ -18,10 +18,10 @@ data class ScheduleCreateReqBody(
     val content: String,
 
     @Schema(description = "일정 시작일")
-    val startDate: LocalDateTime?,
+    val startDate: LocalDateTime,
 
     @Schema(description = "일정 종료일")
-    val endDate: LocalDateTime?,
+    val endDate: LocalDateTime,
 
     @Schema(description = "일정 장소")
     val spot: String
