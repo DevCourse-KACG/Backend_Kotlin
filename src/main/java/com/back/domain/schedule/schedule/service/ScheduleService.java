@@ -104,9 +104,12 @@ public class ScheduleService {
      */
     @Transactional(readOnly = true)
     public Schedule getActiveScheduleEntityById(Long scheduleId) {
-        return scheduleRepository
-                .findActiveScheduleById(scheduleId)
-                .orElseThrow(() -> new NoSuchElementException(ScheduleErrorCode.SCHEDULE_NOT_FOUND.getMessage()));
+        Schedule schedule = scheduleRepository
+            .findActiveScheduleById(scheduleId);
+        if (schedule == null) {
+            throw new NoSuchElementException(ScheduleErrorCode.SCHEDULE_NOT_FOUND.getMessage());
+        }
+        return schedule;
     }
 
     /**
@@ -127,9 +130,10 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public ScheduleDetailDto getLatestClubSchedule(Long clubId) {
         Schedule schedule = scheduleRepository
-                .findFirstByClubIdOrderByIdDesc(clubId)
-                .orElseThrow(() -> new NoSuchElementException(ScheduleErrorCode.SCHEDULE_NOT_FOUND.getMessage()));
-
+                .findFirstByClubIdOrderByIdDesc(clubId);
+        if (schedule == null) {
+            throw new NoSuchElementException(ScheduleErrorCode.SCHEDULE_NOT_FOUND.getMessage());
+        }
         return ScheduleDetailDto.from(schedule);
     }
 
