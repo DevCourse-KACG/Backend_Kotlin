@@ -13,7 +13,6 @@ import com.back.domain.schedule.schedule.entity.Schedule
 import com.back.domain.schedule.schedule.error.ScheduleErrorCode
 import com.back.domain.schedule.schedule.repository.ScheduleRepository
 import com.back.global.exception.ServiceException
-import lombok.RequiredArgsConstructor
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,7 +21,6 @@ import java.time.LocalDateTime
 import java.time.YearMonth
 
 @Service
-@RequiredArgsConstructor
 class ScheduleService(
     private val scheduleRepository: ScheduleRepository,
     private val clubRepository: ClubRepository,
@@ -201,7 +199,7 @@ class ScheduleService(
      */
     private fun getDateTimeRange(startDate: LocalDate?, endDate: LocalDate?): DateTimeRange {
         val (startDateTime, endDateTime) = when {
-            // 1. 시작일과 종료일이 모두 있는 경우 (종료일 포함)
+            // 1. 시작일과 종료일이 모두 있는 경우 (종료일 미포함)
             startDate != null && endDate != null -> {
                 startDate.atStartOfDay() to endDate.atStartOfDay()
             }
