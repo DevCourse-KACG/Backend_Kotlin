@@ -2,7 +2,8 @@ package com.back.domain.club.clubMember.service;
 
 import com.back.domain.club.club.entity.Club;
 import com.back.domain.club.club.service.ClubService;
-import com.back.domain.club.clubMember.dtos.MyClubControllerDtos;
+import com.back.domain.club.clubMember.dtos.ClubListItem;
+import com.back.domain.club.clubMember.dtos.MyClubList;
 import com.back.domain.club.clubMember.entity.ClubMember;
 import com.back.domain.club.clubMember.repository.ClubMemberRepository;
 import com.back.domain.member.member.entity.Member;
@@ -125,7 +126,7 @@ public class MyClubService {
                 .orElseThrow(() -> new ServiceException(404, "클럽 멤버 정보가 존재하지 않습니다."));
     }
 
-    public MyClubControllerDtos.MyClubList getMyClubs() {
+    public MyClubList getMyClubs() {
         // 현재 로그인한 멤버 가져오기
         Member user = memberService.findMemberById(rq.getActor().getId())
                 .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
@@ -134,10 +135,10 @@ public class MyClubService {
         List<ClubMember> clubMembers = clubMemberRepository.findAllByMember(user);
 
         // 클럽 멤버 정보를 기반으로 클럽 목록 생성
-        List<MyClubControllerDtos.ClubListItem> clubListItems = clubMembers.stream()
+        List<ClubListItem> clubListItems = clubMembers.stream()
                 .map(clubMember -> {
                     Club club = clubMember.getClub();
-                    return new MyClubControllerDtos.ClubListItem(
+                    return new ClubListItem(
                             club.getId(),
                             club.getName(),
                             club.getBio(),
@@ -155,7 +156,7 @@ public class MyClubService {
                 .toList();
 
         // 클럽 목록을 MyClubList DTO로 반환
-        return new MyClubControllerDtos.MyClubList(clubListItems);
+        return new MyClubList(clubListItems);
     }
 
     public Club cancelClubApplication(Long clubId) {

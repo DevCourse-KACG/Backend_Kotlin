@@ -1,7 +1,9 @@
 package com.back.domain.club.clubMember.controller;
 
 import com.back.domain.club.club.entity.Club;
-import com.back.domain.club.clubMember.dtos.MyClubControllerDtos;
+import com.back.domain.club.clubMember.dtos.MyClubList;
+import com.back.domain.club.clubMember.dtos.MyInfoInClub;
+import com.back.domain.club.clubMember.dtos.SimpleClubInfo;
 import com.back.domain.club.clubMember.entity.ClubMember;
 import com.back.domain.club.clubMember.service.ClubMemberService;
 import com.back.domain.club.clubMember.service.MyClubService;
@@ -28,9 +30,9 @@ public class ApiV1MyClubController {
 
     @GetMapping
     @Operation(summary = "내 클럽 목록 조회")
-    public RsData<MyClubControllerDtos.MyClubList> getMyClubs() {
+    public RsData<MyClubList> getMyClubs() {
         // 유저의 클럽 멤버 정보를 조회하는 서비스 메서드를 호출
-        MyClubControllerDtos.MyClubList myClubList = myClubService.getMyClubs();
+        MyClubList myClubList = myClubService.getMyClubs();
 
         // 조회된 클럽 멤버 정보를 응답으로 반환
         return RsData.of(200,
@@ -42,7 +44,7 @@ public class ApiV1MyClubController {
 
     @GetMapping("{clubId}")
     @Operation(summary = "클럽에서 내 정보 조회")
-    public RsData<MyClubControllerDtos.MyInfoInClub> getMyClubInfo(
+    public RsData<MyInfoInClub> getMyClubInfo(
             @PathVariable Long clubId
     ) {
         // 클럽 멤버 정보를 조회하는 서비스 메서드를 호출
@@ -51,7 +53,7 @@ public class ApiV1MyClubController {
         // 조회된 클럽 멤버 정보를 응답으로 반환
         return RsData.of(200,
                 "클럽 멤버 정보를 조회했습니다.",
-                new MyClubControllerDtos.MyInfoInClub(
+                new MyInfoInClub(
                         clubMember.getId(),
                         clubMember.getClub().getId(),
                         clubMember.getClub().getName(),
@@ -64,7 +66,7 @@ public class ApiV1MyClubController {
 
     @PatchMapping("{clubId}/join")
     @Operation(summary = "클럽 초대 수락")
-    public RsData<MyClubControllerDtos.SimpleClubInfo> acceptClubInvitation(
+    public RsData<SimpleClubInfo> acceptClubInvitation(
             @PathVariable Long clubId
     ) {
         // 클럽 초대 수락 로직을 처리하는 서비스 메서드를 호출
@@ -74,7 +76,7 @@ public class ApiV1MyClubController {
         return RsData.of(
                 200,
                 "클럽 초대를 수락했습니다.",
-                new MyClubControllerDtos.SimpleClubInfo(
+                new SimpleClubInfo(
                         selectedClub.getId(),
                         selectedClub.getName()
                 )
@@ -83,7 +85,7 @@ public class ApiV1MyClubController {
 
     @DeleteMapping("{clubId}/invitation")
     @Operation(summary = "클럽 초대 거절")
-    public RsData<MyClubControllerDtos.SimpleClubInfo> rejectClubInvitation(
+    public RsData<SimpleClubInfo> rejectClubInvitation(
             @PathVariable Long clubId
     ) {
         // 클럽 초대 거절 로직을 처리하는 서비스 메서드를 호출
@@ -93,7 +95,7 @@ public class ApiV1MyClubController {
         return RsData.of(
                 200,
                 "클럽 초대를 거절했습니다.",
-                new MyClubControllerDtos.SimpleClubInfo(
+                new SimpleClubInfo(
                         selectedClub.getId(),
                         selectedClub.getName()
                 )
@@ -102,7 +104,7 @@ public class ApiV1MyClubController {
 
     @PostMapping("{clubId}/apply")
     @Operation(summary = "클럽 가입 신청")
-    public RsData<MyClubControllerDtos.SimpleClubInfo> applyForPublicClub(
+    public RsData<SimpleClubInfo> applyForPublicClub(
             @PathVariable Long clubId
     ) {
         // 클럽 가입 신청 로직을 처리하는 서비스 메서드를 호출
@@ -112,7 +114,7 @@ public class ApiV1MyClubController {
         return RsData.of(
                 200,
                 "클럽 가입 신청을 완료했습니다.",
-                new MyClubControllerDtos.SimpleClubInfo(
+                new SimpleClubInfo(
                         selectedClub.getId(),
                         selectedClub.getName()
                 )
@@ -121,7 +123,7 @@ public class ApiV1MyClubController {
 
     @DeleteMapping("{clubId}/apply")
     @Operation(summary = "클럽 가입 신청 취소")
-    public RsData<MyClubControllerDtos.SimpleClubInfo> cancelClubApplication(
+    public RsData<SimpleClubInfo> cancelClubApplication(
             @PathVariable Long clubId
     ) {
         // 클럽 가입 신청 취소 로직을 처리하는 서비스 메서드를 호출
@@ -131,7 +133,7 @@ public class ApiV1MyClubController {
         return RsData.of(
                 200,
                 "클럽 가입 신청을 취소했습니다.",
-                new MyClubControllerDtos.SimpleClubInfo(
+                new SimpleClubInfo(
                         selectedClub.getId(),
                         selectedClub.getName()
                 )
@@ -140,7 +142,7 @@ public class ApiV1MyClubController {
 
     @DeleteMapping("{clubId}/withdraw")
     @Operation(summary = "클럽 탈퇴")
-    public RsData<MyClubControllerDtos.SimpleClubInfo> withdrawFromClub(
+    public RsData<SimpleClubInfo> withdrawFromClub(
             @PathVariable Long clubId
     ) {
         // 클럽 탈퇴 로직을 처리하는 서비스 메서드를 호출
