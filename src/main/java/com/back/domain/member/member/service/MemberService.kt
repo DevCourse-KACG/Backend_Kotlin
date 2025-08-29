@@ -81,8 +81,7 @@ class MemberService(
 
     // ============================== [회원] 로그인 ==============================
     fun loginMember(@Valid dto: MemberLoginDto): MemberAuthResponse {
-        val email = dto.email.lowercase(Locale.getDefault())
-        val memberInfo = memberInfoRepository.findByEmail(email)
+        val memberInfo = memberInfoRepository.findByEmail(dto.email)
             .orElseThrow { ServiceException(400, "해당 사용자를 찾을 수 없습니다.") }
 
         val member = memberInfo.getMember()
@@ -171,8 +170,7 @@ class MemberService(
 
     // ============================== [검증 메소드] ==============================
     private fun validateDuplicateMember(dto: MemberRegisterDto) {
-        val email = dto.email.lowercase(Locale.getDefault())
-        if (memberInfoRepository.findByEmail(email).isPresent) {
+        if (memberInfoRepository.findByEmail(dto.email).isPresent) {
             throw ServiceException(400, "이미 사용 중인 이메일입니다.")
         }
     }
@@ -185,7 +183,7 @@ class MemberService(
 
     private fun validatePassword(password: String, member: Member) {
         if (!passwordEncoder.matches(password, member.password)) {
-            throw ServiceException(401, "비밀번호가 일치하지 않습니다.")
+            throw ServiceException(400, "해당 사용자를 찾을 수 없습니다.")
         }
     }
 
@@ -211,9 +209,8 @@ class MemberService(
     }
 
     private fun createAndSaveMemberInfo(dto: MemberRegisterDto, member: Member, apiKey: String): MemberInfo {
-        val normalizedEmail = dto.email.lowercase(Locale.getDefault())
         val info = MemberInfo(
-            email = normalizedEmail,
+            email = dto.email,
             bio = dto.bio,
             profileImageUrl = "",
             apiKey = apiKey,
@@ -239,7 +236,7 @@ class MemberService(
     fun payload(accessToken: String) = authService.payload(accessToken)
 
     fun findMemberByEmail(email: String): Member =
-                memberInfoRepository.findByEmail(email.lowercase(Locale.getDefault()))
+                memberInfoRepository.findByEmail(email)
                 .orElseThrow { ServiceException(400, "사용자를 찾을 수 없습니다.") }
                 .getMember() ?: throw ServiceException(400, "사용자를 찾을 수 없습니다.")
 
