@@ -12,8 +12,8 @@ data class PresetDto(
      */
     constructor(preset: Preset) : this(
         id = preset.id,
-        name = preset.name,
-        // presetItems 리스트를 PresetItemDto 리스트로 변환
-        presetItems = preset.presetItems.map { PresetItemDto(it) }
+        name = requireNotNull(preset.name) { "Preset.name must not be null" },
+        // presetItems가 null인 경우 빈 리스트로 방어
+        presetItems = (preset.presetItems ?: emptyList()).map(::PresetItemDto)
     )
 }
