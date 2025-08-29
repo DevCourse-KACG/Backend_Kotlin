@@ -139,8 +139,9 @@ public class ClubMemberService {
         Club club = clubService.getClubById(clubId);
         Member member = memberService.findMemberById(memberId)
                 .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
-        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, member)
-                .orElseThrow(() -> new ServiceException(404, "클럽 멤버가 존재하지 않습니다."));
+        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, member);
+        if (clubMember == null)
+            throw new ServiceException(404, "클럽 멤버가 존재하지 않습니다.");
 
         // 호스트 본인이 탈퇴하려는 경우 예외 처리
         if (user.getId().equals(memberId) && clubMember.getRole() == ClubMemberRole.HOST) {
@@ -163,8 +164,10 @@ public class ClubMemberService {
         Club club = clubService.getClubById(clubId);
         Member member = memberService.findMemberById(memberId)
                 .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
-        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, member)
-                .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
+        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, member);
+        if (clubMember == null) {
+            throw new ServiceException(404, "클럽 멤버가 존재하지 않습니다.");
+        }
 
         // 호스트 본인이 역할을 변경하려는 경우 예외 처리
         if (member.getId().equals(rq.getActor().getId())) {
@@ -239,8 +242,11 @@ public class ClubMemberService {
      * @return 클럽 멤버 엔티티
      */
     public ClubMember getClubMember(Club club, Member member) {
-        return clubMemberRepository.findByClubAndMemberAndState(club, member, ClubMemberState.JOINING)
-                .orElseThrow(() -> new AccessDeniedException("권한이 없습니다."));
+        ClubMember clubMember = clubMemberRepository.findByClubAndMemberAndState(club, member, ClubMemberState.JOINING);
+        if(clubMember == null)
+            throw new AccessDeniedException("권한이 없습니다.");
+
+        return clubMember;
     }
 
     /**
@@ -265,8 +271,9 @@ public class ClubMemberService {
         Club club = clubService.getClubById(clubId);
         Member member = memberService.findMemberById(memberId)
                 .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
-        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, member)
-                .orElseThrow(() -> new ServiceException(400, "가입 신청 상태가 아닙니다."));
+        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, member);
+        if (clubMember == null)
+            throw new ServiceException(400, "가입 신청 상태가 아닙니다.");
 
         // 현재 상태가 APPLYING이 아닌 경우 예외 처리
         if (clubMember.getState() != ClubMemberState.APPLYING) {

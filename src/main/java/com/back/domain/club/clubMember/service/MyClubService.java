@@ -38,8 +38,9 @@ public class MyClubService {
         Member user = rq.getActor();
         // 클럽 ID로 클럽 가져오기
         Club club = clubService.getClubById(clubId);
-        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, user)
-                .orElseThrow(() -> new ServiceException(400, "클럽 초대 상태가 아닙니다."));
+        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, user);
+        if (clubMember == null)
+            throw new ServiceException(400, "클럽 초대 상태가 아닙니다.");
 
         // 클럽 멤버 상태 확인
         if (clubMember.getState() == ClubMemberState.JOINING) // 가입 중인 경우
@@ -78,8 +79,9 @@ public class MyClubService {
 
         // 클럽 멤버 상태 확인
         if (clubMemberRepository.existsByClubAndMember(club, user)) {
-            ClubMember existingMember = clubMemberRepository.findByClubAndMember(club, user)
-                    .orElseThrow(() -> new ServiceException(404, "클럽 멤버가 존재하지 않습니다."));
+            ClubMember existingMember = clubMemberRepository.findByClubAndMember(club, user);
+            if (existingMember == null)
+                throw new ServiceException(404, "클럽 멤버가 존재하지 않습니다.");
 
             if (existingMember.getState() == ClubMemberState.JOINING)
                 throw new ServiceException(400, "이미 가입 상태입니다.");
@@ -122,8 +124,11 @@ public class MyClubService {
         Club club = clubService.getClubById(clubId);
 
         // 클럽 멤버 정보 조회
-        return clubMemberRepository.findByClubAndMember(club, user)
-                .orElseThrow(() -> new ServiceException(404, "클럽 멤버 정보가 존재하지 않습니다."));
+        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, user);
+        if (clubMember == null)
+            throw new ServiceException(404, "클럽 멤버 정보가 존재하지 않습니다.");
+
+        return clubMember;
     }
 
     public MyClubList getMyClubs() {
@@ -168,8 +173,10 @@ public class MyClubService {
         Club club = clubService.getClubById(clubId);
 
         // 클럽 멤버 정보 조회
-        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, user)
-                .orElseThrow(() -> new ServiceException(404, "클럽 멤버 정보가 존재하지 않습니다."));
+        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, user);
+        if (clubMember == null)
+            throw new ServiceException(404, "클럽 멤버 정보가 존재하지 않습니다.");
+
 
         // 클럽 멤버 상태 확인
         if (clubMember.getState() != ClubMemberState.APPLYING) {

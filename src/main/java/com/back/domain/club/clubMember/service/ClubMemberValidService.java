@@ -36,8 +36,9 @@ public class ClubMemberValidService {
                 .orElseThrow(() -> new ServiceException(404, "클럽이 존재하지 않습니다."));
         Member member = memberService.findMemberById(memberId)
                 .orElseThrow(() -> new ServiceException(404, "멤버가 존재하지 않습니다."));
-        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, member)
-                .orElseThrow(() -> new ServiceException(404, "클럽 멤버가 존재하지 않습니다."));
+        ClubMember clubMember = clubMemberRepository.findByClubAndMember(club, member);
+        if (clubMember == null)
+            throw new ServiceException(404, "클럽 멤버가 존재하지 않습니다.");
 
         // 요청된 역할이 클럽 멤버의 역할 중 하나인지 확인
         for (ClubMemberRole role : roles) {

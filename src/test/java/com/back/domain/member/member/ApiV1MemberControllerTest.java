@@ -807,8 +807,8 @@ public class ApiV1MemberControllerTest {
         assertTrue(savedGuestOpt.isPresent(), "비회원 게스트 회원이 멤버 DB에 저장되어야 합니다.");
 
         Member savedGuest = savedGuestOpt.get();
-        Optional<ClubMember> savedClubGuestOpt = clubMemberRepository.findByClubAndMember(club, savedGuest);
-        assertTrue(savedClubGuestOpt.isPresent(), "비회원 게스트 회원이 클럽멤버 DB에 저장되어야 합니다.");
+        ClubMember savedClubGuestOpt = clubMemberRepository.findByClubAndMember(club, savedGuest);
+        assertTrue(savedClubGuestOpt != null, "비회원 게스트 회원이 클럽멤버 DB에 저장되어야 합니다.");
 
         assertEquals(nickname, savedGuest.getNickname());
         assertEquals(MemberType.GUEST, savedGuest.getMemberType());
