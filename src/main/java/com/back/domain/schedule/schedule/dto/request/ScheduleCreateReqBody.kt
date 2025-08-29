@@ -1,7 +1,7 @@
 package com.back.domain.schedule.schedule.dto.request
 
 import io.swagger.v3.oas.annotations.media.Schema
-import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import java.time.LocalDateTime
 
@@ -12,11 +12,11 @@ data class ScheduleCreateReqBody(
     val clubId: Long,
 
     @Schema(description = "일정 제목")
-    @field:NotEmpty
+    @field:NotBlank
     val title: String,
 
     @Schema(description = "일정 내용")
-    @field:NotEmpty
+    @field:NotBlank
     val content: String,
 
     @Schema(description = "일정 시작일")
@@ -28,6 +28,6 @@ data class ScheduleCreateReqBody(
     val endDate: LocalDateTime,
 
     @Schema(description = "일정 장소")
-    @field:NotNull
+    @field:NotBlank
     val spot: String
 )
