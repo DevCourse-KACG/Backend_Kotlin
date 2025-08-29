@@ -3,7 +3,7 @@ package com.back.global.rsData
 @JvmRecord
 data class RsData<T>(
     val code: Int,
-    val message: String,
+    val message: String?,
     val data: T?
 ) {
     companion object {
