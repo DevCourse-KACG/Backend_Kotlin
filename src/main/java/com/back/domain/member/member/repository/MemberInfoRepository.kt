@@ -9,9 +9,9 @@ import java.util.Optional
 @Repository
 interface MemberInfoRepository : JpaRepository<MemberInfo, Long> {
 
-    fun findByEmail(email: String): MemberInfo?
+    fun findByEmail(email: String): Optional<MemberInfo>
 
-    fun findByApiKey(apiKey: String): MemberInfo?
+    fun findByApiKey(apiKey: String): Optional<MemberInfo>
 
     /**
      * 이메일로 회원 정보 조회 (MemberInfo와 Member를 함께 조회)
@@ -22,5 +22,5 @@ interface MemberInfoRepository : JpaRepository<MemberInfo, Long> {
         JOIN FETCH mi.member m
         WHERE mi.email = :email
     """)
-    fun findByEmailWithMember(email: String): MemberInfo?
+    fun findByEmailWithMember(email: String): Optional<MemberInfo>
 }
