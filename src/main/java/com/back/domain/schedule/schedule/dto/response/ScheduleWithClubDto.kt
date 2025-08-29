@@ -35,9 +35,9 @@ data class ScheduleWithClubDto(
                 title = schedule.title,
                 startDate = schedule.startDate,
                 endDate = schedule.endDate,
-                clubId = schedule.club.getId(),
-                clubName = schedule.club.getName(),
-                checkListId = schedule.checkList?.getId()
+                clubId = schedule.club.id !!,
+                clubName = schedule.club.name,
+                checkListId = schedule.checkList?.id
             )
         }
     }

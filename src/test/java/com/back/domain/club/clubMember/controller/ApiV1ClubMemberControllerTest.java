@@ -105,9 +105,7 @@ class ApiV1ClubMemberControllerTest {
                 .andExpect(jsonPath("$.message").value("클럽에 멤버가 추가됐습니다."));
 
         // 추가 검증: 클럽에 멤버가 실제로 추가되었는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        club = clubService.getClubById(club.getId());
 
         assertThat(club.getClubMembers().size()).isEqualTo(5); // 멤버가 총 3명 인지 확인 (호스트 포함)
         assertThat(club.getClubMembers().get(0).getMember().getEmail()).isEqualTo(hostMember.getEmail());
@@ -167,9 +165,7 @@ class ApiV1ClubMemberControllerTest {
                 .andExpect(jsonPath("$.message").value("클럽에 멤버가 추가됐습니다."));
 
         // 추가 검증: 클럽에 멤버가 실제로 추가되었는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        club = clubService.getClubById(club.getId());
 
         assertThat(club.getClubMembers().size()).isEqualTo(4); // 중복된 멤버는 하나만 추가
         assertThat(club.getClubMembers().get(3).getMember().getEmail()).isEqualTo(member1.getEmail());
@@ -225,9 +221,7 @@ class ApiV1ClubMemberControllerTest {
                 .andExpect(jsonPath("$.message").value("클럽에 멤버가 추가됐습니다."));
 
         // 추가 검증: 클럽에 멤버가 실제로 추가되었는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        club = clubService.getClubById(club.getId());
 
         assertThat(club.getClubMembers().size()).isEqualTo(3);
         assertThat(club.getClubMembers().get(0).getMember().getEmail()).isEqualTo(hostMember.getEmail());
@@ -408,9 +402,7 @@ class ApiV1ClubMemberControllerTest {
                 .andExpect(jsonPath("$.message").value("클럽의 최대 멤버 수를 초과했습니다."));
 
         // 추가 검증: 클럽에 멤버가 실제로 추가되지 않았는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        club = clubService.getClubById(club.getId());
         assertThat(club.getClubMembers().size()).isEqualTo(3); // 클럽에 멤버가 2명만 있어야 함 (호스트 + 참여자)
     }
 
@@ -448,9 +440,7 @@ class ApiV1ClubMemberControllerTest {
                 .andExpect(jsonPath("$.message").value("클럽에서 멤버가 탈퇴됐습니다."));
 
         // 추가 검증: 클럽에서 멤버가 실제로 삭제되지 않고 state가 withdrawn로 변경되었는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        club = clubService.getClubById(club.getId());
 
         assertThat(club.getClubMembers().size()).isEqualTo(3); // 클럽에 멤버가 여전히 존재해야 함
         assertThat(club.getClubMembers().get(1).getMember().getEmail()).isEqualTo(member1.getEmail());
@@ -611,9 +601,7 @@ class ApiV1ClubMemberControllerTest {
                 .andExpect(jsonPath("$.message").value("멤버의 권한이 변경됐습니다."));
 
         // 추가 검증: 클럽에서 멤버의 역할이 실제로 변경되었는지 확인
-        club = clubService.getClubById(club.getId()).orElseThrow(
-                () -> new IllegalStateException("클럽이 존재하지 않습니다.")
-        );
+        club = clubService.getClubById(club.getId());
 
         assertThat(club.getClubMembers().size()).isEqualTo(3);
         assertThat(club.getClubMembers().get(0).getMember().getEmail()).isEqualTo(hostMember.getEmail());

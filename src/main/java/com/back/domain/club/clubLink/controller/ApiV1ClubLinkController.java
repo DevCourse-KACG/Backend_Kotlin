@@ -1,6 +1,6 @@
 package com.back.domain.club.clubLink.controller;
 
-import com.back.domain.club.club.dtos.ClubControllerDtos;
+import com.back.domain.club.club.dtos.SimpleClubInfoResponse;
 import com.back.domain.club.clubLink.dtos.ClubLinkDtos;
 import com.back.domain.club.clubLink.service.ClubLinkService;
 import com.back.domain.member.member.entity.Member;
@@ -57,8 +57,8 @@ public class ApiV1ClubLinkController {
 
     @GetMapping("/invitations/{token}")
     @Operation(summary = "클럽 초대 링크용 클럽 정보 반환")
-    public RsData<ClubControllerDtos.SimpleClubInfoResponse> getClubInfoByInvitationToken(@PathVariable String token) {
-        ClubControllerDtos.SimpleClubInfoResponse response = clubLinkService.getClubInfoByInvitationToken(token);
+    public RsData<SimpleClubInfoResponse> getClubInfoByInvitationToken(@PathVariable String token) {
+        SimpleClubInfoResponse response = clubLinkService.getClubInfoByInvitationToken(token);
 
         return new RsData<>(200, "클럽 정보가 반환되었습니다.", response);
     }

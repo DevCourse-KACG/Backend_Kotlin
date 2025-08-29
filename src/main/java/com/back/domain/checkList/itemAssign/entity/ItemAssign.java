@@ -38,4 +38,9 @@ public class ItemAssign {
 
     @Description("체크 여부")
     private boolean isChecked;
+
+    // TODO : 코틀린 호환용 임시 setter
+    public void setClubMember(ClubMember clubMember) {
+        this.clubMember = clubMember;
+    }
 }
