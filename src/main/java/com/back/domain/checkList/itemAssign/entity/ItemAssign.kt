@@ -20,7 +20,7 @@ class ItemAssign(
      */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "club_member_id", nullable = false)
-    val clubMember: ClubMember,
+    var clubMember: ClubMember,
 
     /**
      * 체크 여부
