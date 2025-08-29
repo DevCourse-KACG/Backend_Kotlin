@@ -10,10 +10,8 @@ import org.springframework.stereotype.Service
 class AuthService(private val jwtProperties: JwtProperties) {
 
     fun generateAccessToken(member: Member): String {
-        // 1. 회원, 비회원 공통 검증
-        requireNotNull(member) { "Member 정보가 없습니다." }
-
-        val id = member.id
+        // 1. 핵심 식별자 검증
+        val id = member.id ?: throw IllegalStateException("회원 ID가 없습니다.")
         val nickname = member.nickname
         val tag = member.tag
         val memberType = member.memberType
@@ -21,9 +19,14 @@ class AuthService(private val jwtProperties: JwtProperties) {
         // 2. 회원 검증
         val email = member.getMemberInfo()?.email ?: ""
 
+        val expiration = (jwtProperties.accessToken.expirationSeconds ?: 3600L)
+                    .coerceAtLeast(60L) // 최소 60초
+                    .coerceAtMost(Int.MAX_VALUE.toLong())
+                    .toInt()
+
         return Ut.jwt.toString(
             jwtProperties.jwt.secretKey,
-            jwtProperties.accessToken.expirationSeconds?.toInt() ?: 3600,
+            expiration,
             mapOf(
                 "id" to id,
                 "email" to email,
