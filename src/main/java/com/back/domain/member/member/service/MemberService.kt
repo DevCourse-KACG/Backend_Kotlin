@@ -67,13 +67,14 @@ class MemberService(
         val club = clubRepository.findById(dto.clubId)
             .orElseThrow { ServiceException(400, "클럽을 찾을 수 없습니다.") }
 
-        //임시방편용 코드. clubMember 코틀린 전환 후 개변 예정
-        val clubMember = ClubMember()
-        clubMember.updateMember(guest)
-        clubMember.updateClub(club)
-        clubMember.updateRole(ClubMemberRole.PARTICIPANT)
-        clubMember.updateState(ClubMemberState.APPLYING)
-        clubMemberRepository.save(clubMember)
+        // 임시방편용 코드. clubMember 코틀린 전환 후 개변 예정
+//        val clubMember = ClubMember()
+//        clubMember.member = guest
+//        clubMember.club = club
+//        clubMember.role = ClubMemberRole.PARTICIPANT
+//        clubMember.state = ClubMemberState.APPLYING
+//
+//        clubMemberRepository.save(clubMember)
 
         val accessToken = generateAccessToken(guest)
         return GuestResponse(dto.nickname, accessToken, dto.clubId)
@@ -81,15 +82,16 @@ class MemberService(
 
     // ============================== [회원] 로그인 ==============================
     fun loginMember(@Valid dto: MemberLoginDto): MemberAuthResponse {
-        val memberInfo = memberInfoRepository.findByEmail(dto.email.lowercase())
-            ?: throw ServiceException(400, "해당 사용자를 찾을 수 없습니다.")
+        val memberInfo = memberInfoRepository.findByEmail(dto.email)
+            .orElseThrow { ServiceException(400, "해당 사용자를 찾을 수 없습니다.") }
+
         val member = memberInfo.getMember()
             ?: throw ServiceException(400, "해당 사용자를 찾을 수 없습니다.")
 
         validatePassword(dto.password, member)
 
-        val apiKey = member?.getMemberInfo()?.apiKey
-            ?: throw ServiceException(400, "API Key가 없습니다.")
+        val apiKey = member.getMemberInfo()?.apiKey
+            ?: throw ServiceException(400, "api키가 존재하지 않습니다..")
         val accessToken = authService.generateAccessToken(member)
 
         return MemberAuthResponse(apiKey, accessToken)
@@ -98,7 +100,7 @@ class MemberService(
     // ============================== [비회원] 임시 로그인 ==============================
     fun loginGuestMember(@Valid dto: GuestDto): GuestResponse {
         val member = memberRepository.findByGuestNicknameInClub(dto.nickname, dto.clubId)
-            ?: throw ServiceException(400, "해당 사용자를 찾을 수 없습니다.")
+            .orElseThrow { ServiceException(400, "해당 사용자를 찾을 수 없습니다.") }
 
         validatePassword(dto.password, member)
 
@@ -116,9 +118,9 @@ class MemberService(
 
     // ============================== [회원] 정보 조회/수정 ==============================
     fun getMemberInfo(id: Long): MemberDetailInfoResponse {
-        val member : Member = findMemberById(id)
-            ?: throw ServiceException(400, "해당 id의 유저가 없습니다.")
-        val info : MemberInfo = member.getMemberInfo()
+        val member: Member = findMemberById(id)
+            .orElseThrow { ServiceException(400, "해당 id의 유저가 없습니다.") }
+        val info: MemberInfo = member.getMemberInfo()
             ?: throw ServiceException(400, "해당 유저의 정보가 없습니다.")
 
         return MemberDetailInfoResponse(
@@ -133,7 +135,7 @@ class MemberService(
     @Transactional
     fun updateMemberInfo(id: Long, dto: UpdateMemberInfoDto, image: MultipartFile?): MemberDetailInfoResponse {
         val member = findMemberById(id)
-            ?: throw ServiceException(400, "해당 id의 유저가 없습니다.")
+            .orElseThrow { ServiceException(400, "해당 id의 유저가 없습니다.") }
         val info = member.getMemberInfo()
             ?: throw ServiceException(400, "해당 유저의 정보가 없습니다.")
 
@@ -168,7 +170,7 @@ class MemberService(
     // ============================== [검증 메소드] ==============================
     private fun validateDuplicateMember(dto: MemberRegisterDto) {
         val email = dto.email.lowercase(Locale.getDefault())
-        if (memberInfoRepository.findByEmail(email) != null) {
+        if (memberInfoRepository.findByEmail(email).isPresent) {
             throw ServiceException(400, "이미 사용 중인 이메일입니다.")
         }
     }
@@ -221,7 +223,8 @@ class MemberService(
 
     // ============================== [유틸 / 기타] ==============================
     fun checkPasswordValidity(memberId: Long, password: String): MemberPasswordResponse {
-        val member = findMemberById(memberId) ?: throw ServiceException(400, "해당 id로 유저를 찾을 수 없습니다.")
+        val member = findMemberById(memberId)
+            .orElseThrow { ServiceException(400, "해당 id로 유저가 없습니다.") }
         return try {
             validatePassword(password, member)
             MemberPasswordResponse(true)
@@ -232,23 +235,25 @@ class MemberService(
 
     fun payload(accessToken: String) = authService.payload(accessToken)
 
-    fun findMemberByEmail(email: String) = memberInfoRepository.findByEmail(email)?.getMember()
-        ?: throw ServiceException(400, "사용자를 찾을 수 없습니다.")
+    fun findMemberByEmail(email: String) = memberInfoRepository.findByEmail(email)
+        .orElseThrow { ServiceException(400, "사용자를 찾을 수 없습니다.") }
+        .getMember()
 
     private fun deleteMember(member: Member) = memberRepository.delete(member)
 
     fun findMemberByNicknameAndTag(nickname: String, tag: String) =
         memberRepository.findByNicknameAndTag(nickname, tag)
-            ?: throw ServiceException(400, "회원 정보를 찾을 수 없습니다.")
+            .orElseThrow { ServiceException(400, "회원 정보를 찾을 수 없습니다.") }
 
-    fun findMemberById(id: Long): Member? = memberRepository.findById(id).orElse(null)
+    fun findMemberById(id: Long) = memberRepository.findById(id)
 
     fun getMember(memberId: Long) =
-        findMemberById(memberId) ?: throw NoSuchElementException("멤버가 존재하지 않습니다.")
+        findMemberById(memberId).orElseThrow { NoSuchElementException("멤버가 존재하지 않습니다.") }
 
     fun generateAccessToken(member: Member) = authService.generateAccessToken(member)
 
     fun findMemberByApiKey(apiKey: String) =
-        memberInfoRepository.findByApiKey(apiKey)?.getMember()
-            ?: throw ServiceException(400, "유효하지 않은 Refresh Token 입니다.")
+        memberInfoRepository.findByApiKey(apiKey)
+            .orElseThrow { ServiceException(400, "유효하지 않은 Refresh Token 입니다.") }
+            .getMember()
 }
