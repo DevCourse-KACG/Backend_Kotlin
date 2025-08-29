@@ -19,7 +19,7 @@ class ScheduleAuthorizationChecker(
     @Transactional(readOnly = true)
     fun isActiveClubHost(scheduleId: Long, memberId: Long): Boolean {
         val schedule = scheduleService.getActiveScheduleEntityById(scheduleId)
-        val clubId = schedule.club.getId()
+        val clubId = schedule.club.id !!
 
         return clubChecker.isActiveClubHost(clubId, memberId)
     }
@@ -33,7 +33,7 @@ class ScheduleAuthorizationChecker(
     @Transactional(readOnly = true)
     fun isActiveClubManagerOrHost(scheduleId: Long, memberId: Long): Boolean {
         val schedule = scheduleService.getActiveScheduleEntityById(scheduleId)
-        val clubId = schedule.club.getId()
+        val clubId = schedule.club.id !!
 
         return clubChecker.isActiveClubManagerOrHost(clubId, memberId)
     }
@@ -47,7 +47,7 @@ class ScheduleAuthorizationChecker(
     @Transactional(readOnly = true)
     fun isClubMember(scheduleId: Long, memberId: Long): Boolean {
         val schedule = scheduleService.getActiveScheduleEntityById(scheduleId)
-        val clubId = schedule.club.getId()
+        val clubId = schedule.club.id !!
 
         return clubChecker.isClubMember(clubId, memberId)
     }
