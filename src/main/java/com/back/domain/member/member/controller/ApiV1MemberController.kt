@@ -158,13 +158,10 @@ class ApiV1MemberController(
     @Operation(summary = "access token 재발급 API", description = "리프레시 토큰으로 access token을 재발급하는 API 입니다.")
     @PostMapping("/auth/refresh")
     fun apiTokenReissue(
-        @RequestBody requestBody: TokenRefreshRequest,
+        @Valid @RequestBody requestBody: TokenRefreshRequest,
         response: HttpServletResponse
     ): RsData<MemberAuthResponse> {
-        val apiKey = requestBody.refreshToken()
-        if (apiKey.isNullOrBlank()) {
-            return RsData.of(401, "Refresh Token이 존재하지 않습니다.")
-        }
+        val apiKey = requestBody.refreshToken
 
         val member = memberService.findMemberByApiKey(apiKey)
         val newAccessToken = memberService.generateAccessToken(member)
