@@ -3,7 +3,7 @@ package com.back.global.rsData
 @JvmRecord
 data class RsData<T>(
     val code: Int,
-    val message: String,
+    val message: String?,
     val data: T?
 ) {
     companion object {
@@ -12,7 +12,7 @@ data class RsData<T>(
             RsData(code, message, data)
 
         @JvmStatic
-        fun <T> of(code: Int, message: String): RsData<T> =
+        fun <T> of(code: Int, message: String?): RsData<T> =
             RsData(code, message, null)
 
         // 성공 편의 메소드

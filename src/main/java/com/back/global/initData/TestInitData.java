@@ -4,6 +4,7 @@ import com.back.domain.checkList.checkList.entity.CheckList;
 import com.back.domain.checkList.checkList.entity.CheckListItem;
 import com.back.domain.checkList.checkList.repository.CheckListItemRepository;
 import com.back.domain.checkList.checkList.repository.CheckListRepository;
+import com.back.global.enums.CheckListItemCategory;
 import com.back.domain.checkList.itemAssign.entity.ItemAssign;
 import com.back.domain.checkList.itemAssign.repository.ItemAssignRepository;
 import com.back.domain.club.club.entity.Club;
@@ -465,10 +466,7 @@ public class TestInitData {
             for (Schedule schedule : club1Schedules) {
                 if (schedule.getTitle().equals("강릉 여행")) continue; // 체크리스트 없는 일정(테스트용)
 
-                CheckList checkList = CheckList.builder()
-                        .isActive(true)
-                        .build();
-                checkList.setSchedule(schedule);
+                CheckList checkList = new CheckList(true, schedule, new ArrayList<>());
                 checkListRepository.save(checkList);
             }
         }
@@ -484,11 +482,8 @@ public class TestInitData {
         for (CheckList checkList : allCheckLists) {
             // 각 체크리스트에 3개의 체크리스트 항목 생성
             for (int i = 1; i <= 3; i++) {
-                CheckListItem item = CheckListItem.builder()
-                        .content("체크리스트 항목 " + i)
-                        .isChecked(false)
-                        .checkList(checkList)
-                        .build();
+                CheckListItem item = new CheckListItem("체크리스트 항목 " + i, CheckListItemCategory.ETC, i, false, new ArrayList<>());
+                item.setCheckList(checkList);
                 checkListItemRepository.save(item);
             }
         }
@@ -525,10 +520,8 @@ public class TestInitData {
                 assignedMembers.add(assignee);
 
                 // 아이템 할당 생성
-                ItemAssign assign = ItemAssign.builder()
-                        .clubMember(assignee)
-                        .checkListItem(item)
-                        .build();
+                ItemAssign assign = new ItemAssign(assignee, false);
+                assign.setCheckListItem(item);
 
                 assignee.addItemAssign(assign);
                 itemAssignRepository.save(assign);

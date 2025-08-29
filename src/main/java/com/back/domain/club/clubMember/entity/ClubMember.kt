@@ -35,7 +35,7 @@ class ClubMember(
     fun addItemAssign(itemAssign: ItemAssign) {
         itemAssigns.add(itemAssign)
         // ItemAssign 클래스에 clubMember 프로퍼티가 var로 선언되어 있다고 가정합니다.
-        itemAssign.setClubMember(this)
+        itemAssign.clubMember = this
     }
 
     fun updateState(newState: ClubMemberState) {
