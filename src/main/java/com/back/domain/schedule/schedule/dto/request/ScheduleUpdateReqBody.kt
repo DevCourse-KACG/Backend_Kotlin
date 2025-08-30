@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import java.time.LocalDateTime
 
-@JvmRecord
 data class ScheduleUpdateReqBody(
     @Schema(description = "일정 제목")
     @field:NotBlank

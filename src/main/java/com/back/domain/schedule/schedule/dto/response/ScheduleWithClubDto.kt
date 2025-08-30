@@ -4,7 +4,6 @@ import com.back.domain.schedule.schedule.entity.Schedule
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
-@JvmRecord
 data class ScheduleWithClubDto(
     @Schema(description = "일정 ID")
     val id: Long,
@@ -28,7 +27,6 @@ data class ScheduleWithClubDto(
     val checkListId: Long?,
 ) {
     companion object {
-        @JvmStatic
         fun from(schedule: Schedule): ScheduleWithClubDto {
             return ScheduleWithClubDto(
                 id = schedule.id!!,

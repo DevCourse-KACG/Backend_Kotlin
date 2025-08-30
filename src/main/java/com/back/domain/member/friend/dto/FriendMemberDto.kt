@@ -3,7 +3,6 @@ package com.back.domain.member.friend.dto
 import com.back.domain.member.member.entity.Member
 import io.swagger.v3.oas.annotations.media.Schema
 
-@JvmRecord
 data class FriendMemberDto(
     @Schema(description = "친구(회원) ID")
     val friendMemberId: Long,
@@ -15,7 +14,6 @@ data class FriendMemberDto(
     val friendProfileImageUrl: String?
 ) {
     companion object {
-        @JvmStatic
         fun from(friendMember: Member): FriendMemberDto {
             val memberInfo = friendMember.getMemberInfo()
 

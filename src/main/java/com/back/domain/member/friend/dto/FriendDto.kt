@@ -5,7 +5,6 @@ import com.back.domain.member.friend.entity.FriendStatus
 import com.back.domain.member.member.entity.Member
 import io.swagger.v3.oas.annotations.media.Schema
 
-@JvmRecord
 data class FriendDto(
     @Schema(description = "친구 ID")
     val friendId: Long,
@@ -26,7 +25,6 @@ data class FriendDto(
     val status: FriendStatus
 ) {
     companion object {
-        @JvmStatic
         fun from(friend: Friend, friendMember: Member): FriendDto {
             val memberInfo = friendMember.getMemberInfo()
             return FriendDto(
