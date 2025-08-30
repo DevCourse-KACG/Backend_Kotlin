@@ -219,19 +219,11 @@ class FriendService(
      * 이미 친구인 경우 예외 처리
      * @param friend 친구 엔티티
      */
-    private fun validateAlreadyFriend(friend: Friend) {
-        if (friend.status == FriendStatus.ACCEPTED) {
-            throw ServiceException(FriendErrorCode.FRIEND_ALREADY_ACCEPTED)
-        }
-    }
-
-    /**
-     * 이미 친구인 경우 예외 처리
-     * @param friend 친구 엔티티
-     */
-    private fun validateNotYetFriend(friend: Friend) {
-        if (friend.status == FriendStatus.ACCEPTED) {
-            throw ServiceException(FriendErrorCode.FRIEND_ALREADY_ACCEPTED_NOT_ALLOWED)
+    private fun validatePending(friend: Friend) {
+        when (friend.status) {
+            FriendStatus.PENDING -> return
+            FriendStatus.ACCEPTED -> throw ServiceException(FriendErrorCode.FRIEND_ALREADY_ACCEPTED)
+            FriendStatus.REJECTED -> throw ServiceException(FriendErrorCode.FRIEND_ALREADY_REJECTED)
         }
     }
 
@@ -275,8 +267,8 @@ class FriendService(
             throw ServiceException(FriendErrorCode.FRIEND_REQUEST_NOT_ALLOWED_ACCEPT)
         }
 
-        // 친구 요청의 상태가 PENDING이 아닌 경우 예외 처리
-        validateAlreadyFriend(friend)
+        // PENDING 이외 상태는 수락 불가
+        validatePending(friend)
     }
 
     /**
@@ -294,8 +286,8 @@ class FriendService(
             throw ServiceException(FriendErrorCode.FRIEND_REQUEST_NOT_ALLOWED_REJECT)
         }
 
-        // 이미 친구인 경우 예외 처리
-        validateNotYetFriend(friend)
+        // PENDING 이외 상태는 거절 불가
+        validatePending(friend)
     }
 
     /**

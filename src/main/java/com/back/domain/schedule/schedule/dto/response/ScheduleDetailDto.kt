@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 @JvmRecord
 data class ScheduleDetailDto(
     @Schema(description = "일정 ID")
-    val id: Long?,
+    val id: Long,
 
     @Schema(description = "일정 제목")
     val title: String,

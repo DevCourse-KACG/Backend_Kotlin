@@ -38,7 +38,7 @@ class Friend(
         if (other !is Friend) return false
 
         if (id == 0L || other.id == 0L) return false
-        return id == other.id
+        return this.id != null && this.id == other.id
     }
 
     override fun hashCode(): Int = id.hashCode()

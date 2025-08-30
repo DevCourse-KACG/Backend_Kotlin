@@ -394,7 +394,7 @@ class ApiV1FriendControllerTest {
                 2L,
                 "reject",
                 "rejectFriend",
-                FriendErrorCode.FRIEND_ALREADY_ACCEPTED_NOT_ALLOWED
+                FriendErrorCode.FRIEND_ALREADY_ACCEPTED
         );
     }
 

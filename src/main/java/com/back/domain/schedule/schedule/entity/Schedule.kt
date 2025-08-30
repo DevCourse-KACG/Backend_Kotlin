@@ -77,7 +77,7 @@ class Schedule(
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
         other as Schedule
 
-        return this.id == other.id
+        return this.id != null && this.id == other.id
     }
 
     override fun hashCode(): Int = javaClass.hashCode()
