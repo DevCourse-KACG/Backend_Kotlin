@@ -78,12 +78,8 @@ class FriendService(
         // 이미 친구인 경우 예외 처리
         validateForAddFriend(requester, responder)
 
-        // TODO: Member id 낫널로 변경 시 제거 예정
-        val requesterId = requester.id ?: throw IllegalStateException("Requester entity must have a non-null ID")
-        val responderId = responder.id ?: throw IllegalStateException("Responder entity must have a non-null ID")
-
         // id 순서로 member1, member2 지정
-        val (lowerMember, higherMember) = if (requesterId < responderId) {
+        val (lowerMember, higherMember) = if (requester.id!! < responder.id!!) {
             requester to responder
         } else {
             responder to requester
@@ -230,6 +226,16 @@ class FriendService(
     }
 
     /**
+     * 이미 친구인 경우 예외 처리
+     * @param friend 친구 엔티티
+     */
+    private fun validateNotYetFriend(friend: Friend) {
+        if (friend.status == FriendStatus.ACCEPTED) {
+            throw ServiceException(FriendErrorCode.FRIEND_ALREADY_ACCEPTED_NOT_ALLOWED)
+        }
+    }
+
+    /**
      * 친구 추가 시 유효성 검사
      * (이미 친구인 경우 예외 처리 )
      * @param requester 요청자
@@ -289,7 +295,7 @@ class FriendService(
         }
 
         // 이미 친구인 경우 예외 처리
-        validateAlreadyFriend(friend)
+        validateNotYetFriend(friend)
     }
 
     /**

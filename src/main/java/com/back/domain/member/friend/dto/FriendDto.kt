@@ -11,7 +11,7 @@ data class FriendDto(
     val friendId: Long,
 
     @Schema(description = "친구(회원) ID")
-    val friendMemberId: Long?, // TODO: member id 낫널로 변경시 반영 예정
+    val friendMemberId: Long,
 
     @Schema(description = "친구(회원) 닉네임")
     val friendNickname: String,
@@ -31,7 +31,7 @@ data class FriendDto(
             val memberInfo = friendMember.getMemberInfo()
             return FriendDto(
                 friendId = friend.id,
-                friendMemberId = friendMember.id,
+                friendMemberId = friendMember.id!!,
                 friendNickname = friendMember.nickname,
                 friendBio = memberInfo?.bio,
                 friendProfileImageUrl = memberInfo?.profileImageUrl,
