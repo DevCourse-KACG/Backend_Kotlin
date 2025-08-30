@@ -11,7 +11,7 @@ import java.util.*
 interface ClubLinkRepository : JpaRepository<ClubLink, Long> {
     override fun findAll(): List<ClubLink>
 
-    fun findByClubAndExpiresAtAfter(club: Club, expiresAt: LocalDateTime): Optional<ClubLink>
+    fun findByClubAndExpiresAtAfter(club: Club, expiresAt: LocalDateTime): ClubLink?
 
-    fun findByInviteCode(inviteCode: String): Optional<ClubLink>
+    fun findByInviteCode(inviteCode: String): ClubLink?
 }
