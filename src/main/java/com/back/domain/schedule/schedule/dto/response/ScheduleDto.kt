@@ -28,7 +28,7 @@ data class ScheduleDto(
         @JvmStatic
         fun from(schedule: Schedule): ScheduleDto {
             return ScheduleDto(
-                id = schedule.id,
+                id = schedule.id!!,
                 title = schedule.title,
                 startDate = schedule.startDate,
                 endDate = schedule.endDate,

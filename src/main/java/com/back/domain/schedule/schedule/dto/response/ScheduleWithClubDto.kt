@@ -31,7 +31,7 @@ data class ScheduleWithClubDto(
         @JvmStatic
         fun from(schedule: Schedule): ScheduleWithClubDto {
             return ScheduleWithClubDto(
-                id = schedule.id,
+                id = schedule.id!!,
                 title = schedule.title,
                 startDate = schedule.startDate,
                 endDate = schedule.endDate,

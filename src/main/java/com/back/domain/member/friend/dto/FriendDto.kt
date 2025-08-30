@@ -30,7 +30,7 @@ data class FriendDto(
         fun from(friend: Friend, friendMember: Member): FriendDto {
             val memberInfo = friendMember.getMemberInfo()
             return FriendDto(
-                friendId = friend.id,
+                friendId = friend.id!!,
                 friendMemberId = friendMember.id!!,
                 friendNickname = friendMember.nickname,
                 friendBio = memberInfo?.bio,

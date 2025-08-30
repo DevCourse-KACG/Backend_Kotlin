@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 @JvmRecord
 data class ScheduleDetailDto(
     @Schema(description = "일정 ID")
-    val id: Long,
+    val id: Long?,
 
     @Schema(description = "일정 제목")
     val title: String,
@@ -34,7 +34,7 @@ data class ScheduleDetailDto(
         @JvmStatic
         fun from(schedule: Schedule): ScheduleDetailDto {
             return ScheduleDetailDto(
-                id = schedule.id,
+                id = schedule.id!!,
                 title = schedule.title,
                 content = schedule.content,
                 startDate = schedule.startDate,

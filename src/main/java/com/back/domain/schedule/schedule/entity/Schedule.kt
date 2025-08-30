@@ -18,7 +18,8 @@ class Schedule(
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long = 0L
+    var id: Long? = null
+        private set
 
     var title: String = title
         private set
