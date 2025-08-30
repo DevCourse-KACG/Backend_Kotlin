@@ -294,7 +294,7 @@ class TestInitData(
             LocalDate.parse("2025-08-11"),
             "img4",
             false,
-            leader1.id,
+            leader2.id,
             false
         )
         clubRepository.save(nClub2)
