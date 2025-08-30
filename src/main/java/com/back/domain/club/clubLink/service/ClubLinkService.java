@@ -16,6 +16,7 @@ import com.back.global.enums.ClubMemberState;
 import com.back.global.exception.ServiceException;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,8 @@ public class ClubLinkService {
     private final ClubMemberRepository clubMemberRepository;
     private final ClubLinkRepository clubLinkRepository;
     private final MemberRepository memberRepository;
+    @Value("${app.frontend.base-url}")
+    private String frontendBaseUrl;
 
     @Transactional
     public CreateClubLinkResponse createClubLink(Member user, Long clubId) {
@@ -66,7 +69,7 @@ public class ClubLinkService {
 
         clubLinkRepository.save(clubLink);
 
-        String link = "http://localhost:3000/clubs/invite?token=" + inviteCode;
+        String link = frontendBaseUrl + "/clubs/invite?token=" + inviteCode;
         return new CreateClubLinkResponse(link);
     }
 
