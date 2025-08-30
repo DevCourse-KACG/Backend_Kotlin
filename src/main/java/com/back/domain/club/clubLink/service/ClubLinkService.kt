@@ -81,9 +81,9 @@ class ClubLinkService(
         val clubLink = validateInviteTokenOrThrow(token)
         val club = clubLink.club
 
-        val existingMember = clubMemberRepository.findByClubAndMember(club, user)
-        if (existingMember != null) {
-            return when (existingMember.get().state) {
+        val existingMemberOpt = clubMemberRepository.findByClubAndMember(club, user)
+        if (existingMemberOpt.isPresent) {
+            return when (existingMemberOpt.get().state) {
                 ClubMemberState.JOINING -> ClubApplyResult.ALREADY_JOINED
                 ClubMemberState.APPLYING -> ClubApplyResult.ALREADY_APPLYING
                 ClubMemberState.INVITED -> ClubApplyResult.ALREADY_INVITED

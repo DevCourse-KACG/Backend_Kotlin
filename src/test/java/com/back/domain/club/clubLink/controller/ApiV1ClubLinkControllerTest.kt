@@ -88,8 +88,9 @@ class ApiV1ClubLinkControllerTest @Autowired constructor(
 
         val club: Club = clubRepository.findById(1L).orElseThrow()
         val savedLink: ClubLink? = clubLinkRepository.findByClubAndExpiresAtAfter(club, LocalDateTime.now())
-        assertNotNull(savedLink)
-        assertEquals(inviteCodeFromResponse, savedLink.inviteCode)
+        assertNotNull(savedLink) {
+            assertEquals(inviteCodeFromResponse, it.inviteCode)
+        }
     }
 
     @Test
@@ -190,6 +191,4 @@ class ApiV1ClubLinkControllerTest @Autowired constructor(
             .andExpect(jsonPath("$.code").value(400))
             .andExpect(jsonPath("$.message").value("해당 id의 클럽을 찾을 수 없습니다."))
     }
-
-    // 나머지 applyToPrivateClub, getClubInfoByInvitationToken 테스트들도 동일한 패턴으로 변환
 }
