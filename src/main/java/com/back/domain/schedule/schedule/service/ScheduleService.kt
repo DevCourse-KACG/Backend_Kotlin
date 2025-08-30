@@ -66,7 +66,7 @@ class ScheduleService(
     fun getScheduleEntityById(scheduleId: Long): Schedule {
         return scheduleRepository
             .findByIdOrNull(scheduleId)
-            ?: throw NoSuchElementException(ScheduleErrorCode.SCHEDULE_NOT_FOUND.message)
+            ?: throw ServiceException(ScheduleErrorCode.SCHEDULE_NOT_FOUND)
     }
 
     /**
@@ -89,7 +89,7 @@ class ScheduleService(
     fun getActiveScheduleEntityById(scheduleId: Long): Schedule {
         return scheduleRepository
             .findActiveScheduleById(scheduleId)
-            ?: throw NoSuchElementException(ScheduleErrorCode.SCHEDULE_NOT_FOUND.message)
+            ?: throw ServiceException(ScheduleErrorCode.SCHEDULE_NOT_FOUND)
     }
 
     /**
@@ -112,7 +112,7 @@ class ScheduleService(
     fun getLatestClubSchedule(clubId: Long): ScheduleDetailDto {
         val schedule = scheduleRepository
             .findFirstByClubIdOrderByIdDesc(clubId)
-            ?: throw NoSuchElementException(ScheduleErrorCode.SCHEDULE_NOT_FOUND.message)
+            ?: throw ServiceException(ScheduleErrorCode.SCHEDULE_NOT_FOUND)
 
         return ScheduleDetailDto.from(schedule)
     }
@@ -226,7 +226,7 @@ class ScheduleService(
     private fun getClubOrThrow(clubId: Long): Club {
         return clubRepository
             .findByIdOrNull(clubId)
-            ?: throw NoSuchElementException(ClubErrorCode.CLUB_NOT_FOUND.message)
+            ?: throw ServiceException(ClubErrorCode.CLUB_NOT_FOUND)
     }
 
     /**

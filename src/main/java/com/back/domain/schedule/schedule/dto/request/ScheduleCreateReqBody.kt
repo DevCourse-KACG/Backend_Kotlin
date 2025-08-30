@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import java.time.LocalDateTime
 
-@JvmRecord
 data class ScheduleCreateReqBody(
     @Schema(description = "모임 ID")
     @field:NotNull
