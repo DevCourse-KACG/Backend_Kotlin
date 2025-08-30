@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 @JvmRecord
 data class FriendMemberDto(
     @Schema(description = "친구(회원) ID")
-    val friendMemberId: Long?, // TODO: member id 낫널로 변경시 반영 예정
+    val friendMemberId: Long,
     @Schema(description = "친구(회원) 닉네임")
     val friendNickname: String,
     @Schema(description = "친구(회원) 자기소개")
@@ -20,7 +20,7 @@ data class FriendMemberDto(
             val memberInfo = friendMember.getMemberInfo()
 
             return FriendMemberDto(
-                friendMemberId = friendMember.id,
+                friendMemberId = friendMember.id!!,
                 friendNickname = friendMember.nickname,
                 friendBio = memberInfo?.bio,
                 friendProfileImageUrl = memberInfo?.profileImageUrl

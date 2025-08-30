@@ -22,7 +22,6 @@ enum class FriendErrorCode(
     FRIEND_ALREADY_REQUEST_PENDING(409, "이미 친구 요청을 보냈습니다.  상대방의 수락을 기다려주세요."),
     FRIEND_ALREADY_RESPOND_PENDING(409, "이미 친구 요청을 받았습니다. 수락 또는 거절해주세요"),
     FRIEND_ALREADY_ACCEPTED(409, "이미 친구입니다."),
-    FRIEND_ALREADY_ACCEPTED_NOT_ALLOWED(409, "이미 친구입니다. 친구 삭제를 이용해 주세요."),
     FRIEND_ALREADY_REJECTED(409, "이전에 거절한 친구 요청입니다. 다시 요청할 수 없습니다."),
 
     // 400 유효하지 않은 상태

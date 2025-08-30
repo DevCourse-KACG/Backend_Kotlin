@@ -18,7 +18,8 @@ class Schedule(
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long = 0L
+    var id: Long? = null
+        private set
 
     var title: String = title
         private set
@@ -32,7 +33,7 @@ class Schedule(
     var endDate: LocalDateTime = endDate
         private set
 
-    var spot: String = spot //TODO : 나중에 지도 연동하면 좌표로 변경
+    var spot: String = spot
         private set
 
     var isActive: Boolean = true
@@ -76,7 +77,7 @@ class Schedule(
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
         other as Schedule
 
-        return this.id == other.id
+        return this.id != null && this.id == other.id
     }
 
     override fun hashCode(): Int = javaClass.hashCode()

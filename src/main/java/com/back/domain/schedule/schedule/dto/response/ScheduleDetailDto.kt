@@ -34,7 +34,7 @@ data class ScheduleDetailDto(
         @JvmStatic
         fun from(schedule: Schedule): ScheduleDetailDto {
             return ScheduleDetailDto(
-                id = schedule.id,
+                id = schedule.id!!,
                 title = schedule.title,
                 content = schedule.content,
                 startDate = schedule.startDate,
