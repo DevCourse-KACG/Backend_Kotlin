@@ -95,5 +95,5 @@ class Member(
         return this.id != null && this.id == other.id
     }
 
-    override fun hashCode(): Int = AbstractPersistable_.id?.hashCode() ?: System.identityHashCode(this)
+    override fun hashCode(): Int = id?.hashCode() ?: System.identityHashCode(this)
 }
