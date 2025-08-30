@@ -9,38 +9,21 @@ import java.time.LocalDateTime
 
 @Entity
 class Schedule(
-    title: String,
-    content: String,
-    startDate: LocalDateTime,
-    endDate: LocalDateTime,
-    spot: String,
-    club: Club,
+    var title: String,
+    var content: String,
+    var startDate: LocalDateTime,
+    var endDate: LocalDateTime,
+    var spot: String,
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    val club: Club,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
         private set
 
-    var title: String = title
-        private set
-
-    var content: String = content
-        private set
-
-    var startDate: LocalDateTime = startDate
-        private set
-
-    var endDate: LocalDateTime = endDate
-        private set
-
-    var spot: String = spot
-        private set
-
     var isActive: Boolean = true
-        private set
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    var club: Club = club
         private set
 
     @OneToOne(mappedBy = "schedule", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
