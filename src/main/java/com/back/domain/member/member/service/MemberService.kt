@@ -235,7 +235,7 @@ class MemberService(
 
     fun getMember(memberId: Long) =
         findMemberById(memberId)
-            ?: throw NoSuchElementException("멤버가 존재하지 않습니다.")
+            ?: throw ServiceException(404, "멤버가 존재하지 않습니다.")
 
     fun generateAccessToken(member: Member) = authService.generateAccessToken(member)
 
