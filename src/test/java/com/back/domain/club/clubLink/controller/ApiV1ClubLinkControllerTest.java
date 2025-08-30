@@ -405,8 +405,15 @@ public class ApiV1ClubLinkControllerTest {
     }
 
     private Member findMemberByEmail(String email) {
-        return memberRepository.findByMemberInfo_Email(email)
-                .orElseThrow(() -> new IllegalArgumentException("멤버를 찾을 수 없습니다: " + email));
+//        return memberRepository.findByMemberInfo_Email(email)
+//                .orElseThrow(() -> new IllegalArgumentException("멤버를 찾을 수 없습니다: " + email));
+
+        //코틀린 전환 용 임시방편 코드
+        Member member = memberRepository.findByMemberInfo_Email(email);
+        if (member == null) {
+            throw new IllegalArgumentException("멤버를 찾을 수 없습니다: " + email);
+        }
+        return member;
     }
 }
 

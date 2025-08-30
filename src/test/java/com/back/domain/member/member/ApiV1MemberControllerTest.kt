@@ -914,9 +914,10 @@ class ApiV1MemberControllerTest {
 
         // DB에서 저장 여부 확인
         val savedGuestOpt = memberRepository.findByNickname(nickname)
-        Assertions.assertTrue(savedGuestOpt.isPresent(), "비회원 게스트 회원이 멤버 DB에 저장되어야 합니다.")
+        Assertions.assertTrue(savedGuestOpt != null, "비회원 게스트 회원이 멤버 DB에 저장되어야 합니다.")
 
-        val savedGuest = savedGuestOpt.get()
+        val savedGuest = savedGuestOpt
+            ?: throw NoSuchElementException("회원이 존재하지 않습니다.")
         val savedClubGuestOpt = clubMemberRepository.findByClubAndMember(club, savedGuest)
         Assertions.assertTrue(savedClubGuestOpt.isPresent(), "비회원 게스트 회원이 클럽멤버 DB에 저장되어야 합니다.")
 
@@ -933,10 +934,9 @@ class ApiV1MemberControllerTest {
     @Test
     @DisplayName("비회원 임시 로그인 - 정상 처리")
     fun guestLogin_success() {
-        // memberRepository가 lateinit var로 선언되었기 때문에  대신 ?.let을 사용해 안전하게 접근
-        val guest: Member = memberRepository.findByNickname("김암호").orElseThrow()
+        val guest: Member = memberRepository.findByNickname("김암호")
+            ?: throw ServiceException(400, "회원을 찾을 수 없습니다.")
 
-        // stream() 대신 Kotlin의 sequence를 사용해 지연 연산을 처리하거나, filter를 직접 사용
         val club: Club = clubRepository.findAll()
             .firstOrNull { it.name == "친구 모임2" }
             ?: throw IllegalArgumentException("친구 모임2 클럽을 찾을 수 없습니다.")
@@ -1020,7 +1020,8 @@ class ApiV1MemberControllerTest {
         val rawPassword = "pw1"
 
         memberService.registerMember(MemberRegisterDto("1", rawPassword, "user1", "<>"))
-        val savedMember = memberRepository.findByNickname("user1").get()
+        val savedMember = memberRepository.findByNickname("user1")
+            ?: throw NoSuchElementException("회원이 존재하지 않습니다.")
 
         val savedHashedPassword = savedMember.password
 
