@@ -23,11 +23,11 @@ import org.assertj.core.api.ThrowableAssert
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
@@ -41,7 +41,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.multipart.MultipartFile
 import java.nio.charset.StandardCharsets
 import java.util.*
 
@@ -49,18 +48,38 @@ import java.util.*
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-class ApiV1MemberControllerTest @Autowired constructor(
-    private val memberFixture: MemberFixture,
-    private val memberRepository: MemberRepository,
-    private val mockMvc: MockMvc,
-    private val apiKeyService: ApiKeyService,
-    private val authService: AuthService,
-    private val clubRepository: ClubRepository,
-    private val memberService: MemberService,
-    private val clubMemberRepository: ClubMemberRepository,
-    private val passwordEncoder: PasswordEncoder,
-    private val s3Service: S3Service
-){
+class ApiV1MemberControllerTest {
+
+    @Autowired
+    lateinit var mockMvc: MockMvc   //  필요 없음
+
+    @Autowired
+    lateinit var memberFixture: MemberFixture
+
+    @Autowired
+    lateinit var memberRepository: MemberRepository
+
+    @Autowired
+    lateinit var apiKeyService: ApiKeyService
+
+    @Autowired
+    lateinit var authService: AuthService
+
+    @Autowired
+    lateinit var clubRepository: ClubRepository
+
+    @Autowired
+    lateinit var memberService: MemberService
+
+    @Autowired
+    lateinit var clubMemberRepository: ClubMemberRepository
+
+    @Autowired
+    lateinit var passwordEncoder: PasswordEncoder
+
+    @MockBean
+    lateinit var s3Service: S3Service
+
     @Test
     @DisplayName("회원가입 - 정상 기입 / 객체 정상 생성")
     fun memberObjectCreationTest() {
@@ -98,7 +117,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
                 
                 """.trimIndent()
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -123,7 +142,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
                 
                 """.trimIndent()
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -168,7 +187,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
         
         """.trimIndent()
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -192,7 +211,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
         
         """.trimIndent()
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -215,7 +234,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
         
         """.trimIndent()
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -230,7 +249,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("API key 발급 - 정상")
     @Throws(Exception::class)
     fun generateApiKey_success() {
-        val apiKey = apiKeyService!!.generateApiKey()
+        val apiKey = apiKeyService.generateApiKey()
 
         Assertions.assertNotNull(apiKey)
         Assertions.assertTrue(apiKey.startsWith("api_"))
@@ -240,9 +259,9 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("AccessToken 발급 - 정상")
     @Throws(Exception::class)
     fun generateAccessToken_success() {
-        val member = memberFixture!!.createMember(1)
+        val member = memberFixture.createMember(1)
 
-        val accessToken = authService!!.generateAccessToken(member)
+        val accessToken = authService.generateAccessToken(member)
 
         Assertions.assertNotNull(accessToken)
     }
@@ -251,7 +270,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("로그인 - 정상 기입")
     @Throws(Exception::class)
     fun loginSuccess() {
-        memberFixture!!.createMember(1)
+        memberFixture.createMember(1)
 
         val requestBody = """
         {
@@ -261,7 +280,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
         
         """.trimIndent()
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -275,7 +294,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("로그인 - 없는 이메일 기입")
     @Throws(Exception::class)
     fun loginNonexistentEmail() {
-        memberFixture!!.createMember(1)
+        memberFixture.createMember(1)
 
         val requestBody = """
         {
@@ -285,7 +304,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
         
         """.trimIndent()
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -300,7 +319,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("로그인 - 맞지 않는 비밀번호 기입")
     @Throws(Exception::class)
     fun loginWrongPassword() {
-        memberFixture!!.createMember(1)
+        memberFixture.createMember(1)
 
         val requestBody = """
         {
@@ -310,7 +329,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
         
         """.trimIndent()
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -325,7 +344,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("로그인 실패 - 이메일 대소문자 구분 (대문자 입력 시도)")
     @Throws(Exception::class)
     fun loginFail_emailCaseSensitive() {
-        memberFixture!!.createMember(1) // test1@example.com 으로 회원 생성됨
+        memberFixture.createMember(1) // test1@example.com 으로 회원 생성됨
 
         val requestBody = """
     {
@@ -335,7 +354,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     
     """.trimIndent()
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -350,7 +369,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("로그인 실패 - 비밀번호 공백 입력")
     @Throws(Exception::class)
     fun loginFail_blankPassword() {
-        memberFixture!!.createMember(1) // 회원 생성
+        memberFixture.createMember(1) // 회원 생성
 
         val requestBody = """
     {
@@ -360,7 +379,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     
     """.trimIndent()
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -379,11 +398,11 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @WithUserDetails(value = "hgd222@test.com")
     @Throws(Exception::class)
     fun logout() {
-        memberFixture!!.createMember(1)
+        memberFixture.createMember(1)
 
         val accessTokenCookie = loginAndGetAccessTokenCookie("test1@example.com", "password123")
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.delete("/api/v1/members/auth/logout")
                 .cookie(accessTokenCookie)
         )
@@ -395,11 +414,11 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("회원탈퇴 - 정상 처리")
     @Throws(Exception::class)
     fun withdrawMembership() {
-        val member = memberFixture!!.createMember(1)
+        val member = memberFixture.createMember(1)
 
         val accessTokenCookie = loginAndGetAccessTokenCookie("test1@example.com", "password123")
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.delete("/api/v1/members/me")
                 .with(
                     SecurityMockMvcRequestPostProcessors.user(
@@ -421,7 +440,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.tag").value(member.tag))
             .andExpect(MockMvcResultMatchers.cookie().maxAge("accessToken", 0)) // 쿠키 만료 확인
 
-        val deletedMember = memberRepository!!.findById(member.id!!)
+        val deletedMember = memberRepository.findById(member.id!!)
         AssertionsForClassTypes.assertThat<Member?>(deletedMember).isEmpty()
     }
 
@@ -429,7 +448,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("회원탈퇴 - 인증 없이 탈퇴 요청 시도")
     @Throws(Exception::class)
     fun withdrawMembership_Unauthenticated_Failure() {
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.delete("/api/v1/members/me")
                 .contentType(MediaType.APPLICATION_JSON)
         )
@@ -453,7 +472,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
             mutableListOf<GrantedAuthority>()
         )
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.delete("/api/v1/members/me")
                 .with(SecurityMockMvcRequestPostProcessors.user(fakeUser))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -469,7 +488,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @Throws(Exception::class)
     fun reGenerateAccessToken_success() {
         //회원 생성
-        val member = memberFixture!!.createMember(1)
+        val member = memberFixture.createMember(1)
 
         //로그인하여 액세스 토큰 쿠키 받기
         loginAndGetAccessTokenCookie("test1@example.com", "password123")
@@ -488,7 +507,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
         )
 
         //재발급 api 호출 및 검증
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -520,7 +539,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     """.trimIndent(), invalidRefreshToken
         )
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -537,7 +556,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     fun logout_fail_invalidAccessToken() {
         val invalidAccessTokenCookie = Cookie("accessToken", "invalid_access_token_value")
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.delete("/api/v1/members/auth/logout")
                 .cookie(invalidAccessTokenCookie)
         )
@@ -551,7 +570,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("내 정보 조회 - 정상")
     @Throws(Exception::class)
     fun getMyInfo_success() {
-        val member = memberFixture!!.createMember(1)
+        val member = memberFixture.createMember(1)
         val memberInfo = member.getMemberInfo()
 
         val securityUser = SecurityUser(
@@ -563,7 +582,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
             mutableListOf<GrantedAuthority>()
         )
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/members/me")
                 .with(SecurityMockMvcRequestPostProcessors.user(securityUser))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -573,7 +592,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("유저 정보 반환 성공"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.nickname").value(member.nickname))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.email").value(memberInfo!!.email))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data.profileImage").value(memberInfo.profileImageUrl))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data.profileImage").value(memberInfo!!.profileImageUrl))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.bio").value(memberInfo.bio))
     }
 
@@ -581,7 +600,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("비밀번호 유효성 검사 - 정상")
     @Throws(Exception::class)
     fun checkPasswordValidity_success() {
-        val member = memberFixture!!.createMember(1)
+        val member = memberFixture.createMember(1)
         val memberInfo = member.getMemberInfo()
         val rawPassword = "password123" //평문 비밀번호
 
@@ -595,15 +614,15 @@ class ApiV1MemberControllerTest @Autowired constructor(
         )
 
         val securityUser = SecurityUser(
-            member.id!!,
+            requireNotNull(member.id) { "member.id must not be null" },
             member.nickname,
-            member.tag!!,
+            requireNotNull(member.tag) { "member.tag must not be null" },
             member.memberType,
-            member.password!!,
+            requireNotNull(member.password) { "member.password must not be null" },
             mutableListOf<GrantedAuthority>()
         )
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/verify-password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -620,7 +639,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("비밀번호 유효성 검사 - 잘못된 비밀번호")
     @Throws(Exception::class)
     fun checkPasswordValidity_wrongPassword() {
-        val member = memberFixture!!.createMember(1)
+        val member = memberFixture.createMember(1)
         val memberInfo = member.getMemberInfo()
         val wrongPassword = "wrongPassword!" // 틀린 비밀번호
 
@@ -634,15 +653,15 @@ class ApiV1MemberControllerTest @Autowired constructor(
         )
 
         val securityUser = SecurityUser(
-            member.id!!,
+            requireNotNull(member.id) { "member.id must not be null" },
             member.nickname,
-            member.tag!!,
+            requireNotNull(member.tag) { "member.tag must not be null" },
             member.memberType,
-            member.password!!,
+            requireNotNull(member.password) { "member.password must not be null" },
             mutableListOf<GrantedAuthority>()
         )
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/verify-password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -664,7 +683,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     
     """.trimIndent()
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/verify-password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -677,7 +696,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("비밀번호 유효성 검사 - 빈 비밀번호")
     @Throws(Exception::class)
     fun checkPasswordValidity_blankPassword() {
-        val member = memberFixture!!.createMember(1)
+        val member = memberFixture.createMember(1)
         val memberInfo = member.getMemberInfo()
 
         val requestBody = """
@@ -688,15 +707,15 @@ class ApiV1MemberControllerTest @Autowired constructor(
     """.trimIndent()
 
         val securityUser = SecurityUser(
-            member.id!!,
+            requireNotNull(member.id) { "member.id must not be null" },
             member.nickname,
-            member.tag!!,
+            requireNotNull(member.tag) { "member.tag must not be null" },
             member.memberType,
-            member.password!!,
+            requireNotNull(member.password) { "member.password must not be null" },
             mutableListOf<GrantedAuthority>()
         )
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/verify-password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -707,89 +726,83 @@ class ApiV1MemberControllerTest @Autowired constructor(
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(400)) // 상세 메시지는 DTO의 @NotBlank 메시지에 따라 다름
     }
 
-//    @Test
-//    @DisplayName("유저 정보 수정 - 성공")
-//    fun updateUserInfoTest_green() {
-//        // 1. 회원 생성
-//        val member = memberFixture.createMember(1)
-//
-//        // 2. SecurityUser 생성
-//        val securityUser = SecurityUser(
-//            member.id!!,
-//            member.nickname,
-//            member.tag!!,
-//            member.memberType,
-//            member.password!!,
-//            mutableListOf<GrantedAuthority>()
-//        )
-//
-//        // 3. S3Service Mock 반환값 지정
-//        Mockito.`when`<String?>(
-//            s3Service!!.upload(
-//                ArgumentMatchers.any() as MultipartFile, // 수정된 부분: any()를 non-nullable 타입으로 캐스팅
-//                ArgumentMatchers.anyString()
-//            )
-//        )
-//            .thenReturn("http://s3.com/profile.jpg")
-//
-//        // 4. 요청 데이터 준비
-//        val requestBody = """
-//        {
-//            "nickname": "개나리",
-//            "password": "newPassword",
-//            "bio": "노란색 개나리"
-//        }
-//
-//        """.trimIndent()
-//
-//        val dataPart = MockMultipartFile(
-//            "data", "data",
-//            MediaType.APPLICATION_JSON_VALUE,
-//            requestBody.toByteArray(StandardCharsets.UTF_8)
-//        )
-//
-//        val imagePart = MockMultipartFile(
-//            "profileImage", "profileImage",
-//            MediaType.IMAGE_JPEG_VALUE,
-//            "fake-image-content".toByteArray(StandardCharsets.UTF_8)
-//        )
-//
-//        // 5. MockMvc 요청 수행
-//        mockMvc.perform(
-//            MockMvcRequestBuilders.multipart(HttpMethod.PUT, "/api/v1/members/me")
-//                .file(dataPart)
-//                .file(imagePart)
-//                .with(SecurityMockMvcRequestPostProcessors.user(securityUser))
-//                .contentType(MediaType.MULTIPART_FORM_DATA)
-//        )
-//            .andExpect(MockMvcResultMatchers.status().isOk())
-//            .andExpect(MockMvcResultMatchers.jsonPath("$.data.nickname").value("개나리"))
-//            .andExpect(MockMvcResultMatchers.jsonPath("$.data.bio").value("노란색 개나리"))
-//            .andExpect(MockMvcResultMatchers.jsonPath("$.data.profileImage").value("http://s3.com/profile.jpg"))
-//
-//        // 6. DB 검증
-//        val updated = memberRepository.findById(member.id!!).orElseThrow()
-//        AssertionsForClassTypes.assertThat(updated.nickname).isEqualTo("개나리")
-//        AssertionsForClassTypes.assertThat(updated.tag).isNotNull()
-//        AssertionsForClassTypes.assertThat(updated.password).isNotEqualTo("newPassword")
-//        AssertionsForClassTypes.assertThat(updated.getMemberInfo()!!.bio).isEqualTo("노란색 개나리")
-//        AssertionsForClassTypes.assertThat(updated.getMemberInfo()!!.profileImageUrl)
-//            .isEqualTo("http://s3.com/profile.jpg")
-//    }
+    @Test
+    @DisplayName("유저 정보 수정 - 성공")
+    fun updateUserInfoTest_green() {
+        // 1. Member 생성
+        val member = memberFixture.createMember(1)
+
+        val securityUser = SecurityUser(
+            requireNotNull(member.id),
+            member.nickname,
+            requireNotNull(member.tag),
+            member.memberType,
+            requireNotNull(member.password),
+            mutableListOf()
+        )
+
+        // 2. MultipartFile 준비 (프로필 이미지)
+        val imagePart = MockMultipartFile(
+            "profileImage",           // 컨트롤러 파라미터 이름과 일치
+            "profileImage.jpg",       // 실제 파일명
+            MediaType.IMAGE_JPEG_VALUE,
+            "fake-image-content".toByteArray()
+        )
+
+        // 3. S3Service stub
+        val path = "members/profile"
+        whenever(s3Service.upload(imagePart, path))
+            .thenReturn("http://s3.com/profile.jpg")
+
+        // 4. JSON 데이터 MultipartFile
+        val requestBody = """
+        {
+            "nickname": "개나리",
+            "password": "newPassword",
+            "bio": "노란색 개나리"
+        }
+    """.trimIndent()
+
+        val dataPart = MockMultipartFile(
+            "data", "data",
+            MediaType.APPLICATION_JSON_VALUE,
+            requestBody.toByteArray(StandardCharsets.UTF_8)
+        )
+
+        // 5. MockMvc 수행 (Multipart PUT)
+        mockMvc.perform(
+            MockMvcRequestBuilders.multipart("/api/v1/members/me")
+                .file(dataPart)
+                .file(imagePart)
+                .with(SecurityMockMvcRequestPostProcessors.user(securityUser))
+                .with { request ->
+                    request.method = "PUT" // multipart PUT 처리
+                    request
+                }
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data.nickname").value("개나리"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data.bio").value("노란색 개나리"))
+    }
+
+
+
+
 
 
     @Test
     @DisplayName("회원 정보 수정 - 잘못된 multipart 형식으로 요청 (data part 누락)")
     @Throws(Exception::class)
     fun updateUserInfo_invalidMultipartFormat() {
-        val member = memberFixture!!.createMember(1)
+        val member = memberFixture.createMember(1)
 
         val securityUser = SecurityUser(
-            member.id!!,
+            requireNotNull(member.id) { "member.id must not be null" },
             member.nickname,
-            member.tag!!,
+            requireNotNull(member.tag) { "member.tag must not be null" },
             member.memberType,
-            member.password!!,
+            requireNotNull(member.password) { "member.password must not be null" },
             mutableListOf<GrantedAuthority>()
         )
 
@@ -801,7 +814,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
             "fake-image-content".toByteArray(StandardCharsets.UTF_8)
         )
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.multipart(HttpMethod.PUT, "/api/v1/members/me")
                 .file(imagePart)
                 .with(SecurityMockMvcRequestPostProcessors.user(securityUser))
@@ -816,14 +829,14 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("회원 정보 수정 - 허용되지 않은 이미지 포맷 업로드 시 400 Bad Request")
     @Throws(Exception::class)
     fun updateUserInfo_invalidImageFormat() {
-        val member = memberFixture!!.createMember(1)
+        val member = memberFixture.createMember(1)
 
         val securityUser = SecurityUser(
-            member.id!!,
+            requireNotNull(member.id) { "member.id must not be null" },
             member.nickname,
-            member.tag!!,
+            requireNotNull(member.tag) { "member.tag must not be null" },
             member.memberType,
-            member.password!!,
+            requireNotNull(member.password) { "member.password must not be null" },
             mutableListOf<GrantedAuthority>()
         )
 
@@ -849,7 +862,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
             "some text content".toByteArray(StandardCharsets.UTF_8)
         )
 
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.multipart(HttpMethod.PUT, "/api/v1/members/me")
                 .file(dataPart)
                 .file(invalidImagePart)
@@ -867,13 +880,13 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @Throws(Exception::class)
     fun GuestRegister_success_withDbCheck() {
         // 회원 생성 (기존 회원 fixture)
-        val guest = memberFixture!!.createMember(1)
+        val guest = memberFixture.createMember(1)
 
         // API 요청 바디 (요청하는 비회원 정보)
         val nickname = "guestUser"
         val rawPassword = "guestPassword123"
         val clubId = 1L
-        val club = clubRepository!!.findById(clubId).orElseThrow()
+        val club = clubRepository.findById(clubId).orElseThrow()
         val requestBody = String.format(
             """
         {
@@ -886,7 +899,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
         )
 
         // API 호출 및 응답 검증
-        mockMvc!!.perform(
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/guest-register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -900,11 +913,11 @@ class ApiV1MemberControllerTest @Autowired constructor(
             .andExpect(MockMvcResultMatchers.cookie().exists("accessToken"))
 
         // DB에서 저장 여부 확인
-        val savedGuestOpt = memberRepository!!.findByNickname(nickname)
+        val savedGuestOpt = memberRepository.findByNickname(nickname)
         Assertions.assertTrue(savedGuestOpt.isPresent(), "비회원 게스트 회원이 멤버 DB에 저장되어야 합니다.")
 
         val savedGuest = savedGuestOpt.get()
-        val savedClubGuestOpt = clubMemberRepository!!.findByClubAndMember(club, savedGuest)
+        val savedClubGuestOpt = clubMemberRepository.findByClubAndMember(club, savedGuest)
         Assertions.assertTrue(savedClubGuestOpt.isPresent(), "비회원 게스트 회원이 클럽멤버 DB에 저장되어야 합니다.")
 
         Assertions.assertEquals(nickname, savedGuest.nickname)
@@ -920,7 +933,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @Test
     @DisplayName("비회원 임시 로그인 - 정상 처리")
     fun guestLogin_success() {
-        // memberRepository가 lateinit var로 선언되었기 때문에 !! 대신 ?.let을 사용해 안전하게 접근
+        // memberRepository가 lateinit var로 선언되었기 때문에  대신 ?.let을 사용해 안전하게 접근
         val guest: Member = memberRepository.findByNickname("김암호").orElseThrow()
 
         // stream() 대신 Kotlin의 sequence를 사용해 지연 연산을 처리하거나, filter를 직접 사용
@@ -994,7 +1007,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
         val memberRegisterDto1 = MemberRegisterDto("1", "pw1", "user1", "안녕하세요")
         val memberRegisterDto2 = MemberRegisterDto("1", "pw1", "user2", "안녕하세요")
 
-        memberService!!.registerMember(memberRegisterDto1)
+        memberService.registerMember(memberRegisterDto1)
 
         AssertionsForClassTypes.assertThatThrownBy(ThrowableAssert.ThrowingCallable {
             memberService.registerMember(memberRegisterDto2)
@@ -1006,14 +1019,14 @@ class ApiV1MemberControllerTest @Autowired constructor(
     fun registerPasswordHashingAndMatching() {
         val rawPassword = "pw1"
 
-        memberService!!.registerMember(MemberRegisterDto("1", rawPassword, "user1", "<>"))
-        val savedMember = memberRepository!!.findByNickname("user1").get()
+        memberService.registerMember(MemberRegisterDto("1", rawPassword, "user1", "<>"))
+        val savedMember = memberRepository.findByNickname("user1").get()
 
         val savedHashedPassword = savedMember.password
 
         Assertions.assertNotEquals(rawPassword, savedHashedPassword)
 
-        Assertions.assertTrue(passwordEncoder!!.matches(rawPassword, savedHashedPassword))
+        Assertions.assertTrue(passwordEncoder.matches(rawPassword, savedHashedPassword))
 
         Assertions.assertFalse(passwordEncoder.matches("wrongPassword", savedHashedPassword))
     }
@@ -1022,7 +1035,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     @DisplayName("로그인 - 액세스토큰에 tag, memberType 포함 확인")
     @Throws(Exception::class)
     fun accessToken_containsTagAndMemberType() {
-        memberFixture!!.createMember(1)
+        memberFixture.createMember(1)
 
         val requestBody = """
         {
@@ -1032,7 +1045,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
     
     """.trimIndent()
 
-        val result = mockMvc!!.perform(
+        val result = mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/members/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
@@ -1060,7 +1073,7 @@ class ApiV1MemberControllerTest @Autowired constructor(
 
 
     @Throws(Exception::class)
-    private fun loginAndGetAccessTokenCookie(email: String?, password: String?): Cookie {
+    private fun loginAndGetAccessTokenCookie(email: String?, password: String?): Cookie? {
         val loginRequestBody = String.format(
             """
         {
@@ -1081,6 +1094,6 @@ class ApiV1MemberControllerTest @Autowired constructor(
             .andDo(MockMvcResultHandlers.print())
             .andReturn()
             .getResponse()
-            .getCookie("accessToken")!!
+            .getCookie("accessToken")
     }
 }

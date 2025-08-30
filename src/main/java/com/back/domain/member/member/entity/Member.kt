@@ -4,20 +4,8 @@ import com.back.domain.club.clubMember.entity.ClubMember
 import com.back.domain.member.friend.entity.Friend
 import com.back.domain.preset.preset.entity.Preset
 import com.back.global.enums.MemberType
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.FetchType
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.OneToMany
-import jakarta.persistence.OneToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import org.springframework.data.jpa.domain.AbstractPersistable_
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
