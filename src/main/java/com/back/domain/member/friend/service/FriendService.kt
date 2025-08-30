@@ -13,12 +13,10 @@ import com.back.domain.member.member.error.MemberErrorCode
 import com.back.domain.member.member.repository.MemberInfoRepository
 import com.back.domain.member.member.repository.MemberRepository
 import com.back.global.exception.ServiceException
-import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 class FriendService(
     private val memberRepository: MemberRepository,
@@ -33,7 +31,7 @@ class FriendService(
     fun getFriends(memberId: Long, statusFilter: FriendStatusDto?): List<FriendDto> {
         // 로그인 회원
         val member = memberRepository.findWithFriendsById(memberId)
-            .orElseThrow { ServiceException(MemberErrorCode.MEMBER_NOT_FOUND) }
+            ?: throw ServiceException(MemberErrorCode.MEMBER_NOT_FOUND)
 
         // member1로 등록된 친구 관계 + member2로 등록된 친구 관계
         val allFriends = member.friendshipsAsMember1 + member.friendshipsAsMember2
@@ -188,7 +186,7 @@ class FriendService(
      */
     private fun getFriendMemberInfoByEmail(friendEmail: String): MemberInfo {
         return memberInfoRepository.findByEmailWithMember(friendEmail)
-            .orElseThrow { ServiceException(MemberErrorCode.MEMBER_NOT_FOUND) }
+            ?: throw ServiceException(MemberErrorCode.MEMBER_NOT_FOUND)
     }
 
     private fun matchesStatusFilter(friend: Friend, statusFilter: FriendStatusDto?, me: Member): Boolean {
