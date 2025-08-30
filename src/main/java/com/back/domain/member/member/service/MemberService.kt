@@ -18,8 +18,8 @@ import com.back.domain.member.member.repository.MemberRepository
 import com.back.global.aws.S3Service
 import com.back.global.exception.ServiceException
 import com.back.standard.util.orServiceThrow
-import io.jsonwebtoken.security.Keys.password
 import jakarta.validation.Valid
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -65,7 +65,7 @@ class MemberService(
         val tag = generateMemberTag(dto.nickname)
         val guest = createAndSaveGuestMember(dto, tag)
 
-        val club = clubRepository.findById(dto.clubId).orServiceThrow("클럽을 찾을 수 없습니다.")
+        val club = clubRepository.findByIdOrNull(dto.clubId).orServiceThrow("클럽을 찾을 수 없습니다.")
 
         // 임시방편용 코드. clubMember 코틀린 전환 후 개변 예정
 //        val clubMember = ClubMember()
