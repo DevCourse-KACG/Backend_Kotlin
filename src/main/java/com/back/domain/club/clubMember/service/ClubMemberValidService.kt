@@ -15,7 +15,6 @@ import java.util.function.Supplier
  * 클럽 멤버의 역할을 확인하거나 클럽 멤버 여부를 확인하는 기능을 제공합니다.
  */
 @Service
-@RequiredArgsConstructor
 class ClubMemberValidService(
     private val clubMemberRepository: ClubMemberRepository,
     private val clubRepository: ClubRepository,

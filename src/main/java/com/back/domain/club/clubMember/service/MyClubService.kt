@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.function.Supplier
 
 @Service
-@RequiredArgsConstructor
 class MyClubService(
     private val clubService: ClubService,
     private val clubMemberRepository: ClubMemberRepository,
