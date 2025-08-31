@@ -127,39 +127,37 @@ class MyClubService(
         return clubMember
     }
 
-    val myClubs: MyClubList
-        get() {
-            // 현재 로그인한 멤버 가져오기
-            val user = memberService.findMemberById(rq.actor!!.id!!)
-                .orElseThrow{ServiceException(404, "멤버가 존재하지 않습니다.")}
+    fun getMyClubs(): MyClubList {
+        // 현재 로그인한 멤버 가져오기
+        val user = memberService.findMemberById(rq.actor!!.id!!)
+            .orElseThrow { ServiceException(404, "멤버가 존재하지 않습니다.") }
 
-            // 멤버가 속한 클럽 멤버 정보 조회
-            val clubMembers: MutableList<ClubMember> = clubMemberRepository.findAllByMember(user)
+        // 멤버가 속한 클럽 멤버 정보 조회
+        val clubMembers = clubMemberRepository.findAllByMember(user)
 
-            // 클럽 멤버 정보를 기반으로 클럽 목록 생성
-            val clubListItems = clubMembers
-                .map { clubMember: ClubMember? ->
-                    val club = clubMember!!.club
-                    ClubListItem(
-                        club!!.id!!,
-                        club.name,
-                        club.bio,
-                        club.category,
-                        club.imageUrl,
-                        club.mainSpot,
-                        club.eventType,
-                        club.startDate!!,
-                        club.endDate!!,
-                        club.isPublic,
-                        clubMember.role,
-                        clubMember.state
-                    )
-                }
-                .toMutableList()
+        // 클럽 멤버 정보를 기반으로 클럽 목록 생성
+        val clubListItems = clubMembers.map { clubMember ->
+            val club = clubMember.club!!
+            ClubListItem(
+                club.id!!,
+                club.name,
+                club.bio,
+                club.category,
+                club.imageUrl,
+                club.mainSpot,
+                club.eventType,
+                club.startDate!!,
+                club.endDate!!,
+                club.isPublic,
+                clubMember.role,
+                clubMember.state
+            )
+        }.toMutableList()
 
-            // 클럽 목록을 MyClubList DTO로 반환
-            return MyClubList(clubListItems)
-        }
+        // 클럽 목록을 MyClubList DTO로 반환
+        return MyClubList(clubListItems)
+    }
+
 
     fun cancelClubApplication(clubId: Long): Club {
         // 현재 로그인한 멤버 가져오기
