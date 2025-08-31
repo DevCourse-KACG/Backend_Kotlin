@@ -237,7 +237,7 @@ class ClubService(
 
         // 비공개 클럽인 경우, 현재 로그인한 유저가 클럽 멤버인지 확인
         if (!club.isPublic) {
-            if (rq.actor == null || !clubMemberValidService.isClubMember(clubId, rq.actor!!.id)) {
+            if (rq.actor == null || !clubMemberValidService.isClubMember(clubId, rq.actor!!.id ?: throw ServiceException(401, "인증되지 않은 사용자입니다."))) {
                 throw ServiceException(403, "비공개 클럽 정보는 클럽 멤버만 조회할 수 있습니다.")
             }
         }
