@@ -3,6 +3,7 @@ package com.back.domain.member.member.service
 import com.back.domain.api.service.ApiKeyService
 import com.back.domain.auth.service.AuthService
 import com.back.domain.club.club.repository.ClubRepository
+import com.back.domain.club.clubMember.entity.ClubMember
 import com.back.domain.club.clubMember.repository.ClubMemberRepository
 import com.back.domain.member.member.dto.request.GuestDto
 import com.back.domain.member.member.dto.request.MemberLoginDto
@@ -16,6 +17,8 @@ import com.back.domain.member.member.entity.MemberInfo
 import com.back.domain.member.member.repository.MemberInfoRepository
 import com.back.domain.member.member.repository.MemberRepository
 import com.back.global.aws.S3Service
+import com.back.global.enums.ClubMemberRole
+import com.back.global.enums.ClubMemberState
 import com.back.global.exception.ServiceException
 import com.back.standard.util.orServiceThrow
 import jakarta.validation.Valid
@@ -67,14 +70,15 @@ class MemberService(
 
         val club = clubRepository.findByIdOrNull(dto.clubId).orServiceThrow("클럽을 찾을 수 없습니다.")
 
-        // 임시방편용 코드. clubMember 코틀린 전환 후 개변 예정
-//        val clubMember = ClubMember()
-//        clubMember.member = guest
-//        clubMember.club = club
-//        clubMember.role = ClubMemberRole.PARTICIPANT
-//        clubMember.state = ClubMemberState.APPLYING
-//
-//        clubMemberRepository.save(clubMember)
+        val clubMember = ClubMember(
+            guest,
+            ClubMemberRole.PARTICIPANT,
+            ClubMemberState.APPLYING
+        )
+
+        clubMember.setClub(club)
+
+        clubMemberRepository.save(clubMember)
 
         val accessToken = generateAccessToken(guest)
         return GuestResponse(dto.nickname, accessToken, dto.clubId)
