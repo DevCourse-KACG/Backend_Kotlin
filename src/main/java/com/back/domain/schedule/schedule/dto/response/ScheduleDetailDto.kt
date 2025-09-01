@@ -4,7 +4,6 @@ import com.back.domain.schedule.schedule.entity.Schedule
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
-@JvmRecord
 data class ScheduleDetailDto(
     @Schema(description = "일정 ID")
     val id: Long,
@@ -31,10 +30,9 @@ data class ScheduleDetailDto(
     val checkListId: Long?,
 ) {
     companion object {
-        @JvmStatic
         fun from(schedule: Schedule): ScheduleDetailDto {
             return ScheduleDetailDto(
-                id = schedule.id,
+                id = schedule.id!!,
                 title = schedule.title,
                 content = schedule.content,
                 startDate = schedule.startDate,
