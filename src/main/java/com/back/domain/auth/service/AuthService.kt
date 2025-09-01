@@ -24,21 +24,21 @@ class AuthService(private val jwtProperties: JwtProperties) {
                     .coerceAtMost(Int.MAX_VALUE.toLong())
                     .toInt()
 
-        return Ut.jwt.toString(
-            jwtProperties.jwt.secretKey,
+        return Ut.jwt.generate(
+            jwtProperties.jwt.secretKey!!,
             expiration,
             mapOf(
                 "id" to id,
                 "email" to email,
                 "nickname" to nickname,
-                "tag" to tag,
-                "memberType" to memberType.toString()
+                "tag" to (tag ?: ""),
+                "memberType" to memberType.name
             )
         )
     }
 
     fun payload(accessToken: String): Map<String, Any>? {
-        val parsedPayload = Ut.jwt.payload(jwtProperties.jwt.secretKey, accessToken) ?: return null
+        val parsedPayload = Ut.jwt.payload(jwtProperties.jwt.secretKey!!, accessToken) ?: return null
         val email = parsedPayload["email"] as? String ?: ""
         return mapOf("email" to email)
     }
