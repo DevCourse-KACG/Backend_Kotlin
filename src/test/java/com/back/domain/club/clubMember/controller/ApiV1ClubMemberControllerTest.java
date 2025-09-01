@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@Import(S3Service.class)
 class ApiV1ClubMemberControllerTest {
     @Autowired
     private MockMvc mvc;
