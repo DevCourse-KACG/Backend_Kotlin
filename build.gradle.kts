@@ -84,3 +84,7 @@ tasks.withType<Test> {
 tasks.named("compileJava") {
     dependsOn(tasks.named("compileKotlin"))
 }
+
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
+    mainClass.set("com.back.BackendApplicationKt")
+}
