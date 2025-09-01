@@ -919,7 +919,7 @@ class ApiV1MemberControllerTest {
         val savedGuest = savedGuestOpt
             ?: throw NoSuchElementException("회원이 존재하지 않습니다.")
         val savedClubGuestOpt = clubMemberRepository.findByClubAndMember(club, savedGuest)
-        Assertions.assertTrue(savedClubGuestOpt.isPresent(), "비회원 게스트 회원이 클럽멤버 DB에 저장되어야 합니다.")
+        Assertions.assertTrue(savedClubGuestOpt != null, "비회원 게스트 회원이 클럽멤버 DB에 저장되어야 합니다.")
 
         Assertions.assertEquals(nickname, savedGuest.nickname)
         Assertions.assertEquals(MemberType.GUEST, savedGuest.memberType)

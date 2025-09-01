@@ -73,8 +73,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -82,8 +82,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 멤버를 초대 (1번을 초대)
-        Member invitedMember = memberService.findMemberById(1L)
-                .orElseThrow(() -> new IllegalStateException("초대된 멤버가 존재하지 않습니다."));
+        Member invitedMember = memberService.findMemberById(1L);
+        if (invitedMember == null) {throw new IllegalStateException("초대된 멤버가 존재하지 않습니다.");}
 
         clubMemberService.addMemberToClub(
                 club.getId(),
@@ -134,8 +134,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -143,8 +143,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 멤버를 초대 (1번을 초대)
-        Member invitedMember = memberService.findMemberById(1L)
-                .orElseThrow(() -> new IllegalStateException("초대된 멤버가 존재하지 않습니다."));
+        Member invitedMember = memberService.findMemberById(1L);
+        if (invitedMember == null) {throw new IllegalStateException("초대된 멤버가 존재하지 않습니다.");}
 
         clubMemberService.addMemberToClub(
                 club.getId(),
@@ -195,8 +195,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -240,8 +240,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -249,8 +249,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 이미 가입된 멤버 추가 (1번을 이미 가입 상태로 추가)
-        Member alreadyJoinedMember = memberService.findMemberById(1L)
-                .orElseThrow(() -> new IllegalStateException("이미 가입된 멤버가 존재하지 않습니다."));
+        Member alreadyJoinedMember = memberService.findMemberById(1L);
+        if (alreadyJoinedMember == null) {throw new IllegalStateException("이미 가입된 멤버가 존재하지 않습니다.");}
 
         ClubMember alreadyClubMember = clubMemberService.addMemberToClub(
                 club.getId(),
@@ -296,8 +296,9 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
+
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -305,8 +306,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 가입 신청 중인 멤버 추가 (1번을 가입 신청 상태로 추가)
-        Member applyingMember = memberService.findMemberById(1L)
-                .orElseThrow(() -> new IllegalStateException("가입 신청 중인 멤버가 존재하지 않습니다."));
+        Member applyingMember = memberService.findMemberById(1L);
+        if (applyingMember == null) {throw new IllegalStateException("가입 신청 중인 멤버가 존재하지 않습니다.");}
 
         ClubMember applyingClubMember = clubMemberService.addMemberToClub(
                 club.getId(),
@@ -374,8 +375,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -425,8 +426,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -434,8 +435,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 이미 가입된 멤버 추가 (1번을 이미 가입 상태로 추가)
-        Member alreadyJoinedMember = memberService.findMemberById(1L)
-                .orElseThrow(() -> new IllegalStateException("이미 가입된 멤버가 존재하지 않습니다."));
+        Member alreadyJoinedMember = memberService.findMemberById(1L);
+        if (alreadyJoinedMember == null) {throw new IllegalStateException("이미 가입된 멤버가 존재하지 않습니다.");}
 
         ClubMember alreadyClubMember = clubMemberService.addMemberToClub(
                 club.getId(),
@@ -481,8 +482,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -490,8 +491,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 가입 신청 중인 멤버 추가 (1번을 가입 신청 상태로 추가)
-        Member applyingMember = memberService.findMemberById(1L)
-                .orElseThrow(() -> new IllegalStateException("가입 신청 중인 멤버가 존재하지 않습니다."));
+        Member applyingMember = memberService.findMemberById(1L);
+        if (applyingMember == null) {throw new IllegalStateException("가입 신청 중인 멤버가 존재하지 않습니다.");}
 
         ClubMember applyingClubMember = clubMemberService.addMemberToClub(
                 club.getId(),
@@ -537,8 +538,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -546,8 +547,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 초대된 멤버 추가 (1번을 초대 상태로 추가)
-        Member invitedMember = memberService.findMemberById(1L)
-                .orElseThrow(() -> new IllegalStateException("초대된 멤버가 존재하지 않습니다."));
+        Member invitedMember = memberService.findMemberById(1L);
+        if (invitedMember == null) {throw new IllegalStateException("초대된 멤버가 존재하지 않습니다.");}
 
         ClubMember invitedClubMember = clubMemberService.addMemberToClub(
                 club.getId(),
@@ -612,8 +613,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -656,8 +657,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -665,8 +666,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 멤버를 초대 (1번을 초대)
-        Member invitedMember = memberService.findMemberById(1L)
-                .orElseThrow(() -> new IllegalStateException("초대된 멤버가 존재하지 않습니다."));
+        Member invitedMember = memberService.findMemberById(1L);
+        if (invitedMember == null) {throw new IllegalStateException("초대된 멤버가 존재하지 않습니다.");}
 
         clubMemberService.addMemberToClub(
                 club.getId(),
@@ -783,16 +784,16 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember1 = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember1 = memberService.findMemberById(2L);
+        if (hostMember1 == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club1.getId(),
                 hostMember1,
                 ClubMemberRole.HOST
         );
 
-        Member hostMember2 = memberService.findMemberById(3L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember2 = memberService.findMemberById(3L);
+        if (hostMember2 == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club2.getId(),
                 hostMember2,
@@ -800,8 +801,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 멤버를 초대 (1번을 초대)
-        Member invitedMember = memberService.findMemberById(6L)
-                .orElseThrow(() -> new IllegalStateException("초대된 멤버가 존재하지 않습니다."));
+        Member invitedMember = memberService.findMemberById(6L);
+        if (invitedMember == null) {throw new IllegalStateException("초대된 멤버가 존재하지 않습니다.");}
 
         clubMemberService.addMemberToClub(
                 club1.getId(),
@@ -897,8 +898,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -906,8 +907,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 가입 신청 중인 멤버 추가 (6번을 가입 신청 상태로 추가)
-        Member applyingMember = memberService.findMemberById(6L)
-                .orElseThrow(() -> new IllegalStateException("가입 신청 중인 멤버가 존재하지 않습니다."));
+        Member applyingMember = memberService.findMemberById(6L);
+        if (applyingMember == null) {throw new IllegalStateException("가입 신청 중인 멤버가 존재하지 않습니다.");}
 
         ClubMember applyingClubMember = clubMemberService.addMemberToClub(
                 club.getId(),
@@ -978,8 +979,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 호스트 멤버 추가 (2번을 호스트로)
-        Member hostMember = memberService.findMemberById(2L)
-                .orElseThrow(() -> new IllegalStateException("호스트 멤버가 존재하지 않습니다."));
+        Member hostMember = memberService.findMemberById(2L);
+        if (hostMember == null) {throw new IllegalStateException("호스트 멤버가 존재하지 않습니다.");}
         clubMemberService.addMemberToClub(
                 club.getId(),
                 hostMember,
@@ -987,8 +988,8 @@ class ApiV1MyClubControllerTest {
         );
 
         // 클럽에 멤버를 초대 (6번을 초대)
-        Member invitedMember = memberService.findMemberById(6L)
-                .orElseThrow(() -> new IllegalStateException("초대된 멤버가 존재하지 않습니다."));
+        Member invitedMember = memberService.findMemberById(6L);
+        if (invitedMember == null) {throw new IllegalStateException("초대된 멤버가 존재하지 않습니다.");}
 
         ClubMember clubMember = clubMemberService.addMemberToClub(
                 club.getId(),

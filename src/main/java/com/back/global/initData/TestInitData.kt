@@ -169,7 +169,7 @@ class TestInitData(
             true,
             EventType.LONG_TERM,
             LocalDate.parse("2025-07-05"),
-            LocalDate.parse("2025-08-30"),
+            LocalDate.parse("2026-08-30"),
             null,
             true,
             leader1.id,
@@ -243,7 +243,7 @@ class TestInitData(
             true,
             EventType.ONE_TIME,
             LocalDate.parse("2025-08-10"),
-            LocalDate.parse("2025-08-10"),
+            LocalDate.parse("2026-08-10"),
             null,
             true,
             leader2.id,
@@ -267,7 +267,7 @@ class TestInitData(
             true,
             EventType.SHORT_TERM,
             LocalDate.parse("2025-07-12"),
-            LocalDate.parse("2025-07-12"),
+            LocalDate.parse("2026-07-12"),
             "img3",
             false,
             leader2.id,
@@ -291,7 +291,7 @@ class TestInitData(
             false,
             EventType.SHORT_TERM,
             LocalDate.parse("2025-07-05"),
-            LocalDate.parse("2025-08-11"),
+            LocalDate.parse("2026-08-11"),
             "img4",
             false,
             leader2.id,
@@ -483,7 +483,7 @@ class TestInitData(
         val allItems = checkListItemRepository.findAll()
 
         for (item in allItems) {
-            val clubId = item.checkList.schedule.club.id
+            val clubId = item.checkList.schedule.club.id ?: throw IllegalStateException("체크리스트 항목의 모임 정보가 없습니다.")
 
             // 모임의 맴버들만 할당 대상
             val clubMembers = clubMemberRepository.findAllByClubId(clubId)

@@ -82,8 +82,8 @@ class ClubLinkService(
         val club = clubLink.club
 
         val existingMemberOpt = clubMemberRepository.findByClubAndMember(club, user)
-        if (existingMemberOpt.isPresent) {
-            return when (existingMemberOpt.get().state) {
+        existingMemberOpt?.let { member ->
+            return when (member.state) {
                 ClubMemberState.JOINING -> ClubApplyResult.ALREADY_JOINED
                 ClubMemberState.APPLYING -> ClubApplyResult.ALREADY_APPLYING
                 ClubMemberState.INVITED -> ClubApplyResult.ALREADY_INVITED
@@ -136,7 +136,7 @@ class ClubLinkService(
         if (!clubMemberRepository.existsByClubAndMemberAndRoleIn(
                 club,
                 user,
-                listOf(ClubMemberRole.MANAGER, ClubMemberRole.HOST)
+                mutableListOf(ClubMemberRole.MANAGER, ClubMemberRole.HOST)
             )
         ) {
             throw ServiceException(400, "호스트나 매니저만 초대 링크를 관리할 수 있습니다.")
