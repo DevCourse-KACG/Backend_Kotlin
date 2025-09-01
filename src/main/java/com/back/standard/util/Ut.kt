@@ -1,5 +1,6 @@
 package com.back.standard.util
 
+import com.back.global.exception.ServiceException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ClaimsBuilder
@@ -63,3 +64,6 @@ object Ut {
         }
     }
 }
+
+fun <T> T?.orServiceThrow(message: String): T =
+    this ?: throw ServiceException(400, message)
