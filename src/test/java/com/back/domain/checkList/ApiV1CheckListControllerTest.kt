@@ -62,7 +62,8 @@ class ApiV1CheckListControllerTest {
 
     @BeforeEach
     fun setUp() {
-        member = memberRepository.findByMemberInfo_Email("hgd222@test.com")!!
+        member = memberRepository.findByMemberInfo_Email("hgd222@test.com")
+            ?: throw IllegalStateException("테스트용 멤버(email: hgd222@test.com)가 존재하지 않습니다")
 
         // 참고: ClubMember, Club 엔티티는 코틀린으로 변환되었다고 가정하고 주 생성자를 사용합니다.
         clubMember = ClubMember(member, ClubMemberRole.MANAGER, ClubMemberState.JOINING)
