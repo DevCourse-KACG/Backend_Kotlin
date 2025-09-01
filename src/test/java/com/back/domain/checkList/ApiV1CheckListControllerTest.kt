@@ -34,7 +34,7 @@ import java.time.LocalDateTime
 
 @ActiveProfiles("test")
 @SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc(addFilters = true)
 @Transactional
 class ApiV1CheckListControllerTest {
     @Autowired
@@ -62,7 +62,7 @@ class ApiV1CheckListControllerTest {
 
     @BeforeEach
     fun setUp() {
-        member = memberRepository.findById(1L).orElseThrow { IllegalStateException("테스트용 멤버(ID: 1)가 존재하지 않습니다") }
+        member = memberRepository.findByMemberInfo_Email("hgd222@test.com")!!
 
         // 참고: ClubMember, Club 엔티티는 코틀린으로 변환되었다고 가정하고 주 생성자를 사용합니다.
         clubMember = ClubMember(member, ClubMemberRole.MANAGER, ClubMemberState.JOINING)
