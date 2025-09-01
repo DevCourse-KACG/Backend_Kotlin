@@ -129,7 +129,7 @@ class ClubMemberService (
         val user = rq.actor ?: throw ServiceException(401, "로그인이 필요합니다.")
         val club = clubService.getClubById(clubId)
         val member = memberService.findMemberById(memberId)
-            .orElseThrow{ServiceException(404, "멤버가 존재하지 않습니다.")}
+            ?: throw ServiceException(404, "멤버가 존재하지 않습니다.")
         val clubMember = clubMemberRepository.findByClubAndMember(club, member)
             ?: throw ServiceException(404, "클럽 멤버가 존재하지 않습니다.")
 
@@ -153,7 +153,7 @@ class ClubMemberService (
     fun changeMemberRole(clubId: Long, memberId: Long, role: @NotBlank String) {
         val club = clubService.getClubById(clubId)
         val member = memberService.findMemberById(memberId)
-            .orElseThrow{ServiceException(404, "멤버가 존재하지 않습니다.")}
+            ?: throw ServiceException(404, "멤버가 존재하지 않습니다.")
         val clubMember = clubMemberRepository.findByClubAndMember(club, member)
             ?: throw ServiceException(404, "클럽 멤버가 존재하지 않습니다.")
 
@@ -244,7 +244,7 @@ class ClubMemberService (
     fun handleMemberApplication(clubId: Long, memberId: Long, approve: Boolean) {
         val club = clubService.getClubById(clubId)
         val member = memberService.findMemberById(memberId)
-            .orElseThrow { ServiceException(404, "멤버가 존재하지 않습니다.") }
+            ?: throw ServiceException(404, "멤버가 존재하지 않습니다.")
         val clubMember = clubMemberRepository.findByClubAndMember(club, member)
             ?: throw ServiceException(400, "가입 신청 상태가 아닙니다.")
 

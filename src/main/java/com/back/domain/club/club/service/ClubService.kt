@@ -128,7 +128,7 @@ class ClubService(
 
         // 클럽 생성 시 유저를 리더로 설정하고 멤버에 추가
         val leader = memberService.findMemberById(rq.actor?.id!!)
-            .orElseThrow { NoSuchElementException("ID ${rq.actor!!.id}에 해당하는 리더를 찾을 수 없습니다.") }
+            ?: throw NoSuchElementException("ID ${rq.actor!!.id}에 해당하는 리더를 찾을 수 없습니다.")
 
         val clubLeader = ClubMember(
             leader,
@@ -142,7 +142,7 @@ class ClubService(
         reqBody.clubMembers.forEach { memberInfo: CreateClubRequestMemberInfo? ->
             // 멤버 ID로 Member 엔티티 조회
             val member = memberService.findMemberById(memberInfo!!.id)
-                .orElseThrow { NoSuchElementException("ID ${memberInfo.id}에 해당하는 멤버를 찾을 수 없습니다.") }
+                ?: throw NoSuchElementException("ID ${memberInfo.id}에 해당하는 멤버를 찾을 수 없습니다.")
 
             // ClubMember 엔티티 생성
             val clubMember = ClubMember(
@@ -233,7 +233,7 @@ class ClubService(
             .orElseThrow { ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다.") }
 
         val leader = memberService.findMemberById(club.leaderId!!)
-            .orElseThrow { ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다.") }
+            ?: throw ServiceException(404, "해당 ID의 클럽을 찾을 수 없습니다.")
 
         // 비공개 클럽인 경우, 현재 로그인한 유저가 클럽 멤버인지 확인
         if (!club.isPublic) {

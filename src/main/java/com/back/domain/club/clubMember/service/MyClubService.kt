@@ -65,7 +65,7 @@ class MyClubService(
     fun applyForClub(clubId: Long): Club {
         // 멤버 가져오기
         val user = memberService.findMemberById(rq.actor!!.id!!)
-            .orElseThrow{ServiceException(404, "멤버가 존재하지 않습니다.")}
+            ?: throw ServiceException(404, "멤버가 존재하지 않습니다.")
 
         // 클럽 ID로 클럽 가져오기
         val club = clubService.getClubById(clubId)
@@ -115,7 +115,7 @@ class MyClubService(
     fun getMyClubInfo(clubId: Long): ClubMember {
         // 현재 로그인한 멤버 가져오기
         val user = memberService.findMemberById(rq.actor!!.id!!)
-            .orElseThrow{ServiceException(404, "멤버가 존재하지 않습니다.")}
+            ?: throw ServiceException(404, "멤버가 존재하지 않습니다.")
 
         // 클럽 ID로 클럽 가져오기
         val club = clubService.getClubById(clubId)
@@ -130,7 +130,7 @@ class MyClubService(
     fun getMyClubs(): MyClubList {
         // 현재 로그인한 멤버 가져오기
         val user = memberService.findMemberById(rq.actor!!.id!!)
-            .orElseThrow { ServiceException(404, "멤버가 존재하지 않습니다.") }
+            ?: throw ServiceException(404, "멤버가 존재하지 않습니다.")
 
         // 멤버가 속한 클럽 멤버 정보 조회
         val clubMembers = clubMemberRepository.findAllByMember(user)
@@ -162,7 +162,7 @@ class MyClubService(
     fun cancelClubApplication(clubId: Long): Club {
         // 현재 로그인한 멤버 가져오기
         val user = memberService.findMemberById(rq.actor!!.id!!)
-            .orElseThrow{ServiceException(404, "멤버가 존재하지 않습니다.")}
+            ?: throw ServiceException(404, "멤버가 존재하지 않습니다.")
 
         // 클럽 ID로 클럽 가져오기
         val club = clubService.getClubById(clubId)

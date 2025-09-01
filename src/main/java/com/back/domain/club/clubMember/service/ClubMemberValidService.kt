@@ -33,7 +33,7 @@ class ClubMemberValidService(
         val club = clubRepository.findById(clubId)
             .orElseThrow{ServiceException(404, "클럽이 존재하지 않습니다.") }
         val member = memberService.findMemberById(memberId)
-            .orElseThrow{ServiceException(404, "멤버가 존재하지 않습니다.") }
+            ?: throw ServiceException(404, "멤버가 존재하지 않습니다.")
 
         val clubMember = clubMemberRepository.findByClubAndMember(club, member)
             ?: throw ServiceException(404, "클럽 멤버가 존재하지 않습니다.")
@@ -58,7 +58,7 @@ class ClubMemberValidService(
         val club = clubRepository.findById(clubId)
             .orElseThrow{ServiceException(404, "클럽이 존재하지 않습니다.") }
         val member = memberService.findMemberById(memberId)
-            .orElseThrow{ServiceException(404, "멤버가 존재하지 않습니다.") }
+            ?: throw ServiceException(404, "멤버가 존재하지 않습니다.")
 
         return clubMemberRepository.existsByClubAndMember(club, member)
     }

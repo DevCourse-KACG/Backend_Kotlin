@@ -483,7 +483,7 @@ class TestInitData(
         val allItems = checkListItemRepository.findAll()
 
         for (item in allItems) {
-            val clubId = item.checkList.schedule.club.id
+            val clubId = item.checkList.schedule.club.id ?: throw IllegalStateException("체크리스트 항목의 모임 정보가 없습니다.")
 
             // 모임의 맴버들만 할당 대상
             val clubMembers = clubMemberRepository.findAllByClubId(clubId)
