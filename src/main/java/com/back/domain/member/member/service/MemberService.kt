@@ -74,9 +74,7 @@ class MemberService(
             guest,
             ClubMemberRole.PARTICIPANT,
             ClubMemberState.APPLYING
-        )
-
-        clubMember.setClub(club)
+        ).apply { setClub(club) }
 
         clubMemberRepository.save(clubMember)
 
