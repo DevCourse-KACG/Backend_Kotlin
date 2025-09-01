@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @ActiveProfiles("test")
 @SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc(addFilters = true)
 @Transactional
 class ApiV1PresetControllerTest {
 
@@ -43,7 +43,8 @@ class ApiV1PresetControllerTest {
 
     @BeforeEach
     fun setUp() {
-        member = memberRepository.findById(1L).orElseThrow { IllegalStateException("테스트용 멤버(ID: 1)가 존재하지 않습니다") }
+        member = memberRepository.findByMemberInfo_Email("hgd222@test.com")
+        ?: throw IllegalStateException("테스트용 멤버(email: hgd222@test.com)가 존재하지 않습니다")
 
         val presetItems = mutableListOf(
             PresetItem(
