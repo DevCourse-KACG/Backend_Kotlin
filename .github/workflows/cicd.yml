@@ -24,7 +24,9 @@ jobs:
 
       # 3. Gradle 빌드
       - name: Build with Gradle
-        run: ./gradlew clean build -x test
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build -x test
 
       # 4. Docker 로그인 (AWS ECR)
       - name: Configure AWS credentials
