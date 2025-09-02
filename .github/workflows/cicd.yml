@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main   # main 브랜치에 push/merge 될 때만 실행
+      - test   # 테스트용 브랜치
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. JDK 세팅
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # 3. Gradle 빌드
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      # 4. Docker 로그인 (AWS ECR)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ap-northeast-2 \
+          | docker login --username AWS --password-stdin 825442073358.dkr.ecr.ap-northeast-2.amazonaws.com
+
+      # 5. Docker 빌드 & 푸시
+      - name: Build and push Docker image
+        run: |
+          docker build -t back-app .
+          docker tag back-app:latest 825442073358.dkr.ecr.ap-northeast-2.amazonaws.com/back-app:latest
+          docker push 825442073358.dkr.ecr.ap-northeast-2.amazonaws.com/back-app:latest
+
+      # 6. ECS 서비스 업데이트 (무중단 배포)
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service \
+            --cluster mysterious-bird-nbmjvy \
+            --service test-task-service-zrky7vkt \
+            --force-new-deployment \
+            --region ap-northeast-2
