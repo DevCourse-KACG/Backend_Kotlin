@@ -1,5 +1,5 @@
 plugins {
-    java
+    //java
     id("org.springframework.boot") version "3.5.4"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("jvm") version "1.9.25"
@@ -16,16 +16,25 @@ java {
     }
 }
 
-kotlin {
-    jvmToolchain(21)
-    sourceSets.main {
-        kotlin.srcDirs("src/main/kotlin", "src/main/java")
+//kotlin {
+//    jvmToolchain(21)
+//    sourceSets.main {
+//        kotlin.srcDirs("src/main/kotlin", "src/main/java")
+//    }
+//    sourceSets.test {
+//        kotlin.srcDirs("src/test/kotlin", "src/test/java")
+//    }
+//    compilerOptions {
+//        freeCompilerArgs.addAll("-Xjsr305=strict")
+//    }
+//}
+
+sourceSets {
+    main {
+        kotlin.srcDir("src/main/kotlin")
     }
-    sourceSets.test {
-        kotlin.srcDirs("src/test/kotlin", "src/test/java")
-    }
-    compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict")
+    test {
+        kotlin.srcDir("src/test/kotlin")
     }
 }
 
@@ -57,9 +66,6 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     // validation
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    // lombok
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
     // jwt
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
